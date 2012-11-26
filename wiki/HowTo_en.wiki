@@ -167,7 +167,7 @@ $make install
 
 
 ==Step6: Setup environment variables and some scripts.==
-Now we had Compiler, Assembler/Linker and IOS file system installed
+Now the Compiler, Assembler/Linker and iPhone SDK had been installed
 
 ||/usr/bin/arm-apple-ios-`*`||Assembler and Linker.||
 ||/usr/share/iPhone5.0.sdk||iPhone 5.0 SDK||
@@ -192,7 +192,7 @@ To use clang compiler to compile sourcecode for IOS, we need add some  parameter
 
 *--target arm-apple-ios* : tell clang the target is arm-apple-ios, it can find proper as/ld
 
-*--isysroot $IPHONEOS_SDK* : tell clang use $IPHONEOS_SDK as root directory to find libraries and Headers.
+*--isysroot $IPHONEOS_SDK* : tell clang use $IPHONEOS_SDK as root directory to find libraries and headers.
 
 Here we create two scripts to wrap it.
 
