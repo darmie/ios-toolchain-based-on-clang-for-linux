@@ -181,6 +181,11 @@ export IPHONEOS_DEPLOYMENT_TARGET=5.0
 
 }}}
 
+*NOTE* : if you install 'arm-apple-ios-codesign_allocate' to other place, you need add a env var.
+{{{
+export CODESIGN_ALLOCATE=<full path to arm-apple-ios-codesign_allocate>
+}}}
+
 
 ==Step7: Create ios-clang/ios-clang++ scripts.==
 To use clang compiler to compile sourcecode for IOS, we need add some  parameters to clang:
