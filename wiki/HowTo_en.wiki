@@ -48,19 +48,16 @@ $svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt -r 168581
 ===2. Patch it===
 
 Download the patch from:
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/clang-iphoneos-toolchain.patch
 
-This patch fix two problem:
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/clang-iphoneos-linker.patch
+
+This patch fix a problem:
 
 1. Clang will link to crt1.3.1.o and there is a symbol missing in this file, and need link to dylib1.o also in Makefile, so we directly link to crt1.o.
 
-
-2. Clang always use 'ld' ,'as' as its linker, so can not find linker name such as 'arm-apple-darwin9-ld' etc. This patch let clang find assembler/linker according to environment variables.
-
-
 {{{
 $cd llvm-svn
-$cat clang-iphoneos-toolchain.patch|patch -p1
+$cat clang-iphoneos-linker.patch|patch -p1
 }}}
 
 ===3. Configure/build and install it. ===
@@ -91,7 +88,7 @@ The toolchain.sh from saurik provides cctools-782/ld64-85.2.1. And I made a upda
 
 The process how to merge/patch and porting is a little bit complicated, let's just skip it.
 
-Here the final tarbal provided: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.tar.gz
+Here the final tarbal provided: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-for-linux.tar.gz
 
 Just download cctools-836.tar.gz and build it.
 
@@ -112,19 +109,23 @@ and build it.*NOTE*: the prefix settings, you can change it as you like.
 {{{
 $export CFLAGS=-fno-stack-protector
 $export CXXFLAGS=-fno-stack-protector
-$./configure --target=arm-apple-darwin9 --prefix=/opt/ios/toolchain
+$./configure --target=arm-apple-ios --prefix=/opt/ios/toolchain
 $make
 $make install
+$cd /usr/bin
+$ln -s /opt/ios/toolchain/bin/arm-apple-ios-* .
 }}}
 
 After installation, under */opt/ios/toolchain/bin* folder, there should have some commands like:
 {{{
-arm-apple-darwin9-ar               
-arm-apple-darwin9-as
-arm-apple-darwin9-ld                  
-arm-apple-darwin9-codesign_allocate
+arm-apple-ios-ar               
+arm-apple-ios-as
+arm-apple-ios-ld                  
+arm-apple-ios-codesign_allocate
 ….
 }}}
+
+to help clang find assembler and linkers, all commands was linked to /usr/bin.
 
 ==Step4: Make a iOS cross compile filesystem from IphoneSDK.==
 
@@ -235,14 +236,7 @@ Now we had Compiler, Assembler/Linker and IOS file system installed
 We need setup some environments variables to setup PATH and something else. Please add below codes to *~/.bashrc.*
 {{{
 
-##
-## These two env vars is very important since we patched llvm/clang
-## to use these two env vars to find assembler/linker.
-##
 export IPHONEOS_TOOLCHAIN_PATH="/opt/ios/toolchain/bin"
-export IPHONEOS_TOOLCHAIN_PREFIX="arm-apple-darwin9"
-
-
 export IPHONEOS_FS="/opt/ios/sys"
 export PATH=$PATH:$IPHONE_TOOLCHAIN_PATH
 #this var only affect llvm/clang link flags.
@@ -250,7 +244,7 @@ export PATH=$PATH:$IPHONE_TOOLCHAIN_PATH
 #and we need add -ldylib1.o to LDFLAGS.
 #after llvm/clang patched, this problem already fixed.
 export IPHONEOS_DEPLOYMENT_TARGET=5.0
-export CODESIGN_ALLOCATE=$IPHONE_TOOLCHAIN_PATH/arm-apple-darwin9-codesign_allocate
+export CODESIGN_ALLOCATE=$IPHONEOS_TOOLCHAIN_PATH/arm-apple-ios-codesign_allocate
 
 }}}
 
@@ -258,7 +252,7 @@ export CODESIGN_ALLOCATE=$IPHONE_TOOLCHAIN_PATH/arm-apple-darwin9-codesign_alloc
 ==Step7: Create ios-clang/ios-clang++ scripts.==
 To use clang compiler to compile sourcecode for IOS, we need add some  parameters to clang:
 
-*--target arm-apple-ios* : tell clang the target is arm-apple-ios
+*--target arm-apple-ios* : tell clang the target is arm-apple-ios, it can find proper as/ld
 
 *--isysroot /opt/ios/sys* : tell clang use /opt/ios/sys as root directory to find libraries and Headers.
 
