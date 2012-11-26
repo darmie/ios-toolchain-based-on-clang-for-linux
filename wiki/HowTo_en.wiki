@@ -1,0 +1,304 @@
+=A new iOS toolchain based on LLVM/clang under linux=
+
+Cjacker <cjacker@gmail.com> 2012-11-26
+
+LLVM/clang for linux provides a fully implementation for Objc-2.0 includes blocks and other features gcc did not provides.
+
+Original iOS toolchain under linux is based on llvm-gcc/odcctools, according to some example Makefile, it use clang as a preprocesser to support blocks feature and other things. 
+
+Here is an instruction of  'How to setup a new IOS toolchain based on LLVM/clang'.
+
+Actually, the IOS toolchain under linux is just as same and simple as other crosscompile toolchain for embeded device. It should include these components:
+
+  # *Assembler and Linker*: cctools and ld64 from opendarwin.
+  # *Compiler*: here we use llvm/clang.
+  # *Target Filesystem*, include headers and libraries.
+  # *Utilities*: such as 'ldid' codesign tool.
+
+==Step 1: Prepare environment.==
+A modern Linux distribution should work well, you need 'xar', 'gcc/g++' or 'llvm/clang' installed. Also you may need 'dmg2img' utility. Here I use a customized Linux dist with gcc-4.7.1.
+
+*dmg2img* can be downloaded from: http://vu1tur.eu.org/tools/
+
+*xar* can be downloaded from: https://code.google.com/p/xar/
+	
+==Step 2: Build and install llvm/clang.(the Compiler)==
+Get llvm/clang source code from svn, llvm/clang 3.2 or svn version is prefered. 
+Here is a User guide about how to catch the llvm/clang source codes via svn: 
+
+'http://llvm.org/docs/GettingStarted.html#checkout'
+
+When this article written, I checkout 168581 svn branch and it works.
+
+===1, Get the source.===
+{{{
+$cd where-you-want-llvm-to-live
+$svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm-svn -r 168581
+
+$cd where-you-want-llvm-to-live
+$cd llvm-svn/tools
+$svn co http://llvm.org/svn/llvm-project/cfe/trunk clang -r 168581
+
+$cd where-you-want-llvm-to-live
+$cd llvm-svn/projects
+$svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt -r 168581
+}}}
+
+===2. Patch it===
+Clang will link to crt1.3.1.o and there is a symbol missing in this file, and need link to dylib1.o also in Makefile, so we directly link to crt1.o.
+
+Download the patch from:
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/llvm-fix-ios-link-libraries.patch
+{{{
+$cd llvm-svn
+$cat llvm-fix-ios-link-libraries.patch|patch -p1
+}}}
+
+===3. Configure/build and install it. ===
+{{{
+$./configure --prefix=/usr  --enable-optimized
+$make 
+$make install
+}}}
+
+===4. Test clang compiler.===
+The compiler clang installed is 'clang' for c/objc and 'clang++' for c++. Just write a simple HelloWorld programe to test it. For example:
+{{{
+$clang -o hello hello.c
+$clang++ -o hello hello.cpp
+}}}
+
+===5. Objc environment for X86/X86_64(*Optional*).===
+Clang fully support all Objective C 2.0 features,  If you'd like to use objc language under x86/x86_64 linux, you should install these components: libobjc2/gnustep, if you need blocks support for C/C++, you also need install libBlocksRuntime, if you need Grand Central Dispatch support, and libdispatch and related packages(libkqueue/libpthread_workqueue) for linux.
+
+==Step3: Build and install cctools/ld64(the assembler/linker)==
+The toolchain.sh from saurik provides cctools-782/ld64-85.2.1. And I made a update and port it to x86_64 arch, and also make it compiled via gcc or clang.
+
+The process how to merge/patch and porting is a little bit complicated, let's just skip it.
+
+Here the final tarbal provided: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.tar.gz
+
+Just download cctools-836.tar.gz and build it.
+
+*NOTE*: the prefix settings, you can change it as you like.
+if you want to use clang/clang++ to build it:
+{{{
+$export CC=clang
+$export CXX=clang++
+}}}
+and build it.
+{{{
+$export CFLAGS=-fno-stack-protector
+$export CXXFLAGS=-fno-stack-protector
+$./configure --target=arm-apple-darwin9 --prefix=/opt/ios/toolchain
+$make
+$make install
+}}}
+
+After installation, under */opt/ios/toolchain/bin* folder, there should have some commands like:
+{{{
+arm-apple-darwin9-ar               
+arm-apple-darwin9-as
+arm-apple-darwin9-ld                  
+arm-apple-darwin9-codesign_allocate
+….
+}}}
+
+==Step4: Make a iOS cross compile filesystem from IphoneSDK.==
+===1. Extract iPhoneSDk pkg from xcode-xxx.img===
+Mount the xcode img from apple under MacOSX, usually it under */Volumes/Xcode*, find *iPhoneSDK5_0.pkg* and *iPhoneSimulatorSDK5_0.pkg* for ios 5.
+
+===2. Extract files and fix header location for IOS filesystem.===
+{{{
+#libraries and headers.
+mkdir -p /opt/ios/sys
+cd /opt/ios/sys
+xar -xf iPhoneSDK5_0.pkg Payload; cat Payload | zcat | cpio -id
+mv Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk .
+rm -fr Platforms
+
+cp -R -pf iPhoneOS5.0.sdk/System /opt/ios/sys
+cp -R -pf iPhoneOS5.0.sdk/usr /opt/ios/sys
+
+cd iPhoneOS5.0.sdk/System/Library/Frameworks
+for i in *.framework
+do
+     f=`basename $i .framework`
+     echo $f
+     mkdir -p opt/ios/sys/usr/include/$f
+     if [ -d $i/Headers ]; then
+     cp -Rf -p $i/Headers/* /opt/ios/sys/usr/include/$f/
+     fi
+done
+cd -
+rm -rf Payload
+rm -rf iPhoneOS5.0.sdk
+}}}
+
+{{{
+#IOKit headers from iPhoneSimulatorSDK5_0.pkg, for older version, just skip it.
+xar -xf iPhoneSimulatorSDK5_0.pkg Payload; cat Payload | zcat | cpio -id
+mv Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk .
+rm -rf Platforms
+mkdir -p /opt/ios/sys/usr/include/IOKit
+cp -Rf -p iPhoneSimulator5.0.sdk/System/Library/Frameworks/IOKit.framework/Headers/* /opt/ios/sys/usr/include/IOKit/
+rm -rf Payload
+rm -rf iPhoneSimulator5.0.sdk
+}}}
+	
+Now, IOS crosscompile file system is under */opt/ios/sys*.
+
+==Step5: Setup asld_wrapper.==
+After Step3, we had 'arm-apple-darwin9-ld' and 'arm-apple-darwin9-as' installed in */opt/sys/toolchain/bin*. But clang will use */usr/bin/ld* as it's linker program. So we need made a wrapper program to make clang use different as/ld for different arch. Here we need asld_wrapper program, the code is modified from original as_driver, but remove native as/ld location codes.
+Download asld.c from:http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/asld.c
+
+Build and install it:
+{{{
+$gcc -o asld asld.c
+
+$install -m 0755 asld /usr/bin
+
+$cd /usr/bin
+$mv ld ld.orig
+$mv as as.orig
+$ln -s asld as
+$ln -s asld ld
+}}}
+Here we rename native as/ld to as.orig and ld.orig. And make a link from asld.
+It will call proper as/ld according -arch parammeter.
+
+*NOTE*: if you install cctools to different path. Please change the path in asld.c
+	
+
+==Step6: install ldid codesign tool==
+ldid is codesign tool from saurik. Here I provide a modified version to support Mach-O armv7 binary produced by clang/cctools.
+Download 'ldid-1.0.610-modified.tar.gz' from:http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.610-modified.tar.gz
+
+Build and install it:
+{{{	
+$make
+$install -m 0755 util/ldid /opt/ios/toolchain/bin
+}}}
+
+If you want to use clang++ to compile it, you need this patch:
+{{{
+diff -Nur ldid-1.0.610/util/ldid.cpp ldid-1.0.610new/util/ldid.cpp
+--- ldid-1.0.610/util/ldid.cpp  2012-11-25 20:34:24.247450779 +0800
++++ ldid-1.0.610new/util/ldid.cpp   2012-11-25 20:34:39.624454277 +0800
+@@ -38,9 +38,10 @@
+ #include "minimal/stdlib.h"
+ #include "minimal/string.h"
+ #include "minimal/mapping.h"
+-
++extern "C"
++{
+ #include "sha1.h"
+-
++}
+ #include <cstring>
+ #include <string>
+ #include <vector>
+}}}
+
+==Step7: setup Environment variables and some scripts.==
+Now we had Compiler, Assembler/Linker and IOS file system installed
+
+||/opt/ios/toolchain/bin/||Assembler and Linker.||
+||/opt/ios/sys/||IOS crosscompile libraries and headers.||
+||/usr/bin/asld||Asld wrapper||
+||/opt/ios/toolchain/bin/ldid|| ldid codesign utility||
+
+We need setup some environments variables to setup PATH and something else. Please add below codes to *~/.bashrc.*
+{{{
+export IOS_TOOLCHAIN="/opt/ios/toolchain"
+export IOS_FS="/opt/ios/sys"
+export PATH=$PATH:$IOS_TOOLCHAIN/bin
+#Change the target version according to your settings.
+export IPHONEOS_DEPLOYMENT_TARGET=5.0
+export CODESIGN_ALLOCATE=$IOS_TOOLCHAIN/bin/arm-apple-darwin9-codesign_allocate
+}}}
+
+==Step8: Create ios-clang/ios-clang++ scripts.==
+To use clang compiler to compile sourcecode for IOS, we need add some  parameters to clang:
+*--target arm-apple-ios* : tell clang the target is arm-apple-ios
+*--isysroot /opt/ios/sys* : tell clang use /opt/ios/sys as root directory to find libraries and Headers.
+
+Here we create two scripts to wrap it.
+
+*ios-clang*
+{{{
+#!/bin/bash
+clang -target arm-apple-ios -isysroot $IOS_FS $@
+}}}
+
+*ios-clang++*
+{{{
+#!/bin/bash
+clang++ -target arm-apple-ios -isysroot $IOS_FS $@
+}}}
+
+And put them in */opt/ios/toolchain/bin*.
+
+*NOTE*: if you use ios4.2 filesystem, you need also add '-arch armv6' to clang/clang++. Otherwise ldid will failed.
+
+==Step9: JailBreak your device.==
+Download proper jailbreak tools and jailbreak your device(iPhone/iTouch/iPad...).
+Install openssh via cyndia and test ssh connections.
+
+*Remember*, the default password is *alpine*.
+
+==Step10: Test toolchain.==
+===1. write a simple hello world program.===
+
+helloworld.m
+{{{
+#import <Foundation/Foundation.h>
+
+int main(int argc, const char **argv)
+{
+    NSLog(@"Hello World");
+    return 0;
+}
+}}}
+
+===2. compile it.===
+{{{
+$ios-clang -o helloworld helloworld.m -framework Foundation
+}}}
+
+*NOTE*, if you *did not* patch llvm-svn. -ldylib1.o should be added. if we set IPHONEOS_DEPLOYMENT_TARGET env to 4.2 and above, it will link to crt1.3.1.o and symbol 'dyld_stub_binding_helper' is missing, so we need link to dylib1.o.
+
+===3. sign the binary.===
+{{{
+$ldid -S helloworld
+}}}
+
+===4. upload to your device and run it.===
+Use scp to transfer helloworld binary to your device and ssh to your device to run it.
+
+==Step11: Build a HelloWorld app for IOS.==
+Download helloworld.tar.gz from:
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/helloworld.tar.gz
+Extract it and build/install it, you need change Makefile to set *IPHONE_IP* to your own IPHONE_IP.
+{{{
+$tar zxvf helloworld.tar.gz 
+$cd helloworld
+$make
+$make dist
+$make install
+}}}
+
+There is also a 'UICatalog.tar.gz' in the download link. You can also try it.
+
+==Step12: iOS API documents.==
+Download API files from:http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
+
+Extract it:
+{{{
+xar -xf com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
+cd com.*iOSLibrary.docset/Contents/Resources/Documents/
+firefox ./index.html
+}}}
+
+==Step13: Enjoy it.==
+ 
