@@ -8,11 +8,11 @@ Original iOS toolchain under linux is based on llvm-gcc/odcctools, according to 
 
 Here is an instruction of  'How to setup a new IOS toolchain based on LLVM/clang'.
 
-Actually, the IOS toolchain under linux is just as same and simple as other crosscompile toolchain for embeded device. It should include these components:
+Actually, the iOS toolchain under linux is just as same and simple as other crosscompile toolchain for embeded device. It should include these components:
 
   # *Assembler and Linker*: cctools and ld64 from opendarwin.
   # *Compiler*: here we use llvm/clang.
-  # *Target Filesystem*, include headers and libraries.
+  # *SDK*, include headers and libraries.
   # *Utilities*: such as 'ldid' codesign tool.
 
 ==Step 1: Prepare environment.==
@@ -141,7 +141,7 @@ rm -rf Payload
 }}}
 
 ===3. ARC support===
-If you want arc support via *'clang -fobjc-arc'*,  you need add *libarclite_iphoneos.a* to crosscompile filesystem. these archive is come frome Xcode.
+If you want arc support via *'clang -fobjc-arc'*,  you need add *libarclite_iphoneos.a* to sdk. it is extracted from Xcode.
 
 Download it from here: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos.a.tar.gz
 
@@ -205,7 +205,7 @@ clang++ -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 
 And put them in */usr/bin*.
 
-*NOTE*: if you use ios4.2 filesystem, you need also add *-arch armv6* to ios-clang/ios-clang++. Otherwise ldid will failed.
+*NOTE*: if you use ios4.2 sdk, you need also add *-arch armv6* to ios-clang/ios-clang++. Otherwise ldid will failed.
 
 
 ==Step8: JailBreak your device.==
