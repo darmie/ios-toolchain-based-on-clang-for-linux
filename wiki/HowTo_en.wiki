@@ -267,13 +267,13 @@ Here we create two scripts to wrap it.
 *ios-clang*
 {{{
 #!/bin/bash
-clang -target arm-apple-ios -isysroot $IOS_FS $@
+clang -target arm-apple-ios -isysroot $IPHONEOS_FS $@
 }}}
 
 *ios-clang++*
 {{{
 #!/bin/bash
-clang++ -target arm-apple-ios -isysroot $IOS_FS $@
+clang++ -target arm-apple-ios -isysroot $IPHONEOS_FS $@
 }}}
 
 And put them in */opt/ios/toolchain/bin*.
