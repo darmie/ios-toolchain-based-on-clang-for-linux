@@ -116,13 +116,13 @@ $make install
 
 *NOTE* : if you use a different prefix, you should linke all "arm-apple-ios-`*`" to /usr/bin, otherwise clang can not find proper assembler and linker. 
 
-==Step4: Make a iOS cross compile filesystem from IphoneSDK.==
+==Step4: Prepare iPhoneOS SDK.==
 
-You can use the pre-generated cross compile file system from:http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/sys50.tar.xz
+You can use the pre-generated 5.0 SDK from:http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
 
-and Extract it to */opt/ios"
+and Extract it to */usr/share"
 {{{
-$tar xvf sys50.tar.xz -C /opt/ios/
+$tar xvf iPhoneOS5.0.sdk.tar.xz -C /usr/share
 }}}
 
 or generate by yourself.
@@ -138,7 +138,6 @@ xar -xf iPhoneSDK5_0.pkg Payload; cat Payload | zcat | cpio -id
 mv Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk .
 rm -rf Platforms
 rm -rf Payload
-rm -rf iPhoneOS5.0.sdk
 }}}
 
 ===3. ARC support===
