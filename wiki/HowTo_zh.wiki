@@ -134,7 +134,7 @@ rm -rf Platforms
 rm -rf Payload
 }}}
 
-===objc ARC支持===
+===3. objc ARC支持===
 如果你需要使用ARC(Auto Reference Counting), 你需要将libarclite_iphoneos.a这个静态库加入文件系统，这个文件来自xcode，可以在这里下载：
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos.a.tar.gz
 
