@@ -111,7 +111,7 @@ $make install
 
 如果你的安装prefix不是/usr，需要将arm-apple-ios-`*`命令链接到/usr/bin目录，是为了让clang能够找到这些工具，以便在编译，链接时使用。
 
-==第四步，通过iPhoneSDK建立cross compile文件系统==
+==第四步，建立iPhoneSDK==
 你可以直接从这里下载预先生成的文件系统: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
 
 将它解压到 */usr/share"
@@ -181,9 +181,9 @@ export IPHONEOS_DEPLOYMENT_TARGET=5.0
 ==第七步，创建ios-clang/ios-clang++脚本==
 使用clang编译器来编译针对iOS的代码时，我们需要加一些额外的参数：
 
-*--target arm-apple-ios* ：告诉clang目标架构是arm-apple-ios，这样clang能够找到<target>-ld等命令，务必要这么设置，否则不能正确的找到汇编器、链接器。
+*-target arm-apple-ios* ：告诉clang目标架构是arm-apple-ios，这样clang能够找到target-ld等命令，务必要这么设置，否则不能正确的找到汇编器、链接器。
 
-*--isysroot $IPHONEOS_SDK* ：告诉clang使用$IPHONEOS_SDK作为根文件系统来寻找开发库和头文件。
+*-isysroot $IPHONEOS_SDK* ：告诉clang使用$IPHONEOS_SDK作为根文件系统来寻找开发库和头文件。
 
 我们创建了两个脚本来自动添加这些参数。
 
