@@ -1,6 +1,7 @@
 =新的基于clang的iOS toolchain=
 
 Cjacker <cjacker@gmail.com> 2012-11-26
+
 LLVM/clang的Linux版本提供了全面的Objective C 2.0支持，包括了blocks, ARC等高级特性。
 
 Linux最早的iOS工具链是iphone 1刚发布时由iphonedev team开发的，使用的是gcc/binutils组合，提供对arm target的支持，后来有了基于llvm-gcc/odcctools的toolchain，但是也使用了clang作为预处理器来支持objc的高级特性，并且使用llvm-gcc作为Makefile的ld链接器。
