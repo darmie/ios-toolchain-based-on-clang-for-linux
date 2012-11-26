@@ -168,6 +168,20 @@ rm -rf iPhoneSimulator5.0.sdk
 }}}
 
 
+现在我们已经有了一个可供crosscompile的filesystem。
+
+如果你需要使用ARC(Auto Reference Counting), 你需要将libarclite_iphoneos.a这个静态库加入文件系统，这个文件来自xcode，可以在这里下载：
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos.a.tar.gz
+
+然后解压：
+{{{
+mkdir -p /opt/ios/sys/usr/lib/arc/
+tar zxvf libarclite_iphoneos.a.tar.gz -C /opt/ios/sys/usr/lib/arc/
+}}}
+
+编译代码时，给编译器加上'-fobjc-arc'就可以打开ARC支持了。
+
+
 ==第五步，设置asld wrapper==
 通过第三步，我们已经安装了汇编器和链接器，位于 */opt/sys/toolchain/bin* 目录。但clang会去找 */usr/bin/ld* 。所以，需要做一个wrapper程序来帮助clang根据不同的架构调用不同的编译器，毕竟我们还需要使用clang来编译native架构的代码。
 
