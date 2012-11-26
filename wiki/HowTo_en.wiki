@@ -93,6 +93,12 @@ if you want to use clang/clang++ to build it:
 $export CC=clang
 $export CXX=clang++
 }}}
+* as reported, 32bit linux had a problem to build cctools via clang, so for 32bit, please use gcc/g++ to build it*
+{{{
+$export CC=gcc
+$export CXX=g++
+}}}
+
 and build it.*NOTE*: the prefix settings, you can change it as you like.
 
 {{{
