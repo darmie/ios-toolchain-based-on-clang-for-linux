@@ -109,23 +109,12 @@ and build it.*NOTE*: the prefix settings, you can change it as you like.
 {{{
 $export CFLAGS=-fno-stack-protector
 $export CXXFLAGS=-fno-stack-protector
-$./configure --target=arm-apple-ios --prefix=/opt/ios/toolchain
+$./configure --target=arm-apple-ios --prefix=/usr
 $make
 $make install
-$cd /usr/bin
-$ln -s /opt/ios/toolchain/bin/arm-apple-ios-* .
 }}}
 
-After installation, under */opt/ios/toolchain/bin* folder, there should have some commands like:
-{{{
-arm-apple-ios-ar               
-arm-apple-ios-as
-arm-apple-ios-ld                  
-arm-apple-ios-codesign_allocate
-….
-}}}
-
-to help clang find assembler and linkers, all commands was linked to /usr/bin.
+*NOTE* : if you use a different prefix, you should linke all "arm-apple-ios-`*`" to /usr/bin, otherwise clang can not find proper assembler and linker. 
 
 ==Step4: Make a iOS cross compile filesystem from IphoneSDK.==
 
@@ -139,56 +128,27 @@ $tar xvf sys50.tar.xz -C /opt/ios/
 or generate by yourself.
 
 ===1. Extract iPhoneSDk pkg from xcode-xxx.img===
-Mount the xcode img from apple under MacOSX, usually it under */Volumes/Xcode*, find *iPhoneSDK5_0.pkg* and *iPhoneSimulatorSDK5_0.pkg* for ios 5.
+Mount the xcode img from apple under MacOSX, usually it under */Volumes/Xcode*, find *iPhoneSDK5_0.pkg*  for ios 5 or other versions according to your iOS version.
 
-===2. Extract files and fix header location for IOS filesystem.===
+===2. Extract files  for iPhoneOS SDK===
 
 {{{
-#libraries and headers.
-mkdir -p /opt/ios/sys
-cd /opt/ios/sys
+cd /usr/share
 xar -xf iPhoneSDK5_0.pkg Payload; cat Payload | zcat | cpio -id
 mv Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk .
-rm -fr Platforms
-
-cp -R -pf iPhoneOS5.0.sdk/System /opt/ios/sys
-cp -R -pf iPhoneOS5.0.sdk/usr /opt/ios/sys
-
-cd iPhoneOS5.0.sdk/System/Library/Frameworks
-for i in *.framework
-do
-     f=`basename $i .framework`
-     echo $f
-     mkdir -p opt/ios/sys/usr/include/$f
-     if [ -d $i/Headers ]; then
-     cp -Rf -p $i/Headers/* /opt/ios/sys/usr/include/$f/
-     fi
-done
-cd -
+rm -rf Platforms
 rm -rf Payload
 rm -rf iPhoneOS5.0.sdk
 }}}
 
-{{{
-#IOKit headers from iPhoneSimulatorSDK5_0.pkg, for older version, just skip it.
-xar -xf iPhoneSimulatorSDK5_0.pkg Payload; cat Payload | zcat | cpio -id
-mv Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk .
-rm -rf Platforms
-mkdir -p /opt/ios/sys/usr/include/IOKit
-cp -Rf -p iPhoneSimulator5.0.sdk/System/Library/Frameworks/IOKit.framework/Headers/* /opt/ios/sys/usr/include/IOKit/
-rm -rf Payload
-rm -rf iPhoneSimulator5.0.sdk
-}}}
-	
-Now, IOS crosscompile file system is under */opt/ios/sys*.
-
+===3. ARC support===
 If you want arc support via *'clang -fobjc-arc'*,  you need add *libarclite_iphoneos.a* to crosscompile filesystem. these archive is come frome Xcode.
 
 Download it from here: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos.a.tar.gz
 
 {{{
-mkdir -p /opt/ios/sys/usr/lib/arc
-tar zxvf libarclite_iphoneos.a.tar.gz -C /opt/ios/sys/usr/lib/arc/
+mkdir -p /usr/share/iPhone5.0.sdk/usr/lib/arc
+tar zxvf libarclite_iphoneos.a.tar.gz -C /usr/share/iPhone5.0.sdk/usr/lib/arc
 }}}
 
 
@@ -196,55 +156,29 @@ tar zxvf libarclite_iphoneos.a.tar.gz -C /opt/ios/sys/usr/lib/arc/
 ldid is codesign tool from saurik. 
 
 I provide a modified version to support Mach-O armv7 binary produced by clang/cctools.
+also with other changes to find 'arm-apple-ios-codesign_allocate' properly.
 
 Download 'ldid-1.0.610-modified.tar.gz' from:http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.610-modified.tar.gz
 
 Build and install it:
 {{{	
 $make
-$install -m 0755 util/ldid /opt/ios/toolchain/bin
-}}}
-
-If you want to use clang++ to compile it, you need this patch:
-{{{
-diff -Nur ldid-1.0.610/util/ldid.cpp ldid-1.0.610new/util/ldid.cpp
---- ldid-1.0.610/util/ldid.cpp  2012-11-25 20:34:24.247450779 +0800
-+++ ldid-1.0.610new/util/ldid.cpp   2012-11-25 20:34:39.624454277 +0800
-@@ -38,9 +38,10 @@
- #include "minimal/stdlib.h"
- #include "minimal/string.h"
- #include "minimal/mapping.h"
--
-+extern "C"
-+{
- #include "sha1.h"
--
-+}
- #include <cstring>
- #include <string>
- #include <vector>
+$make install
 }}}
 
 
 ==Step6: Setup environment variables and some scripts.==
 Now we had Compiler, Assembler/Linker and IOS file system installed
 
-||/opt/ios/toolchain/bin/||Assembler and Linker.||
-||/opt/ios/sys/||IOS crosscompile libraries and headers.||
-||/opt/ios/toolchain/bin/ldid|| ldid codesign utility||
+||/usr/bin/arm-apple-ios-`*`||Assembler and Linker.||
+||/usr/share/iPhone5.0.sdk||iPhone 5.0 SDK||
+||/usr/bin/ldid|| ldid codesign utility||
 
-We need setup some environments variables to setup PATH and something else. Please add below codes to *~/.bashrc.*
+We need setup some environments variables to setup PATH and something else. Please add below codes to *~/.bashrc.* or add a 'ios-toolchain.sh' to /etc/profile.d/
 {{{
 
-export IPHONEOS_TOOLCHAIN_PATH="/opt/ios/toolchain/bin"
-export IPHONEOS_FS="/opt/ios/sys"
-export PATH=$PATH:$IPHONE_TOOLCHAIN_PATH
-#this var only affect llvm/clang link flags.
-#it will links to crt1.3.1.o if we set it to 4.2 and above
-#and we need add -ldylib1.o to LDFLAGS.
-#after llvm/clang patched, this problem already fixed.
+export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
 export IPHONEOS_DEPLOYMENT_TARGET=5.0
-export CODESIGN_ALLOCATE=$IPHONEOS_TOOLCHAIN_PATH/arm-apple-ios-codesign_allocate
 
 }}}
 
@@ -254,23 +188,23 @@ To use clang compiler to compile sourcecode for IOS, we need add some  parameter
 
 *--target arm-apple-ios* : tell clang the target is arm-apple-ios, it can find proper as/ld
 
-*--isysroot /opt/ios/sys* : tell clang use /opt/ios/sys as root directory to find libraries and Headers.
+*--isysroot $IPHONEOS_SDK* : tell clang use $IPHONEOS_SDK as root directory to find libraries and Headers.
 
 Here we create two scripts to wrap it.
 
 *ios-clang*
 {{{
 #!/bin/bash
-clang -target arm-apple-ios -isysroot $IPHONEOS_FS $@
+clang -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 }}}
 
 *ios-clang++*
 {{{
 #!/bin/bash
-clang++ -target arm-apple-ios -isysroot $IPHONEOS_FS $@
+clang++ -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 }}}
 
-And put them in */opt/ios/toolchain/bin*.
+And put them in */usr/bin*.
 
 *NOTE*: if you use ios4.2 filesystem, you need also add *-arch armv6* to ios-clang/ios-clang++. Otherwise ldid will failed.
 
