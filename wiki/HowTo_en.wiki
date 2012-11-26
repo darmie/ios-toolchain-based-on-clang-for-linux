@@ -46,13 +46,21 @@ $svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt -r 168581
 }}}
 
 ===2. Patch it===
-Clang will link to crt1.3.1.o and there is a symbol missing in this file, and need link to dylib1.o also in Makefile, so we directly link to crt1.o.
 
 Download the patch from:
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/llvm-fix-ios-link-libraries.patch
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/clang-iphoneos-toolchain.patch
+
+This patch fix two problem:
+
+1. Clang will link to crt1.3.1.o and there is a symbol missing in this file, and need link to dylib1.o also in Makefile, so we directly link to crt1.o.
+
+
+2. Clang always use 'ld' ,'as' as its linker, so can not find linker name such as 'arm-apple-darwin9-ld' etc. This patch let clang find assembler/linker according to environment variables.
+
+
 {{{
 $cd llvm-svn
-$cat llvm-fix-ios-link-libraries.patch|patch -p1
+$cat clang-iphoneos-toolchain.patch|patch -p1
 }}}
 
 ===3. Configure/build and install it. ===
@@ -183,32 +191,7 @@ tar zxvf libarclite_iphoneos.a.tar.gz -C /opt/ios/sys/usr/lib/arc/
 }}}
 
 
-==Step5: Setup asld_wrapper.==
-After Step3, we had 'arm-apple-darwin9-ld' and 'arm-apple-darwin9-as' installed in */opt/sys/toolchain/bin*. But clang will use */usr/bin/ld* as it's linker program. So we need made a wrapper program to make clang use different as/ld for different arch. 
-
-Here we need asld_wrapper program, the code is modified from original as_driver, but remove native as/ld location codes.
-
-Download asld.c from:http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/asld.c
-
-Build and install it:
-{{{
-$gcc -o asld asld.c
-
-$install -m 0755 asld /usr/bin
-
-$cd /usr/bin
-$mv ld ld.orig
-$mv as as.orig
-$ln -s asld as
-$ln -s asld ld
-}}}
-Here we rename native as/ld to as.orig and ld.orig. And make a link from asld.
-It will call proper as/ld according -arch parammeter.
-
-*NOTE*: if you install cctools to different path. Please change the path in asld.c
-	
-
-==Step6: install ldid codesign tool==
+==Step5: install ldid codesign tool==
 ldid is codesign tool from saurik. 
 
 I provide a modified version to support Mach-O armv7 binary produced by clang/cctools.
@@ -242,26 +225,37 @@ diff -Nur ldid-1.0.610/util/ldid.cpp ldid-1.0.610new/util/ldid.cpp
 }}}
 
 
-==Step7: Setup environment variables and some scripts.==
+==Step6: Setup environment variables and some scripts.==
 Now we had Compiler, Assembler/Linker and IOS file system installed
 
 ||/opt/ios/toolchain/bin/||Assembler and Linker.||
 ||/opt/ios/sys/||IOS crosscompile libraries and headers.||
-||/usr/bin/asld||Asld wrapper||
 ||/opt/ios/toolchain/bin/ldid|| ldid codesign utility||
 
 We need setup some environments variables to setup PATH and something else. Please add below codes to *~/.bashrc.*
 {{{
-export IOS_TOOLCHAIN="/opt/ios/toolchain"
-export IOS_FS="/opt/ios/sys"
-export PATH=$PATH:$IOS_TOOLCHAIN/bin
-#Change the target version according to your settings.
+
+##
+## These two env vars is very important since we patched llvm/clang
+## to use these two env vars to find assembler/linker.
+##
+export IPHONEOS_TOOLCHAIN_PATH="/opt/ios/toolchain/bin"
+export IPHONEOS_TOOLCHAIN_PREFIX="arm-apple-darwin9"
+
+
+export IPHONEOS_FS="/opt/ios/sys"
+export PATH=$PATH:$IPHONE_TOOLCHAIN_PATH
+#this var only affect llvm/clang link flags.
+#it will links to crt1.3.1.o if we set it to 4.2 and above
+#and we need add -ldylib1.o to LDFLAGS.
+#after llvm/clang patched, this problem already fixed.
 export IPHONEOS_DEPLOYMENT_TARGET=5.0
-export CODESIGN_ALLOCATE=$IOS_TOOLCHAIN/bin/arm-apple-darwin9-codesign_allocate
+export CODESIGN_ALLOCATE=$IPHONE_TOOLCHAIN_PATH/arm-apple-darwin9-codesign_allocate
+
 }}}
 
 
-==Step8: Create ios-clang/ios-clang++ scripts.==
+==Step7: Create ios-clang/ios-clang++ scripts.==
 To use clang compiler to compile sourcecode for IOS, we need add some  parameters to clang:
 
 *--target arm-apple-ios* : tell clang the target is arm-apple-ios
@@ -287,14 +281,14 @@ And put them in */opt/ios/toolchain/bin*.
 *NOTE*: if you use ios4.2 filesystem, you need also add *-arch armv6* to ios-clang/ios-clang++. Otherwise ldid will failed.
 
 
-==Step9: JailBreak your device.==
+==Step8: JailBreak your device.==
 Download proper jailbreak tools and jailbreak your device(iPhone/iTouch/iPad...).
 Install openssh via cyndia and test ssh connections.
 
 *Remember*, the default password is *alpine*.
 
 
-==Step10: Test toolchain.==
+==Step9: Test toolchain.==
 ===1. write a simple hello world program.===
 
 helloworld.m
@@ -323,7 +317,7 @@ $ldid -S helloworld
 ===4. upload to your device and run it.===
 Use scp to transfer helloworld binary to your device and ssh to your device to run it.
 
-==Step11: Build a HelloWorld app for IOS.==
+==Step10: Build a HelloWorld app for IOS.==
 Download helloworld.tar.gz from:
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/helloworld.tar.gz
 
@@ -340,7 +334,7 @@ $make install
 There is also a 'UICatalog.tar.gz' in the download link. You can also try it.
 
 
-==Step12: iOS API documents.==
+==Step11: iOS API documents.==
 Download API files from:http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
 Extract it:
@@ -351,5 +345,5 @@ firefox ./index.html
 }}}
 
 
-==Step13: Enjoy it.==
+==Step12: Enjoy it.==
  
