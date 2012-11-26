@@ -119,10 +119,7 @@ arm-apple-darwin9-codesign_allocate
 }}}
 
 ==Step4: Make a iOS cross compile filesystem from IphoneSDK.==
-===1. Extract iPhoneSDk pkg from xcode-xxx.img===
-Mount the xcode img from apple under MacOSX, usually it under */Volumes/Xcode*, find *iPhoneSDK5_0.pkg* and *iPhoneSimulatorSDK5_0.pkg* for ios 5.
 
-===2. Extract files and fix header location for IOS filesystem.===
 You can use the pre-generated cross compile file system from:http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/sys50.tar.xz
 
 and Extract it to */opt/ios"
@@ -130,7 +127,12 @@ and Extract it to */opt/ios"
 $tar xvf sys50.tar.xz -C /opt/ios/
 }}}
 
-or generate by yourself 
+or generate by yourself.
+
+===1. Extract iPhoneSDk pkg from xcode-xxx.img===
+Mount the xcode img from apple under MacOSX, usually it under */Volumes/Xcode*, find *iPhoneSDK5_0.pkg* and *iPhoneSimulatorSDK5_0.pkg* for ios 5.
+
+===2. Extract files and fix header location for IOS filesystem.===
 
 {{{
 #libraries and headers.
@@ -170,6 +172,15 @@ rm -rf iPhoneSimulator5.0.sdk
 }}}
 	
 Now, IOS crosscompile file system is under */opt/ios/sys*.
+
+If you want arc support via *'clang -fobjc-arc'*,  you need add *libarclite_iphoneos.a* to crosscompile filesystem. these archive is come frome Xcode.
+
+Download it from here: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos.a.tar.gz
+
+{{{
+mkdir -p /opt/ios/sys/usr/lib/arc
+tar zxvf libarclite_iphoneos.a.tar.gz -C /opt/ios/sys/usr/lib/arc/
+}}}
 
 
 ==Step5: Setup asld_wrapper.==
