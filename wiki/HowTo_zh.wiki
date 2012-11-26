@@ -48,13 +48,28 @@ $svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt -r 168581
 }}}
 
 ===2. 打补丁===
-根据IPHONE_DEPLOYMENT_TARGET的环境变量设置，clang会有不同的链接参数，如果我们把这个环境变量设置为4以上，那么，clang回去链接crt1.3.1.o，但是会有一个符号缺失，我们还需要在Makefile里手工链接dylib1.o，这个Patch的作用就是直接链接crt1.o。
 
 从这里下载补丁:
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/llvm-fix-ios-link-libraries.patch
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/clang-iphoneos-toolchain.patch
+
+这个补丁修复了两个问题：
+1, 根据IPHONE_DEPLOYMENT_TARGET的环境变量设置，clang会有不同的链接参数，如果我们把这个环境变量设置为4以上，那么，clang回去链接crt1.3.1.o，但是会有一个符号缺失，我们还需要在Makefile里手工链接dylib1.o，这个Patch的作用就是直接链接crt1.o。
+
+2, clang默认使用ld/as等作为汇编器/链接器的名字，所以没有办法找到类似arm-apple-darwin9-ld这样名字的链接器，这个patch加了两个环境变量：
+
+*IPHONEOS_TOOLCHAIN_PATH* 指定toolchain命令所在的路径
+"IPHONEOS_TOOLCHAIN_PREFIX" 指定命令的前缀
+
+补丁会通过
+
+<IPHONEOS_TOOLCHAINPATH>/<IPHONEOS_TOOLCHAIN_PREFIX>-ld
+
+来找到链接器，汇编器等。
+
+
 {{{
 $cd llvm-svn
-$cat llvm-fix-ios-link-libraries.patch|patch -p1
+$cat clang-iphoneos-toolchain.patch|patch -p1
 }}}
 
 ===3. 编译安装. ===
@@ -182,31 +197,7 @@ tar zxvf libarclite_iphoneos.a.tar.gz -C /opt/ios/sys/usr/lib/arc/
 编译代码时，给编译器加上'-fobjc-arc'就可以打开ARC支持了。
 
 
-==第五步，设置asld wrapper==
-通过第三步，我们已经安装了汇编器和链接器，位于 */opt/sys/toolchain/bin* 目录。但clang会去找 */usr/bin/ld* 。所以，需要做一个wrapper程序来帮助clang根据不同的架构调用不同的编译器，毕竟我们还需要使用clang来编译native架构的代码。
-
-这个代码来自as_driver，但是去掉了native ld/as的处理代码，
-
-从这里下载asld.c：http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/asld.c
-
-编译安装：
-{{{
-$gcc -o asld asld.c
-
-$install -m 0755 asld /usr/bin
-
-$cd /usr/bin
-$mv ld ld.orig
-$mv as as.orig
-$ln -s asld as
-$ln -s asld ld
-}}}
-
-我们把native的as/ld重命名为as.orig和ld.orig，从asld做了两个链接出来。
-
-*注意* ：如果你把cctools安装到了不同的目录，需要自己修改一下asld.c中的路径。
-
-==第六步，安装ldid代码签名工具==
+==第五步，安装ldid代码签名工具==
 ldid是saurik做的一个代码签名工具，如果编译出来的目标代码不签名，在iOS上是不能运行的。 
 
 这里提供了一个修改过的版本，可以支持clang/cctools生成的Mach-O armv7 二进制的签名
@@ -240,27 +231,38 @@ diff -Nur ldid-1.0.610/util/ldid.cpp ldid-1.0.610new/util/ldid.cpp
 }}}
 
 
-==第七步，设置环境变量==
+==第六步，设置环境变量==
 现在我们已经有了编译器，汇编器和链接器以及iOS 文件系统。
 
 ||/opt/ios/toolchain/bin/||Assembler and Linker.||
 ||/opt/ios/sys/||IOS crosscompile libraries and headers.||
-||/usr/bin/asld||Asld wrapper||
 ||/opt/ios/toolchain/bin/ldid|| ldid codesign utility||
 
 我们需要设置一些环境变量来方便的使用它们，你可以将下面的代码加进~/.bashrc，或在/etc/profile.d下面建一个ios-toolchain.sh，把代码贴进去。
 
 {{{
-export IOS_TOOLCHAIN="/opt/ios/toolchain"
-export IOS_FS="/opt/ios/sys"
-export PATH=$PATH:$IOS_TOOLCHAIN/bin
-#Change the target version according to your settings.
+
+##
+## These two env vars is very important since we patched llvm/clang
+## to use these two env vars to find assembler/linker.
+##
+export IPHONEOS_TOOLCHAIN_PATH="/opt/ios/toolchain/bin"
+export IPHONEOS_TOOLCHAIN_PREFIX="arm-apple-darwin9"
+
+
+export IPHONEOS_FS="/opt/ios/sys"
+export PATH=$PATH:$IPHONE_TOOLCHAIN_PATH
+#this var only affect llvm/clang link flags.
+#it will links to crt1.3.1.o if we set it to 4.2 and above
+#and we need add -ldylib1.o to LDFLAGS.
+#after llvm/clang patched, this problem already fixed.
 export IPHONEOS_DEPLOYMENT_TARGET=5.0
-export CODESIGN_ALLOCATE=$IOS_TOOLCHAIN/bin/arm-apple-darwin9-codesign_allocate
+export CODESIGN_ALLOCATE=$IPHONE_TOOLCHAIN_PATH/arm-apple-darwin9-codesign_allocate
+
 }}}
 
 
-==第8步，创建ios-clang/ios-clang++脚本==
+==第七步，创建ios-clang/ios-clang++脚本==
 使用clang编译器来编译针对iOS的代码时，我们需要加一些额外的参数：
 
 *--target arm-apple-ios* ：告诉clang目标架构是arm-apple-ios
@@ -272,13 +274,13 @@ export CODESIGN_ALLOCATE=$IOS_TOOLCHAIN/bin/arm-apple-darwin9-codesign_allocate
 *ios-clang*
 {{{
 #!/bin/bash
-clang -target arm-apple-ios -isysroot $IOS_FS $@
+clang -target arm-apple-ios -isysroot $IPHONEOS_FS $@
 }}}
 
 *ios-clang++*
 {{{
 #!/bin/bash
-clang++ -target arm-apple-ios -isysroot $IOS_FS $@
+clang++ -target arm-apple-ios -isysroot $IPHONEOS_FS $@
 }}}
 
 把这两个脚本放到 */opt/ios/toolchain/bin* 。
@@ -287,13 +289,13 @@ clang++ -target arm-apple-ios -isysroot $IOS_FS $@
 *注意* ：如果你使用了 iOS 4.2 文件系统，你还需要加上 *-arch armv6* 参数，否则ldid会签名失败。
 
 
-==第9步，越狱你的设备==
+==第八步，越狱你的设备==
 下载合适的越狱工具越狱你的设备，然后通过cyndia安装openssh并测试ssh连接。
 
 *注意* ： 默认的密码是*alpine*。
 
 
-==第十步，测试工具链==
+==第九步，测试工具链==
 ===1. 写一个简单的objc hello world.===
 
 helloworld.m
@@ -323,7 +325,7 @@ $ldid -S helloworld
 使用scp上传helloworld二进制到你的设备，然后ssh进你的设备运行它。
 
 
-==第十一步，测试iOS app==
+==第十步，测试iOS app==
 从这里下载helloworld.tar.gz:
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/helloworld.tar.gz
 
@@ -339,7 +341,7 @@ $make install
 
 下载里还有一个UICatalog.tar.gz，也可以尝试一下。
 
-==第十二步，API文档==
+==第十一步，API文档==
 从这里下载iOS的API文档：
 http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
