@@ -14,7 +14,7 @@ Linux最早的iOS工具链是iphone 1刚发布时由iphonedev team开发的，�
 
   # *汇编器和链接器*: 这里我们使用来自opendarwin的较新版本的cctools和ld64.
   # *编译器*: 这里我们使用clang
-  # *目标文件系统*. 提供了开发库和头文件
+  # *SDK*. 提供了开发库和头文件
   # *辅助工具*: 比如ldid签名工具
 
 
@@ -104,87 +104,44 @@ $export CXX=g++
 {{{
 $export CFLAGS=-fno-stack-protector
 $export CXXFLAGS=-fno-stack-protector
-$./configure --target=arm-apple-ios --prefix=/opt/ios/toolchain
+$./configure --target=arm-apple-ios --prefix=/usr/bin
 $make
 $make install
-$cd /usr/bin
-$ln -s /opt/ios/toolchain/bin/arm-apple-ios-* .
 }}}
 
-安装后，在 */opt/ios/toolchain/bin* 你会看到:
-
-{{{
-arm-apple-ios-ar               
-arm-apple-ios-as
-arm-apple-ios-ld                  
-arm-apple-ios-codesign_allocate
-….
-}}}
-
-之所以要将命令链接到/usr/bin目录，是为了让clang能够找到这些工具，以便在编译，链接时使用。
+如果你的安装prefix不是/usr，需要将arm-apple-ios-`*`命令链接到/usr/bin目录，是为了让clang能够找到这些工具，以便在编译，链接时使用。
 
 ==第四步，通过iPhoneSDK建立cross compile文件系统==
-你可以直接从这里下载预先生成的文件系统: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/sys50.tar.xz
+你可以直接从这里下载预先生成的文件系统: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
 
-将它解压到 */opt/ios/"
+将它解压到 */usr/share"
 {{{
-$tar xvf sys50.tar.xz -C /opt/ios/
+$tar xvf iPhoneOS5.0.sdk.tar.xz -C /usr/share
 }}}
 
 如果你要自己生成文件系统，请按照以下步骤进行：
 
 ===1. 从xcode-xxx.img中取得iPhoneSDk pkg===
-在Mac下点击xcode.img会自动完成挂载，一般是 */Volumes/Xcode* ,在里面找到 find *iPhoneSDK5_0.pkg* 和 *iPhoneSimulatorSDK5_0.pkg*.
+在Mac下点击xcode.img会自动完成挂载，一般是 */Volumes/Xcode* ,在里面找到  *iPhoneSDK5_0.pkg*。或者找到你需要的版本。
 
 ===2. 解出文件，修复头文件路径.===
 
 {{{
-#libraries and headers.
-mkdir -p /opt/ios/sys
-cd /opt/ios/sys
+cd /usr/share
 xar -xf iPhoneSDK5_0.pkg Payload; cat Payload | zcat | cpio -id
 mv Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk .
-rm -fr Platforms
-
-cp -R -pf iPhoneOS5.0.sdk/System /opt/ios/sys
-cp -R -pf iPhoneOS5.0.sdk/usr /opt/ios/sys
-
-cd iPhoneOS5.0.sdk/System/Library/Frameworks
-for i in *.framework
-do
-     f=`basename $i .framework`
-     echo $f
-     mkdir -p opt/ios/sys/usr/include/$f
-     if [ -d $i/Headers ]; then
-     cp -Rf -p $i/Headers/* /opt/ios/sys/usr/include/$f/
-     fi
-done
-cd -
-rm -rf Payload
-rm -rf iPhoneOS5.0.sdk
-}}}
-
-{{{
-#IOKit headers from iPhoneSimulatorSDK5_0.pkg, for older version, just skip it.
-xar -xf iPhoneSimulatorSDK5_0.pkg Payload; cat Payload | zcat | cpio -id
-mv Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk .
 rm -rf Platforms
-mkdir -p /opt/ios/sys/usr/include/IOKit
-cp -Rf -p iPhoneSimulator5.0.sdk/System/Library/Frameworks/IOKit.framework/Headers/* /opt/ios/sys/usr/include/IOKit/
 rm -rf Payload
-rm -rf iPhoneSimulator5.0.sdk
 }}}
 
-
-现在我们已经有了一个可供crosscompile的filesystem。
-
+===objc ARC支持===
 如果你需要使用ARC(Auto Reference Counting), 你需要将libarclite_iphoneos.a这个静态库加入文件系统，这个文件来自xcode，可以在这里下载：
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos.a.tar.gz
 
 然后解压：
 {{{
-mkdir -p /opt/ios/sys/usr/lib/arc/
-tar zxvf libarclite_iphoneos.a.tar.gz -C /opt/ios/sys/usr/lib/arc/
+mkdir -p /usr/share/iPhone5.0.sdk/usr/lib/arc
+tar zxvf libarclite_iphoneos.a.tar.gz -C /usr/share/iPhone5.0.sdk/usr/lib/arc
 }}}
 
 编译代码时，给编译器加上'-fobjc-arc'就可以打开ARC支持了。
@@ -200,76 +157,49 @@ ldid是saurik做的一个代码签名工具，如果编译出来的目标代码�
 编译安装：
 {{{	
 $make
-$install -m 0755 util/ldid /opt/ios/toolchain/bin
+$make install
 }}}
-
-如果你要使用clang++来编译，需要下面这个补丁：
-{{{
-diff -Nur ldid-1.0.610/util/ldid.cpp ldid-1.0.610new/util/ldid.cpp
---- ldid-1.0.610/util/ldid.cpp  2012-11-25 20:34:24.247450779 +0800
-+++ ldid-1.0.610new/util/ldid.cpp   2012-11-25 20:34:39.624454277 +0800
-@@ -38,9 +38,10 @@
- #include "minimal/stdlib.h"
- #include "minimal/string.h"
- #include "minimal/mapping.h"
--
-+extern "C"
-+{
- #include "sha1.h"
--
-+}
- #include <cstring>
- #include <string>
- #include <vector>
-}}}
-
 
 ==第六步，设置环境变量==
-现在我们已经有了编译器，汇编器和链接器以及iOS 文件系统。
+现在编译器，汇编器和链接器以及iOS SDK已经安装
 
-||/opt/ios/toolchain/bin/||Assembler and Linker.||
-||/opt/ios/sys/||IOS crosscompile libraries and headers.||
-||/opt/ios/toolchain/bin/ldid|| ldid codesign utility||
+||/usr/bin/arm-apple-ios-`*`||Assembler and Linker.||
+||/usr/share/iPhone5.0.sdk||iPhone 5.0 SDK||
+||/usr/bin/ldid|| ldid codesign utility||
 
 我们需要设置一些环境变量来方便的使用它们，你可以将下面的代码加进~/.bashrc，或在/etc/profile.d下面建一个ios-toolchain.sh，把代码贴进去。
 
 {{{
 
-export IPHONEOS_TOOLCHAIN_PATH="/opt/ios/toolchain/bin"
-export IPHONEOS_FS="/opt/ios/sys"
-export PATH=$PATH:$IPHONE_TOOLCHAIN_PATH
-#this var only affect llvm/clang link flags.
-#it will links to crt1.3.1.o if we set it to 4.2 and above
-#and we need add -ldylib1.o to LDFLAGS.
-#after llvm/clang patched, this problem already fixed.
+export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
 export IPHONEOS_DEPLOYMENT_TARGET=5.0
-export CODESIGN_ALLOCATE=$IPHONEOS_TOOLCHAIN_PATH/arm-apple-ios-codesign_allocate
 
 }}}
 
+*注意* ：如果你将cctools安装到了其他目录，请设置一个环境变量 CODESIGN_ALLOCATE指向arm-apple-ios-codesign_allocate的全路径，否则ldid有可能找不到它。
 
 ==第七步，创建ios-clang/ios-clang++脚本==
 使用clang编译器来编译针对iOS的代码时，我们需要加一些额外的参数：
 
-*--target arm-apple-ios* ：告诉clang目标架构是arm-apple-ios，这样clang能够找到<target>-ld等命令。
+*--target arm-apple-ios* ：告诉clang目标架构是arm-apple-ios，这样clang能够找到<target>-ld等命令，务必要这么设置，否则不能正确的找到汇编器、链接器。
 
-*--isysroot /opt/ios/sys* ：告诉clang使用/opt/ios/sys作为根文件系统来寻找开发库和头文件。
+*--isysroot $IPHONEOS_SDK* ：告诉clang使用$IPHONEOS_SDK作为根文件系统来寻找开发库和头文件。
 
 我们创建了两个脚本来自动添加这些参数。
 
 *ios-clang*
 {{{
 #!/bin/bash
-clang -target arm-apple-ios -isysroot $IPHONEOS_FS $@
+clang -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 }}}
 
 *ios-clang++*
 {{{
 #!/bin/bash
-clang++ -target arm-apple-ios -isysroot $IPHONEOS_FS $@
+clang++ -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 }}}
 
-把这两个脚本放到 */opt/ios/toolchain/bin* 。
+把这两个脚本放到 */usr/bin* 。
 
 
 *注意* ：如果你使用了 iOS 4.2 文件系统，你还需要加上 *-arch armv6* 参数，否则ldid会签名失败。
