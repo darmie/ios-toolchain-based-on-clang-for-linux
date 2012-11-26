@@ -50,26 +50,15 @@ $svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt -r 168581
 ===2. 打补丁===
 
 从这里下载补丁:
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/clang-iphoneos-toolchain.patch
 
-这个补丁修复了两个问题：
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/clang-iphoneos-linker.patch
+
+这个补丁修复了这个问题：
 1, 根据IPHONE_DEPLOYMENT_TARGET的环境变量设置，clang会有不同的链接参数，如果我们把这个环境变量设置为4以上，那么，clang回去链接crt1.3.1.o，但是会有一个符号缺失，我们还需要在Makefile里手工链接dylib1.o，这个Patch的作用就是直接链接crt1.o。
-
-2, clang默认使用ld/as等作为汇编器/链接器的名字，所以没有办法找到类似arm-apple-darwin9-ld这样名字的链接器，这个patch加了两个环境变量：
-
-*IPHONEOS_TOOLCHAIN_PATH* 指定toolchain命令所在的路径
-"IPHONEOS_TOOLCHAIN_PREFIX" 指定命令的前缀
-
-补丁会通过
-
-<IPHONEOS_TOOLCHAINPATH>/<IPHONEOS_TOOLCHAIN_PREFIX>-ld
-
-来找到链接器，汇编器等。
-
 
 {{{
 $cd llvm-svn
-$cat clang-iphoneos-toolchain.patch|patch -p1
+$cat clang-iphoneos-linker.patch|patch -p1
 }}}
 
 ===3. 编译安装. ===
@@ -93,7 +82,7 @@ $clang++ -o hello hello.cpp
 ==第三步，安装汇编器和链接器==
 saurik提供的toolchain.sh提供了cctools-782/ld64-85.2.1版本。这里提供的是一个更新的cctools版本，并且完成了x86_64的移植，且可以直接通过gcc或者clang编译。
 
-opendarwin代码移植的过程有一点点复杂，就不讲了，这里提供了一个针对Linux的tar包下载: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.tar.gz
+opendarwin代码移植的过程有一点点复杂，就不讲了，这里提供了一个针对Linux的tar包下载: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-for-linux.tar.gz
 
 直接下载编译就可以了。
 
@@ -115,20 +104,24 @@ $export CXX=g++
 {{{
 $export CFLAGS=-fno-stack-protector
 $export CXXFLAGS=-fno-stack-protector
-$./configure --target=arm-apple-darwin9 --prefix=/opt/ios/toolchain
+$./configure --target=arm-apple-ios --prefix=/opt/ios/toolchain
 $make
 $make install
+$cd /usr/bin
+$ln -s /opt/ios/toolchain/bin/arm-apple-ios-* .
 }}}
 
 安装后，在 */opt/ios/toolchain/bin* 你会看到:
 
 {{{
-arm-apple-darwin9-ar               
-arm-apple-darwin9-as
-arm-apple-darwin9-ld                  
-arm-apple-darwin9-codesign_allocate
+arm-apple-ios-ar               
+arm-apple-ios-as
+arm-apple-ios-ld                  
+arm-apple-ios-codesign_allocate
 ….
 }}}
+
+之所以要将命令链接到/usr/bin目录，是为了让clang能够找到这些工具，以便在编译，链接时使用。
 
 ==第四步，通过iPhoneSDK建立cross compile文件系统==
 你可以直接从这里下载预先生成的文件系统: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/sys50.tar.xz
@@ -242,14 +235,7 @@ diff -Nur ldid-1.0.610/util/ldid.cpp ldid-1.0.610new/util/ldid.cpp
 
 {{{
 
-##
-## These two env vars is very important since we patched llvm/clang
-## to use these two env vars to find assembler/linker.
-##
 export IPHONEOS_TOOLCHAIN_PATH="/opt/ios/toolchain/bin"
-export IPHONEOS_TOOLCHAIN_PREFIX="arm-apple-darwin9"
-
-
 export IPHONEOS_FS="/opt/ios/sys"
 export PATH=$PATH:$IPHONE_TOOLCHAIN_PATH
 #this var only affect llvm/clang link flags.
@@ -257,7 +243,7 @@ export PATH=$PATH:$IPHONE_TOOLCHAIN_PATH
 #and we need add -ldylib1.o to LDFLAGS.
 #after llvm/clang patched, this problem already fixed.
 export IPHONEOS_DEPLOYMENT_TARGET=5.0
-export CODESIGN_ALLOCATE=$IPHONE_TOOLCHAIN_PATH/arm-apple-darwin9-codesign_allocate
+export CODESIGN_ALLOCATE=$IPHONEOS_TOOLCHAIN_PATH/arm-apple-ios-codesign_allocate
 
 }}}
 
@@ -265,7 +251,7 @@ export CODESIGN_ALLOCATE=$IPHONE_TOOLCHAIN_PATH/arm-apple-darwin9-codesign_alloc
 ==第七步，创建ios-clang/ios-clang++脚本==
 使用clang编译器来编译针对iOS的代码时，我们需要加一些额外的参数：
 
-*--target arm-apple-ios* ：告诉clang目标架构是arm-apple-ios
+*--target arm-apple-ios* ：告诉clang目标架构是arm-apple-ios，这样clang能够找到<target>-ld等命令。
 
 *--isysroot /opt/ios/sys* ：告诉clang使用/opt/ios/sys作为根文件系统来寻找开发库和头文件。
 
