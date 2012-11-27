@@ -72,11 +72,7 @@ $make install
 
 
 ===ios-clang/ios-clang++===
-To use clang compiler to compile sourcecode for IOS, we need add some  parameters to clang:
-
-*-target arm-apple-ios* : tell clang the target is arm-apple-ios, it can find proper as/ld
-
-*-isysroot $IPHONEOS_SDK* : tell clang use $IPHONEOS_SDK as root directory to find libraries and headers.
+To use clang compiler to compile sourcecode for IOS, some  args need to be passed to clang, '--target arm-apple-ios' tell clang to find proper assembler and linker, '-isysroot <sdk full path>' tell clang use <sdk full path> as root directory to find libraries and headers.
 
 Here we create two scripts to wrap it.
 
