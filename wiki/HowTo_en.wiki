@@ -84,15 +84,13 @@ or follow below steps and generate it by yourself
 http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en
 
 ==Step5: install ldid codesign tool==
-ldid is codesign tool from saurik. 
+ldid is codesign tool from saurik. Here is a modified version to support Mach-O armv7 binary produced by clang/cctools. also with other changes to find 'arm-apple-ios-codesign_allocate' properly.
 
-I provide a modified version to support Mach-O armv7 binary produced by clang/cctools.
-also with other changes to find 'arm-apple-ios-codesign_allocate' properly.
-
-Download 'ldid-1.0.610-modified.tar.gz' from:http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.610-modified.tar.gz
+Download 'ldid-1.0.611.tar.bz2' from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.611.tar.bz2
 
 Build and install it:
 {{{	
+$./configure --prefix=/usr
 $make
 $make install
 }}}
@@ -108,9 +106,9 @@ export CODESIGN_ALLOCATE=<full path to arm-apple-ios-codesign_allocate>
 ==Step6: Create ios-clang/ios-clang++ scripts.==
 To use clang compiler to compile sourcecode for IOS, we need add some  parameters to clang:
 
-*--target arm-apple-ios* : tell clang the target is arm-apple-ios, it can find proper as/ld
+*-target arm-apple-ios* : tell clang the target is arm-apple-ios, it can find proper as/ld
 
-*--isysroot $IPHONEOS_SDK* : tell clang use $IPHONEOS_SDK as root directory to find libraries and headers.
+*-isysroot $IPHONEOS_SDK* : tell clang use $IPHONEOS_SDK as root directory to find libraries and headers.
 
 Here we create two scripts to wrap it.
 
@@ -135,42 +133,7 @@ And put them in */usr/bin*.
 *NOTE*: if you use ios4.2 sdk, you need also add *-arch armv6* to ios-clang/ios-clang++. Otherwise ldid will failed.
 
 
-==Step7: Test toolchain.==
-===1. write a simple hello world program.===
-
-helloworld.m
-{{{
-#import <Foundation/Foundation.h>
-
-int main(int argc, const char **argv)
-{
-    NSLog(@"Hello World");
-    return 0;
-}
-}}}
-
-===2. compile it.===
-{{{
-$ios-clang -o helloworld helloworld.m -framework Foundation
-}}}
-
-<font color="red">
-if ld failed with this message:
-{{{
-ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bundle1.o)
-}}}
-please add -ldylib1.o to ios-clang.
-</font>
-
-===3. sign the binary.===
-{{{
-$ldid -S helloworld
-}}}
-
-===4. upload to your device and run it.===
-Use scp to transfer helloworld binary to your device and ssh to your device to run it.
-
-==Step8: Build a HelloWorld app for IOS.==
+==Step7: Build a HelloWorld app for IOS.==
 Download helloworld.tar.gz from:
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/helloworld.tar.gz
 
@@ -184,10 +147,18 @@ $make dist
 $make install
 }}}
 
+<font color="red">
+if ld failed with this message:
+{{{
+ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bundle1.o)
+}}}
+please add -ldylib1.o to ios-clang.
+</font>
+
 There is also a 'UICatalog.tar.gz' in the download link. You can also try it.
 
 
-==Step9: iOS API documents.==
+==Step8: iOS API documents.==
 Download API files from:http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
 Extract it:
@@ -198,5 +169,5 @@ firefox ./index.html
 }}}
 
 
-==Step10: Enjoy it.==
+==Enjoy it.==
  
