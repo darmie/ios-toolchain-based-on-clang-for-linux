@@ -101,7 +101,7 @@ export IPHONEOS_DEPLOYMENT_TARGET=5.0
 clang -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 }}}
 
-<font color="blue"/usr/bin/ios-clang++</font>
+<font color="blue">/usr/bin/ios-clang++</font>
 {{{
 #!/bin/bash
 export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
