@@ -1,10 +1,10 @@
-=iOS toolchain based on clang/LLVM under linux=
+=iOS toolchain based on clang for linux=
 
 <font color="blue">Cjacker <cjacker@gmail.com> 2012-11-26 </font>
 
-clang/LLVM for linux provides a fully implementation for Objective C 2.0 includes blocks and other features gcc not supported.
+Clang for linux provides a fully implementation for Objective C 2.0 includes blocks and other features gcc not supported.
 
-Here is an tutorial of  'How to setup iOS toolchain based on clang/LLVM'.
+Here is an tutorial of  'How to setup iOS toolchain based on clang for linux'.
 
 Actually, the iOS toolchain under linux is as same and simple as other crosscompile toolchain for embeded devices. It should include these components:
 
