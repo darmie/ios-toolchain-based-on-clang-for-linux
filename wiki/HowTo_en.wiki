@@ -17,9 +17,9 @@ You also need a iOS device jailbreaked and with ssh installed.
 
 By the way, the default ssh password is <font color="red"> *alpine* </font>.
 
-
-==At start==
 Before we start, you need a workable C/C++ compiler installed.
+
+
 
 ==Step 1 : The compiler==
 
