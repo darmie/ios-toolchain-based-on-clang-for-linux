@@ -165,29 +165,13 @@ $make
 $make install
 }}}
 
-
-==Step6: Setup environment variables and some scripts.==
-Now the Compiler, Assembler/Linker and iPhone SDK had been installed
-
-||/usr/bin/arm-apple-ios-`*`||Assembler and Linker.||
-||/usr/share/iPhone5.0.sdk||iPhone 5.0 SDK||
-||/usr/bin/ldid|| ldid codesign utility||
-
-We need setup some environments variables to setup PATH and something else. Please add below codes to *~/.bashrc.* or add a 'ios-toolchain.sh' to /etc/profile.d/
-{{{
-
-export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
-export IPHONEOS_DEPLOYMENT_TARGET=5.0
-
-}}}
-
 *NOTE* : if you install 'arm-apple-ios-codesign_allocate' to other place, you need add a env var.
 {{{
 export CODESIGN_ALLOCATE=<full path to arm-apple-ios-codesign_allocate>
 }}}
 
 
-==Step7: Create ios-clang/ios-clang++ scripts.==
+==Step6: Create ios-clang/ios-clang++ scripts.==
 To use clang compiler to compile sourcecode for IOS, we need add some  parameters to clang:
 
 *--target arm-apple-ios* : tell clang the target is arm-apple-ios, it can find proper as/ld
@@ -199,12 +183,16 @@ Here we create two scripts to wrap it.
 *ios-clang*
 {{{
 #!/bin/bash
+export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
+export IPHONEOS_DEPLOYMENT_TARGET=5.0
 clang -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 }}}
 
 *ios-clang++*
 {{{
 #!/bin/bash
+export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
+export IPHONEOS_DEPLOYMENT_TARGET=5.0
 clang++ -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 }}}
 
@@ -213,14 +201,14 @@ And put them in */usr/bin*.
 *NOTE*: if you use ios4.2 sdk, you need also add *-arch armv6* to ios-clang/ios-clang++. Otherwise ldid will failed.
 
 
-==Step8: JailBreak your device.==
+==Step7: JailBreak your device.==
 Download proper jailbreak tools and jailbreak your device(iPhone/iTouch/iPad...).
 Install openssh via cyndia and test ssh connections.
 
 *Remember*, the default password is *alpine*.
 
 
-==Step9: Test toolchain.==
+==Step8: Test toolchain.==
 ===1. write a simple hello world program.===
 
 helloworld.m
@@ -249,7 +237,7 @@ $ldid -S helloworld
 ===4. upload to your device and run it.===
 Use scp to transfer helloworld binary to your device and ssh to your device to run it.
 
-==Step10: Build a HelloWorld app for IOS.==
+==Step9: Build a HelloWorld app for IOS.==
 Download helloworld.tar.gz from:
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/helloworld.tar.gz
 
@@ -266,7 +254,7 @@ $make install
 There is also a 'UICatalog.tar.gz' in the download link. You can also try it.
 
 
-==Step11: iOS API documents.==
+==Step10: iOS API documents.==
 Download API files from:http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
 Extract it:
@@ -277,5 +265,5 @@ firefox ./index.html
 }}}
 
 
-==Step12: Enjoy it.==
+==Step11: Enjoy it.==
  
