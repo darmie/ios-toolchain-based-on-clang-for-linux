@@ -152,11 +152,12 @@ ldid是saurik做的一个代码签名工具，如果编译出来的目标代码�
 
 这里提供了一个修改过的版本，可以支持clang/cctools生成的Mach-O armv7 二进制的签名
 
-从这里下载：http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.610-modified.tar.gz
+从这里下载：http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.611.tar.bz2
 
 编译安装：
 {{{	
-$make
+$./configure --prefix=/usr
+$make 
 $make install
 }}}
 
