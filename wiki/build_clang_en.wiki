@@ -1,0 +1,58 @@
+Get clang/llvm 3.1 source code or fetch source code from svn.
+
+Here is a User guide about how to catch the llvm/clang source codes via svn: 
+
+http://llvm.org/docs/GettingStarted.html#checkout
+
+When this article written, I checkout 168581 svn branch and it works.
+
+===1, Get the source.===
+{{{
+$cd where-you-want-llvm-to-live
+$svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm-svn -r 168581
+
+$cd where-you-want-llvm-to-live
+$cd llvm-svn/tools
+$svn co http://llvm.org/svn/llvm-project/cfe/trunk clang -r 168581
+
+$cd where-you-want-llvm-to-live
+$cd llvm-svn/projects
+$svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt -r 168581
+}}}
+
+===2. Patch it===
+
+Download the patch from:
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/clang-iphoneos-linker.patch
+
+This patch fix a problem:
+
+1. Clang will link to crt1.3.1.o and there is a symbol missing in this file, and need link to dylib1.o also in Makefile, so we directly link to crt1.o.
+
+{{{
+$cd llvm-svn
+$cat clang-iphoneos-linker.patch|patch -p1
+}}}
+
+===3. Configure/build and install it. ===
+{{{
+$./configure --prefix=/usr  --enable-optimized
+$make 
+$make install
+}}}
+
+===4. Test clang compiler.===
+The compiler clang installed is 'clang' for c/objc and 'clang++' for c++. 
+
+Just write a simple HelloWorld programe to test it. 
+
+For example:
+
+{{{
+$clang -o hello hello.c
+$clang++ -o hello hello.cpp
+}}}
+
+===5. Objc environment for X86/X86_64(*Optional*).===
+Clang fully support all Objective C 2.0 features,  If you'd like to use objc language under x86/x86_64 linux, you should install these components: libobjc2/gnustep, if you need blocks support for C/C++, you also need install libBlocksRuntime, if you need Grand Central Dispatch support, and libdispatch and related packages(libkqueue/libpthread_workqueue) for linux.
