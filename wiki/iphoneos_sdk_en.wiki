@@ -1,3 +1,9 @@
+If you want to done this totally in linux, you may need these tools installed.
+
+*dmg2img* can be downloaded from: http://vu1tur.eu.org/tools/
+
+*xar* can be downloaded from: https://code.google.com/p/xar/
+
 ===1. Extract iPhoneSDk pkg from xcode-xxx.img===
 Mount the xcode img from apple under MacOSX, usually it under */Volumes/Xcode*, find *iPhoneSDK5_0.pkg*  for ios 5 or other versions according to your iOS version.
 
