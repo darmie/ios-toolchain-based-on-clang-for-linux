@@ -18,28 +18,22 @@ You also need a iOS device jailbreaked and with ssh installed.
 By the way, the default ssh password is <font color="red"> *alpine* </font>.
 
 
-==Step 1: Prepare environment.==
-A modern Linux distribution should work well, you need 'xar', 'gcc/g++' or 'llvm/clang' installed.  
+==At start==
+Before we start, you need a workable C/C++ compiler installed.
 
-*dmg2img* can be downloaded from: http://vu1tur.eu.org/tools/
+==Step 1 : The compiler==
 
-*xar* can be downloaded from: https://code.google.com/p/xar/
+If your distribution already provides  clang/llvm packages，be sure it is 3.1 release or above.  Lower version may also work but untested. 
+
+If you decide to build clang/llvm from scratch, please refer to <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_en"< this link</a>.
 
 
-==Step 2: The compiler==
-
-If your distribution already provides  a clang/llvm packages，be sure it is 3.1 release or above.  Lower version may also work but untestd.
-
-If you want to build clang/llvm from scratch, please follow below steps to build and apply the linker patch for it.
-
-http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_en
-
-==Step3: The assembler and linker==
+==Step 2 : The assembler and linker==
 I had ported cctools-836 and ld64-85.2.2 from opendarwin to linux. the process how to merge/patch and porting is a little bit complicated, let's just skip it.
 
-Here the final tarbal provided: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-for-linux.tar.gz
+Here the final tarbal: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-for-linux.tar.gz
 
-Just download cctools-836.tar.gz and build it:
+Download and build it:
 
 {{{
 $export CFLAGS=-fno-stack-protector
@@ -53,18 +47,18 @@ $make install
 
 ==Step4: The iPhoneOS SDK.==
 
-You can use the pre-generated 5.0 SDK from:http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
+You can use the pre-generated 5.0 SDK from : http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
 
-and Extract it to */usr/share"
+Extract it to */usr/share"
 {{{
 $tar xvf iPhoneOS5.0.sdk.tar.xz -C /usr/share
 }}}
 
-or follow below steps and generate it by yourself
+or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en">this link</a> to generate it by yourself
 
-http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en
 
 ==Step5: The utilities==
+===ldid, the code sign tool===
 ldid is codesign tool from saurik. Here is a modified version to support Mach-O armv7 binary produced by clang/cctools. also with other changes to find 'arm-apple-ios-codesign_allocate' properly.
 
 Download 'ldid-1.0.611.tar.bz2' from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.611.tar.bz2
@@ -77,7 +71,7 @@ $make install
 }}}
 
 
-==Step6: Create ios-clang/ios-clang++ scripts.==
+===ios-clang/ios-clang++===
 To use clang compiler to compile sourcecode for IOS, we need add some  parameters to clang:
 
 *-target arm-apple-ios* : tell clang the target is arm-apple-ios, it can find proper as/ld
@@ -107,7 +101,7 @@ And put them in */usr/bin*.
 *NOTE*: if you use ios4.2 sdk, you need also add *-arch armv6* to ios-clang/ios-clang++. Otherwise ldid will failed.
 
 
-==Step7: Build a HelloWorld app for IOS.==
+==Step6: Build a HelloWorld app for IOS.==
 Download helloworld.tar.gz from:
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/helloworld.tar.gz
 
@@ -132,7 +126,7 @@ ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bund
 There is also a <a href="http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/UICatalog.tar.gz">  UICatalog.tar.gz </a> in the download link. You can also try it.
 
 
-==Step8: iOS API documents.==
+==Step7: iOS API documents.==
 Download API files from:http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
 Extract it:
