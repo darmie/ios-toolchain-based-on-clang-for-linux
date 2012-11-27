@@ -1,4 +1,4 @@
-Get clang/llvm 3.1 source code or fetch source code from svn.
+Get clang/llvm 3.1 release or fetch it from svn.
 
 Here is a User guide about how to catch the llvm/clang source codes via svn: 
 
@@ -41,18 +41,3 @@ $./configure --prefix=/usr  --enable-optimized
 $make 
 $make install
 }}}
-
-===4. Test clang compiler.===
-The compiler clang installed is 'clang' for c/objc and 'clang++' for c++. 
-
-Just write a simple HelloWorld programe to test it. 
-
-For example:
-
-{{{
-$clang -o hello hello.c
-$clang++ -o hello hello.cpp
-}}}
-
-===5. Objc environment for X86/X86_64(*Optional*).===
-Clang fully support all Objective C 2.0 features,  If you'd like to use objc language under x86/x86_64 linux, you should install these components: libobjc2/gnustep, if you need blocks support for C/C++, you also need install libBlocksRuntime, if you need Grand Central Dispatch support, and libdispatch and related packages(libkqueue/libpthread_workqueue) for linux.
