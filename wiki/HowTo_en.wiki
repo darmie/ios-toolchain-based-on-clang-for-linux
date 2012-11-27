@@ -40,19 +40,6 @@ I had ported cctools-836 and ld64-85.2.2 from opendarwin to linux. the process h
 Here the final tarbal provided: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-for-linux.tar.gz
 
 Just download cctools-836.tar.gz and build it:
-{{{
-$export CC=clang
-$export CXX=clang++
-}}}
-
-<font color="red"> * as reported, 32bit linux had a problem to build cctools via clang, so for 32bit, please use gcc/g++ to build it* </font>
-
-{{{
-$export CC=gcc
-$export CXX=g++
-}}}
-
-and build it.
 
 {{{
 $export CFLAGS=-fno-stack-protector
