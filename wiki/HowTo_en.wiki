@@ -85,15 +85,14 @@ If you want to convert a xcode project, enter the folder of that project, and ru
 $proj2make
 }}}
 
-<font color="red">
-*NOTE* : It does not handle/compile .xib file or storyboard files. 
-</font>
+*NOTE* : It does not handle/compile .xib file or storyboard files.
+
 ===ios-clang/ios-clang++===
 To use clang compiler to compile sourcecode for IOS, some  args need to be passed to clang, '--target arm-apple-ios' tell clang to find proper assembler and linker, '-isysroot <sdk full path>' tell clang use <sdk full path> as root directory to find libraries and headers.
 
 Here we create two scripts to wrap it.
 
-<font color="blue>/usr/bin/ios-clang</font>
+<font color="blue">/usr/bin/ios-clang</font>
 {{{
 #!/bin/bash
 export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
@@ -131,7 +130,7 @@ $make install
 }}}
 
 <font color="red">
-*If ld failed with this message , please add <font color="blue">LDFLAGS += -ldylib1.o</font> to your project's Makefile. * 
+*If ld failed with this message , please add <font color="blue">LDFLAGS += -ldylib1.o</font> to your project's Makefile. * </font>
 
 A patch to fix this problem had been provided in <a href = "http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en"> "Build clang from scratch" </a> Section.
 
@@ -139,7 +138,7 @@ A patch to fix this problem had been provided in <a href = "http://code.google.c
 ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bundle1.o)
 }}}
 
-</font>
+
 
 There is also a <a href="http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/UICatalog.tar.gz">UICatalog.tar.gz</a> sample code provided.
 
