@@ -155,7 +155,7 @@ ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bund
 please add -ldylib1.o to ios-clang.
 </font>
 
-There is also a 'UICatalog.tar.gz' in the download link. You can also try it.
+There is also a <a href="http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/UICatalog.tar.gz">  UICatalog.tar.gz </a> in the download link. You can also try it.
 
 
 ==Step8: iOS API documents.==
