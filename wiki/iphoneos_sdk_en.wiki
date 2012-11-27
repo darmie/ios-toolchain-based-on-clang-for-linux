@@ -1,0 +1,22 @@
+===1. Extract iPhoneSDk pkg from xcode-xxx.img===
+Mount the xcode img from apple under MacOSX, usually it under */Volumes/Xcode*, find *iPhoneSDK5_0.pkg*  for ios 5 or other versions according to your iOS version.
+
+===2. Extract files  for iPhoneOS SDK===
+
+{{{
+cd /usr/share
+xar -xf iPhoneSDK5_0.pkg Payload; cat Payload | zcat | cpio -id
+mv Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk .
+rm -rf Platforms
+rm -rf Payload
+}}}
+
+===3. ARC support===
+If you want arc support via *'clang -fobjc-arc'*,  you need add *libarclite_iphoneos.a* to sdk. it is extracted from Xcode.
+
+Download it from here: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos.a.tar.gz
+
+{{{
+mkdir -p /usr/share/iPhone5.0.sdk/usr/lib/arc
+tar zxvf libarclite_iphoneos.a.tar.gz -C /usr/share/iPhone5.0.sdk/usr/lib/arc
+}}}
