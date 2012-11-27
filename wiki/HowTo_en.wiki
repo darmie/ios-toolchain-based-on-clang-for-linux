@@ -97,7 +97,7 @@ And put them in */usr/bin*.
 *NOTE*: if you use ios4.2 sdk, you need also add *-arch armv6* to ios-clang/ios-clang++. Otherwise ldid will failed.
 
 
-==Step6: Build a HelloWorld app for IOS.==
+==Step6: Build app for iOS.==
 Download helloworld.tar.gz from:
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/helloworld.tar.gz
 
