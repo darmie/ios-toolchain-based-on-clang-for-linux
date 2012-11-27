@@ -23,8 +23,20 @@ A modern Linux distribution should work well, you need 'xar', 'gcc/g++' or 'llvm
 *xar* can be downloaded from: https://code.google.com/p/xar/
 
 
-==Step 2: Build and install llvm/clang.(the Compiler)==
-Get llvm/clang source code from svn, llvm/clang 3.2 or svn version is prefered. 
+==Step 2: Prepare clang/llvm.(the Compiler)==
+
+If your distribution already provides  a clang/llvm packages，be sure it is 3.1 release or above.
+
+As tested, clang 3.1 and above should works very well.
+
+*NOTE* : If you use the unpactched clang, you may need add "LDFLAGS += -ldylib1.o" to your project Makefile. since it will links to "crt1.3.1.o" and a symbol is missing. 
+
+This is a problem of clang/llvm. 
+
+If your distribution did not provides a proper version of clang/llvm, please follow below steps to build a clang.
+
+Get clang/llvm 3.1 source code or fetch source code from svn.
+
 Here is a User guide about how to catch the llvm/clang source codes via svn: 
 
 http://llvm.org/docs/GettingStarted.html#checkout
