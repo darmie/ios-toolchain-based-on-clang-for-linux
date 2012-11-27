@@ -45,7 +45,7 @@ $make install
 
 <font color="red"> *NOTE* : if you use a different prefix, you should linke all "arm-apple-ios-`*`" to /usr/bin, otherwise clang can not find proper assembler and linker.  </font>
 
-==Step4: The iPhoneOS SDK.==
+==Step 3: The iPhoneOS SDK.==
 
 You can use the pre-generated 5.0 SDK from : http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
 
@@ -57,7 +57,7 @@ $tar xvf iPhoneOS5.0.sdk.tar.xz -C /usr/share
 or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en">this link</a> to generate it by yourself
 
 
-==Step5: The utilities==
+==Step 4: The utilities==
 ===ldid, the code sign tool===
 ldid is codesign tool from saurik. Here is a modified version to support Mach-O armv7 binary produced by clang/cctools. also with other changes to find 'arm-apple-ios-codesign_allocate' properly.
 
@@ -97,7 +97,7 @@ And put them in */usr/bin*.
 *NOTE*: if you use ios4.2 sdk, you need also add *-arch armv6* to ios-clang/ios-clang++. Otherwise ldid will failed.
 
 
-==Step6: Build app for iOS.==
+==Build app for iOS.==
 Download helloworld.tar.gz from:
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/helloworld.tar.gz
 
@@ -125,7 +125,7 @@ ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bund
 There is also a <a href="http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/UICatalog.tar.gz">  UICatalog.tar.gz </a> sample code provided.
 
 
-==Step7: iOS API documents.==
+==the iOS API documents.==
 Download API files from:http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
 Extract it:
