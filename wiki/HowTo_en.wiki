@@ -112,14 +112,17 @@ $make install
 }}}
 
 <font color="red">
-if ld failed with this message , please add "LDFLAGS += -ldylib1.o" to your project Makefile. 
+*If ld failed with this message , please add "LDFLAGS += -ldylib1.o" to your project's Makefile. * 
+
+A patch to fix this problem had been provided in <a href = "http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en"> "Build clang from scratch" </a> Section.
+
 {{{
 ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bundle1.o)
 }}}
 
 </font>
 
-There is also a <a href="http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/UICatalog.tar.gz">  UICatalog.tar.gz </a> in the download link. You can also try it.
+There is also a <a href="http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/UICatalog.tar.gz">  UICatalog.tar.gz </a> sample code provided.
 
 
 ==Step7: iOS API documents.==
