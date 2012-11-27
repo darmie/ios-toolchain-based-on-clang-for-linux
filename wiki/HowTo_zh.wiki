@@ -160,25 +160,10 @@ $make
 $make install
 }}}
 
-==第六步，设置环境变量==
-现在编译器，汇编器和链接器以及iOS SDK已经安装
-
-||/usr/bin/arm-apple-ios-`*`||Assembler and Linker.||
-||/usr/share/iPhone5.0.sdk||iPhone 5.0 SDK||
-||/usr/bin/ldid|| ldid codesign utility||
-
-我们需要设置一些环境变量来方便的使用它们，你可以将下面的代码加进~/.bashrc，或在/etc/profile.d下面建一个ios-toolchain.sh，把代码贴进去。
-
-{{{
-
-export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
-export IPHONEOS_DEPLOYMENT_TARGET=5.0
-
-}}}
-
 *注意* ：如果你将cctools安装到了其他目录，请设置一个环境变量 CODESIGN_ALLOCATE指向arm-apple-ios-codesign_allocate的全路径，否则ldid有可能找不到它。
 
-==第七步，创建ios-clang/ios-clang++脚本==
+
+==第六步，创建ios-clang/ios-clang++脚本==
 使用clang编译器来编译针对iOS的代码时，我们需要加一些额外的参数：
 
 *-target arm-apple-ios* ：告诉clang目标架构是arm-apple-ios，这样clang能够找到target-ld等命令，务必要这么设置，否则不能正确的找到汇编器、链接器。
@@ -190,12 +175,16 @@ export IPHONEOS_DEPLOYMENT_TARGET=5.0
 *ios-clang*
 {{{
 #!/bin/bash
+export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
+export IPHONEOS_DEPLOYMENT_TARGET=5.0
 clang -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 }}}
 
 *ios-clang++*
 {{{
 #!/bin/bash
+export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
+export IPHONEOS_DEPLOYMENT_TARGET=5.0
 clang++ -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 }}}
 
@@ -205,13 +194,13 @@ clang++ -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 *注意* ：如果你使用了 iOS 4.2 文件系统，你还需要加上 *-arch armv6* 参数，否则ldid会签名失败。
 
 
-==第八步，越狱你的设备==
+==第七步，越狱你的设备==
 下载合适的越狱工具越狱你的设备，然后通过cyndia安装openssh并测试ssh连接。
 
 *注意* ： 默认的密码是*alpine*。
 
 
-==第九步，测试工具链==
+==第八步，测试工具链==
 ===1. 写一个简单的objc hello world.===
 
 helloworld.m
@@ -241,7 +230,7 @@ $ldid -S helloworld
 使用scp上传helloworld二进制到你的设备，然后ssh进你的设备运行它。
 
 
-==第十步，测试iOS app==
+==第九步，测试iOS app==
 从这里下载helloworld.tar.gz:
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/helloworld.tar.gz
 
@@ -257,7 +246,7 @@ $make install
 
 下载里还有一个UICatalog.tar.gz，也可以尝试一下。
 
-==第十一步，API文档==
+==第十步，API文档==
 从这里下载iOS的API文档：
 http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
