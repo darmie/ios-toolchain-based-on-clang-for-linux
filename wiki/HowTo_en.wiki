@@ -155,8 +155,10 @@ $ios-clang -o helloworld helloworld.m -framework Foundation
 }}}
 
 <font color="red">
-if ld failed with this message, 
+if ld failed with this message:
+{{{
 ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bundle1.o)
+}}}
 please add -ldylib1.o to ios-clang.
 </font>
 
