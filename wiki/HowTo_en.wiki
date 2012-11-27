@@ -89,13 +89,6 @@ $make
 $make install
 }}}
 
-<font color="red">
-*NOTE* : if you install 'arm-apple-ios-codesign_allocate' to other place, you need add a env var.
-{{{
-export CODESIGN_ALLOCATE=<full path to arm-apple-ios-codesign_allocate>
-}}}
-</font>
-
 
 ==Step6: Create ios-clang/ios-clang++ scripts.==
 To use clang compiler to compile sourcecode for IOS, we need add some  parameters to clang:
