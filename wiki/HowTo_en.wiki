@@ -1,58 +1,52 @@
-=A new iOS toolchain based on LLVM/clang under linux=
+=iOS toolchain based on clang/LLVM under linux=
 
 <font color="blue">Cjacker <cjacker@gmail.com> 2012-11-26 </font>
 
-LLVM/clang for linux provides a fully implementation for Objc-2.0 includes blocks and other features gcc did not provides.
+clang/LLVM for linux provides a fully implementation for Objective C 2.0 includes blocks and other features gcc not supported.
 
-Original iOS toolchain under linux is based on llvm-gcc/odcctools, according to some example Makefile, it use clang as a preprocesser to support blocks feature and other things. 
+Here is an tutorial of  'How to setup iOS toolchain based on clang/LLVM'.
 
-Here is an instruction of  'How to setup a new IOS toolchain based on LLVM/clang'.
-
-Actually, the iOS toolchain under linux is just as same and simple as other crosscompile toolchain for embeded device. It should include these components:
+Actually, the iOS toolchain under linux is as same and simple as other crosscompile toolchain for embeded devices. It should include these components:
 
   # *Assembler and Linker*: cctools and ld64 from opendarwin.
   # *Compiler*: here we use llvm/clang.
   # *SDK*, include headers and libraries.
-  # *Utilities*: such as 'ldid' codesign tool.
+  # *Utilities*: such as ldid codesign tool.
 
-<font color="red">Also, you need a device jailbreaked and with ssh installed.</font>
+You also need a iOS device jailbreaked and with ssh installed.
 
-*Remember*, the default password is <font color="red"> *alpine* </font>.
+By the way, the default ssh password is <font color="red"> *alpine* </font>.
 
 
 ==Step 1: Prepare environment.==
-A modern Linux distribution should work well, you need 'xar', 'gcc/g++' or 'llvm/clang' installed. Also you may need 'dmg2img' utility. Here I use a customized Linux dist with gcc-4.7.1.
+A modern Linux distribution should work well, you need 'xar', 'gcc/g++' or 'llvm/clang' installed.  
 
 *dmg2img* can be downloaded from: http://vu1tur.eu.org/tools/
 
 *xar* can be downloaded from: https://code.google.com/p/xar/
 
 
-==Step 2: Prepare clang/LLVM.(the Compiler)==
+==Step 2: The compiler clang/LLVM==
 
-If your distribution already provides  a clang/llvm packages，be sure it is 3.1 release or above.
-
-As tested, clang 3.1 and above should works very well.
-
-<font color="red"> *NOTE* : If you use the unpactched clang, you may need add "LDFLAGS += -ldylib1.o" to your project Makefile. since it will links to "crt1.3.1.o" and a symbol is missing. </font>
+If your distribution already provides  a clang/llvm packages，be sure it is 3.1 release or above.  Lower version may also work but untestd.
 
 If you want to build clang/llvm from scratch, please follow below steps to build and apply the linker patch for it.
 
 http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_en
 
-==Step3: Build and install cctools/ld64(the assembler/linker)==
+==Step3: The assembler and linker==
 I had ported cctools-836 and ld64-85.2.2 from opendarwin to linux. the process how to merge/patch and porting is a little bit complicated, let's just skip it.
 
 Here the final tarbal provided: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-for-linux.tar.gz
 
-Just download cctools-836.tar.gz and build it.
-
-if you want to use clang/clang++ to build it:
+Just download cctools-836.tar.gz and build it:
 {{{
 $export CC=clang
 $export CXX=clang++
 }}}
+
 <font color="red"> * as reported, 32bit linux had a problem to build cctools via clang, so for 32bit, please use gcc/g++ to build it* </font>
+
 {{{
 $export CC=gcc
 $export CXX=g++
@@ -70,7 +64,7 @@ $make install
 
 <font color="red"> *NOTE* : if you use a different prefix, you should linke all "arm-apple-ios-`*`" to /usr/bin, otherwise clang can not find proper assembler and linker.  </font>
 
-==Step4: Prepare iPhoneOS SDK.==
+==Step4: The iPhoneOS SDK.==
 
 You can use the pre-generated 5.0 SDK from:http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
 
@@ -83,7 +77,7 @@ or follow below steps and generate it by yourself
 
 http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en
 
-==Step5: install ldid codesign tool==
+==Step5: The utilities==
 ldid is codesign tool from saurik. Here is a modified version to support Mach-O armv7 binary produced by clang/cctools. also with other changes to find 'arm-apple-ios-codesign_allocate' properly.
 
 Download 'ldid-1.0.611.tar.bz2' from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.611.tar.bz2
@@ -148,11 +142,11 @@ $make install
 }}}
 
 <font color="red">
-if ld failed with this message:
+if ld failed with this message , please add "LDFLAGS += -ldylib1.o" to your project Makefile. 
 {{{
 ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bundle1.o)
 }}}
-please add -ldylib1.o to ios-clang.
+
 </font>
 
 There is also a <a href="http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/UICatalog.tar.gz">  UICatalog.tar.gz </a> in the download link. You can also try it.
