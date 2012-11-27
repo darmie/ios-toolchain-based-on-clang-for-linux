@@ -85,6 +85,9 @@ If you want to convert a xcode project, enter the folder of that project, and ru
 $proj2make
 }}}
 
+<font color="red">
+*NOTE* : It does not handle/compile .xib file or storyboard files. 
+</font>
 ===ios-clang/ios-clang++===
 To use clang compiler to compile sourcecode for IOS, some  args need to be passed to clang, '--target arm-apple-ios' tell clang to find proper assembler and linker, '-isysroot <sdk full path>' tell clang use <sdk full path> as root directory to find libraries and headers.
 
