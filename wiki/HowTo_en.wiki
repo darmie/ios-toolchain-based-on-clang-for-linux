@@ -26,7 +26,7 @@ A modern Linux distribution should work well, you need 'xar', 'gcc/g++' or 'llvm
 *xar* can be downloaded from: https://code.google.com/p/xar/
 
 
-==Step 2: The compiler clang/LLVM==
+==Step 2: The compiler==
 
 If your distribution already provides  a clang/llvm packages，be sure it is 3.1 release or above.  Lower version may also work but untestd.
 
