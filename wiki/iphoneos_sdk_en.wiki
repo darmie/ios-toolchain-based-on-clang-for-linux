@@ -20,3 +20,12 @@ Download it from here: http://ios-toolchain-based-on-clang-for-linux.googlecode.
 mkdir -p /usr/share/iPhone5.0.sdk/usr/lib/arc
 tar zxvf libarclite_iphoneos.a.tar.gz -C /usr/share/iPhone5.0.sdk/usr/lib/arc
 }}}
+
+===4. IOKit Headers===
+IOKit Headers is token from iPhoneSimulatorSDK5_0.pkg, If you need develop some app for jailbreaked devices, you may need it.
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/IOKitHeaders5.0.tar.gz
+
+{{{
+tar zxvf IOKitHeaders5.0.tar.gz -C  /usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks/IOKit.framework/
+}}}
