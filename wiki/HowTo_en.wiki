@@ -76,7 +76,7 @@ To use clang compiler to compile sourcecode for IOS, some  args need to be passe
 
 Here we create two scripts to wrap it.
 
-*ios-clang*
+<font color="blue>/usr/bin/ios-clang</font>
 {{{
 #!/bin/bash
 export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
@@ -84,7 +84,7 @@ export IPHONEOS_DEPLOYMENT_TARGET=5.0
 clang -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 }}}
 
-*ios-clang++*
+<font color="blue"/usr/bin/ios-clang++</font>
 {{{
 #!/bin/bash
 export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
@@ -92,8 +92,10 @@ export IPHONEOS_DEPLOYMENT_TARGET=5.0
 clang++ -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 }}}
 
-And put them in */usr/bin*.
-
+{{{
+chmod +x /usr/bin/ios-clang
+chmod +x /usr/bin/ios-clang++
+}}}
 *NOTE*: if you use ios4.2 sdk, you need also add *-arch armv6* to ios-clang/ios-clang++. Otherwise ldid will failed.
 
 
