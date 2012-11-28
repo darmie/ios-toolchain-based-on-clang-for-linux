@@ -1,0 +1,47 @@
+Here I provides a emacs auto complete package based on auto-complete, auto-complete-clang, yasnippet and autopairs.
+
+Assumption you did not had such mode installed for emacs. If you already had these mode installed, modified it according to your environment.
+
+Assumption you installed all toolchain components as "Howto". If not, you need change the path as where they installed.
+
+=Fix header locations in iPhoneOS5.0.sdk=
+All framworks header files installed in   */usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks* , to help clang find proper header files, we need copy all framework headers to standard include path.
+{{{
+$cd /usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks/
+}}}
+
+write a shell script "cpheader.sh" here, put all below contents in it.
+{{{
+for i in *.framework
+do
+     f=`basename $i .framework`
+     echo $f
+     mkdir -p /usr/share/iPhoneOS5.0.sdk/usr/include/$f
+     if [ -d $i/Headers ]; then
+     cp -Rf -p $i/Headers/* /usr/share/iPhoneOS5.0.sdk/usr/include/$f/
+     fi
+done
+}}}
+
+Run the script to copy headers
+{{{
+$sh cpheader.sh
+}}}
+
+After it finished, all framework headers will be copy to /usr/share/iPhoneOS5.0.sdk/usr/include/<framework name> folders.
+
+=Emacs setup=
+Download it from:
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ios-complete-for-emacs.tar.gz
+
+Extract it:
+{{{
+mkdir -p ~/.emacs.d
+tar zxvf ios-complete-for-emacs.tar.gz -C ~/.emacs.d
+cat ~/.emacs.d/DotEmacs >~/.emacs
+}}}
+
+=Launch It=
+Run emacs, write some code, include proper header files.
+When you want to auto-complete, press "Ctrl+Enter".
+
