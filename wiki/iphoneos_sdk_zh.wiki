@@ -1,0 +1,40 @@
+如果你需要全部在Linux下完成iphoneos sdk的抽取，你可能需要以下这些工具来处理.dmg文件和.pkg文件，另，据报告p7zip应该也是可以处理xar文件的。
+
+*dmg2img*  http://vu1tur.eu.org/tools/
+
+*xar*  https://code.google.com/p/xar/
+
+===1. 从Xcode的img中抽取iPhoneSDKx_x.pkg===
+这里我们用了iPhoneSDK 5.0版本。
+
+在Mac 下挂载xcode img，通常目录是在 */Volumes/Xcode* 目录，在里面找到iPhoneSDK5_0.pkg，如果你还需要IOKit的头文件，还需要iPhoneSimulatorSDK5_0.pkg。
+
+===2. 解压 iPhoneOS SDK===
+
+{{{
+cd /usr/share
+xar -xf iPhoneSDK5_0.pkg Payload; cat Payload | zcat | cpio -id
+mv Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk .
+rm -rf Platforms
+rm -rf Payload
+}}}
+
+===3. ARC 支持===
+如果你要打开ARC的支持（通过clang -fobjc-arc），你需要将以下libarclite_iphoneos.a这个静态库包含到sdk中，它也是从xcode取来的。
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos.a.tar.gz
+
+{{{
+mkdir -p /usr/share/iPhone5.0.sdk/usr/lib/arc
+tar zxvf libarclite_iphoneos.a.tar.gz -C /usr/share/iPhone5.0.sdk/usr/lib/arc
+}}}
+
+===4. IOKit Headers===
+IOKit 头文件是从iPhoneSimulatorSDK5_0.pkg解出来的，默认的SDK并不提供这些头文件.
+
+可以在这里下载。
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/IOKitHeaders5.0.tar.gz
+
+{{{
+tar zxvf IOKitHeaders5.0.tar.gz -C  /usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks/IOKit.framework/
+}}}
