@@ -1,12 +1,7 @@
-=新的基于clang的iOS toolchain=
+=Linux系统基于clang的ios toolchain=
 
-Cjacker <cjacker@gmail.com> 2012-11-26
-
-LLVM/clang的Linux版本提供了全面的Objective C 2.0支持，包括了blocks, ARC等高级特性。
-
-Linux最早的iOS工具链是iphone 1刚发布时由iphonedev team开发的，使用的是gcc/binutils组合，提供对arm target的支持，后来有了基于llvm-gcc/odcctools的toolchain，但是也使用了clang作为预处理器来支持objc的高级特性，并且使用llvm-gcc作为Makefile的ld链接器。
-
-其实clang/llvm作为一个完整的编译器实现，本身就可以完成所有的工作，而不再需要llvm-gcc等其他工具。当然，如果有些特殊代码需要，比如使用了gcc扩展的c/c++代码，你仍然可以通过llvm-gcc来构建出目标文件。
+<font color="blue">Cjacker <cjacker@gmail.com> 2012-11-26 </font>
+Clang提供了较完整的Objective C 2.0支持，包括了blocks等gcc不支持的高级特性。
 
 这里提供了一个完整的说明，一步一步的在Linux系统上构建一个基于clang的iOS工具链和开发环境。
 
@@ -17,163 +12,88 @@ Linux最早的iOS工具链是iphone 1刚发布时由iphonedev team开发的，�
   # *SDK*. 提供了开发库和头文件
   # *辅助工具*: 比如ldid签名工具
 
+除此之外，你还需要一个已经越狱的iOS设备，并安装好ssh。
 
-==第一步，准备环境==
-一个较新的Linux发行版都应该可以工作的很好，你可能需要确定系统提供了gcc/g++或者llvm/clang，另外你需要xar和dmg2img工具。我一直使用自己维护的一个定制化系统gcc版本是4.7.1，clang版本是3.3svn，这些编译器都可以编译后面所提到的所有的工具代码。
+顺便说一下，默认的ssh密码是 <font color="red"> *alpine* </font>.
 
-*dmg2img* 可以从 http://vu1tur.eu.org/tools/ 下载
-
-*xar* 可以从 https://code.google.com/p/xar/ 下载
+在开始之前，你需要有一个可以工作的编译环境，gcc或者clang都是可以的。
 
 
-==第二步，编译安装clang==
-即将发布的clang/llvm 3.2以及svn版本应该都是可以的，llvm官方提供了一个怎么构建llvm/clang的说明：
 
-http://llvm.org/docs/GettingStarted.html#checkout
+==Step 1 : 编译器==
 
-写这个howto的时候（也就是1个小时前），我checkout的是168581 版本。
+如果你的发行版已经提供了clang/llvm软件包，只要确定是3.1或者更新的版本，应该都是可以正常工作的，低版本的clang可能可以工作，但没有经过测试。
 
-===1,从svn取得clang代码===
-{{{
-$cd where-you-want-llvm-to-live
-$svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm-svn -r 168581
-
-$cd where-you-want-llvm-to-live
-$cd llvm-svn/tools
-$svn co http://llvm.org/svn/llvm-project/cfe/trunk clang -r 168581
-
-$cd where-you-want-llvm-to-live
-$cd llvm-svn/projects
-$svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt -r 168581
-}}}
-
-===2. 打补丁===
-
-从这里下载补丁:
-
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/clang-iphoneos-linker.patch
-
-这个补丁修复了这个问题：
-1, 根据IPHONE_DEPLOYMENT_TARGET的环境变量设置，clang会有不同的链接参数，如果我们把这个环境变量设置为4以上，那么，clang回去链接crt1.3.1.o，但是会有一个符号缺失，我们还需要在Makefile里手工链接dylib1.o，这个Patch的作用就是直接链接crt1.o。
-
-{{{
-$cd llvm-svn
-$cat clang-iphoneos-linker.patch|patch -p1
-}}}
-
-===3. 编译安装. ===
-{{{
-$./configure --prefix=/usr  --enable-optimized
-$make 
-$make install
-}}}
-
-===4. 测试clang编译器===
-clang会安装一个clang命令和clang++命令，分别是针对c/objc和c++/objc++的。
-我们可以写一个简单的C语言Hello World来验证一下clang是否工作正常。
-
-编译：
-{{{
-$clang -o hello hello.c
-$clang++ -o hello hello.cpp
-}}}
+如果你决定自己构建一个clang编译器，请参考  <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_en">这个链接</a>。
 
 
-==第三步，安装汇编器和链接器==
-saurik提供的toolchain.sh提供了cctools-782/ld64-85.2.1版本。这里提供的是一个更新的cctools版本，并且完成了x86_64的移植，且可以直接通过gcc或者clang编译。
+==Step 2 : 汇编器和链接器==
 
-opendarwin代码移植的过程有一点点复杂，就不讲了，这里提供了一个针对Linux的tar包下载: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-for-linux.tar.gz
+我已经移植了OpenDarwin的cctools-836和ld64-85.2.2到Linux系统，移植的过程比较复杂，这里就不详细讲了。
+可以从这里下载到移植后的代码压缩包 : http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-for-linux.tar.gz
 
-直接下载编译就可以了。
+编译安装：
 
-
-如果你要用clang/clang++来编译，需要export以下环境变量。
-{{{
-$export CC=clang
-$export CXX=clang++
-}}}
-
-*据报告32位系统clang/clang++编译cctools的时候会有一些问题，建议在32位系统使用gcc/g++编译*
-
-{{{
-$export CC=gcc
-$export CXX=g++
-}}}
-
-然后就是配置编译过程:
 {{{
 $export CFLAGS=-fno-stack-protector
 $export CXXFLAGS=-fno-stack-protector
-$./configure --target=arm-apple-ios --prefix=/usr/bin
+$./configure --target=arm-apple-ios --prefix=/usr
 $make
 $make install
 }}}
 
-如果你的安装prefix不是/usr，需要将arm-apple-ios-`*`命令链接到/usr/bin目录，是为了让clang能够找到这些工具，以便在编译，链接时使用。
+<font color="red"> *注意* ： 如果你使用了不同的prefix设置，你可能需要把所有的 *arm-apple-ios* 命令链接到/usr/bin目录，否则，clang可能找不到合适的汇编器和链接器。 </font>
 
-==第四步，建立iPhoneSDK==
-你可以直接从这里下载预先生成的文件系统: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
+==Step 3: iPhoneOS SDK.==
+
+你可以从这里下载一个预先生成好的 5.0 SDK : http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
 
 将它解压到 */usr/share"
 {{{
 $tar xvf iPhoneOS5.0.sdk.tar.xz -C /usr/share
 }}}
 
-如果你要自己生成文件系统，请按照以下步骤进行：
-
-===1. 从xcode-xxx.img中取得iPhoneSDk pkg===
-在Mac下点击xcode.img会自动完成挂载，一般是 */Volumes/Xcode* ,在里面找到  *iPhoneSDK5_0.pkg*。或者找到你需要的版本。
-
-===2. 解出文件，修复头文件路径.===
-
-{{{
-cd /usr/share
-xar -xf iPhoneSDK5_0.pkg Payload; cat Payload | zcat | cpio -id
-mv Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk .
-rm -rf Platforms
-rm -rf Payload
-}}}
-
-===3. objc ARC支持===
-如果你需要使用ARC(Auto Reference Counting), 你需要将libarclite_iphoneos.a这个静态库加入文件系统，这个文件来自xcode，可以在这里下载：
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos.a.tar.gz
-
-然后解压：
-{{{
-mkdir -p /usr/share/iPhone5.0.sdk/usr/lib/arc
-tar zxvf libarclite_iphoneos.a.tar.gz -C /usr/share/iPhone5.0.sdk/usr/lib/arc
-}}}
-
-编译代码时，给编译器加上'-fobjc-arc'就可以打开ARC支持了。
+或者按照 <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_zh">这个链接的说明</a> 来自己生成一个SDK环境。
 
 
-==第五步，安装ldid代码签名工具==
-ldid是saurik做的一个代码签名工具，如果编译出来的目标代码不签名，在iOS上是不能运行的。 
+==Step 4: 辅助工具==
+===ldid, 代码签名工具===
+ldid是saurik编些的一个代码签名工具，这里提供了一个修改过的版本，修复了一些问题，并加入了工程文件的支持。
 
-这里提供了一个修改过的版本，可以支持clang/cctools生成的Mach-O armv7 二进制的签名
-
-从这里下载：http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.611.tar.bz2
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.611.tar.bz2
 
 编译安装：
 {{{	
 $./configure --prefix=/usr
-$make 
+$make
 $make install
 }}}
 
-*注意* ：如果你将cctools安装到了其他目录，请设置一个环境变量 CODESIGN_ALLOCATE指向arm-apple-ios-codesign_allocate的全路径，否则ldid有可能找不到它。
+===proj2make, xcode工程到makefile转换器===
+proj2make是我从pbtomake修改而来的xcode工程转换器，它可以将xcode的ios工程转成我们需要的Makefile，并能够支持make dist/make install等操作。
 
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/proj2make-4.1.tar.gz
 
-==第六步，创建ios-clang/ios-clang++脚本==
-使用clang编译器来编译针对iOS的代码时，我们需要加一些额外的参数：
+{{{
+$tar zxvf proj2make-4.1.tar.gz
+$cd proj2make-4.1
+$make
+$install -m 0755 proj2make /usr/bin
+}}}
 
-*-target arm-apple-ios* ：告诉clang目标架构是arm-apple-ios，这样clang能够找到target-ld等命令，务必要这么设置，否则不能正确的找到汇编器、链接器。
+如果你需要转换一个xcode的ios工程，进入工程目录，运行以下命令
+{{{
+$proj2make
+}}}
 
-*-isysroot $IPHONEOS_SDK* ：告诉clang使用$IPHONEOS_SDK作为根文件系统来寻找开发库和头文件。
+*注意* : proj2make并不是万能的，它可能会出错，可能会有遗漏，也无法编译处理xib/storyboard文件，但是，它提供了一个很好的基础，大部分iOS开发文档提供的sampelcode是可以正常转换并编译的（因为Linux系统没有ibtool，所以，即使samplecode可以编译，可能仍然无法运行）
 
-我们创建了两个脚本来自动添加这些参数。
+===ios-clang/ios-clang++===
+为了使用clang来编译iOS工程，我们需要给clang传递一些参数。'--target arm-apple-ios' 告诉clang找到合适的编译器和汇编器， '-isysroot <sdk full path>' 通知clang使用 <sdk full path> 作为开发库和头文件的根目录。
 
-*ios-clang*
+我们创建了两个脚本：
+
+<font color="blue">/usr/bin/ios-clang</font>
 {{{
 #!/bin/bash
 export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
@@ -181,7 +101,7 @@ export IPHONEOS_DEPLOYMENT_TARGET=5.0
 clang -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 }}}
 
-*ios-clang++*
+<font color="blue">/usr/bin/ios-clang++</font>
 {{{
 #!/bin/bash
 export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
@@ -189,69 +109,48 @@ export IPHONEOS_DEPLOYMENT_TARGET=5.0
 clang++ -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 }}}
 
-把这两个脚本放到 */usr/bin* 。
-
-
-*注意* ：如果你使用了 iOS 4.2 文件系统，你还需要加上 *-arch armv6* 参数，否则ldid会签名失败。
-
-
-==第七步，越狱你的设备==
-下载合适的越狱工具越狱你的设备，然后通过cyndia安装openssh并测试ssh连接。
-
-*注意* ： 默认的密码是*alpine*。
-
-
-==第八步，测试工具链==
-===1. 写一个简单的objc hello world.===
-
-helloworld.m
 {{{
-#import <Foundation/Foundation.h>
-
-int main(int argc, const char **argv)
-{
-    NSLog(@"Hello World");
-    return 0;
-}
+chmod +x /usr/bin/ios-clang
+chmod +x /usr/bin/ios-clang++
 }}}
-
-===2. 编译===
-{{{
-$ios-clang -o helloworld helloworld.m -framework Foundation
-}}}
-
-*注意* ： 如果你 *没有* 给llvm-svn打patch，可能需要加上-ldylib1.o。
-
-===3. 签名===
-{{{
-$ldid -S helloworld
-}}}
-
-===4. 上传到你的设备并运行===
-使用scp上传helloworld二进制到你的设备，然后ssh进你的设备运行它。
+*注* ： 如果你使用iPhone 4.2 SDK，你可能还需要加入 *-arch armv6* ，否则ldid可能会签名失败。
 
 
-==第九步，测试iOS app==
-从这里下载helloworld.tar.gz:
+==为iOS编译一个简单的应用==
+
+从这里下载HelloWorld.app的代码：
+
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/helloworld.tar.gz
 
-解压/编译/安装到你的设备，你可能需要修改一下Makefile，把里面的IPHONE_IP设置为你真实的IP。
+解压编译、安装，然后到越狱设备上看看安装后的结果。
 
 {{{
 $tar zxvf helloworld.tar.gz 
 $cd helloworld
 $make
 $make dist
-$make install
+$make install IPHONE_IP=<你的越狱设备IP>
 }}}
 
-下载里还有一个UICatalog.tar.gz，也可以尝试一下。
+安装时会提示你输入越狱设备的密码，你可以通过预储存ssh密码的方式避免每次都要输入。
 
-==第十步，API文档==
-从这里下载iOS的API文档：
+<font color="red">
+*如果出现如下的错误提示，说明你使用的是一个未打补丁的clang，请在Makefile中加入LDFLAGS += -ldylib1.o</font>
+
+这里提供了一个补丁，参考<a href = "http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_zh"> "如何自己构建clang" </a>。
+
+{{{
+ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bundle1.o)
+}}}
+
+
+
+还有一个常见的 <a href="http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/UICatalog.tar.gz">UICatalog.tar.gz</a>示例代码，也可以尝试一下。
+
+==iOS API 文档==
 http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
-解压：
+解压:
 {{{
 xar -xf com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 cd com.*iOSLibrary.docset/Contents/Resources/Documents/
@@ -259,5 +158,5 @@ firefox ./index.html
 }}}
 
 
-==最后，开始吧==
+==Enjoy it.==
  
