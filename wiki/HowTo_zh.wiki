@@ -24,7 +24,7 @@ Clang提供了较完整的Objective C 2.0支持，包括了blocks等gcc不支持
 
 如果你的发行版已经提供了clang/llvm软件包，只要确定是3.1或者更新的版本，应该都是可以正常工作的，低版本的clang可能可以工作，但没有经过测试。
 
-如果你决定自己构建一个clang编译器，请参考  <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_en">这个链接</a>。
+如果你决定自己构建一个clang编译器，请参考  <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_zh">这个链接</a>。
 
 
 ==Step 2 : 汇编器和链接器==
