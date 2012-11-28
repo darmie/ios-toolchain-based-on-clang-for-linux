@@ -1,0 +1,57 @@
+这里提供了一个emacs自动补全的mode包，包含了auto-complete，auto-complete-clang，yasnippet和autopairs.
+
+我加了更多的objc snippet到yasnippet，可以更快的编些objc代码。
+
+auto-complete-clang也修改了很多，现在可以较好的支持objc代码，函数，多参数函数的补全。
+
+假设：你没有自己安装这些emacs的mode，如果你安装了，请根据你自己的环境进行修改。
+
+假设：你按照howto说明中的方法安装的ios toolchain，如果你改变了安装路径，请修改后面相关操作中的路径，包括.emacs中iPhoneOS SDK所处的路径。
+
+
+=调整iPhoneOS5.0.sdk中的头文件位置=
+
+所有framework相关的头文件都在 */usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks*，这个位置的头文件，clang是找不到的，所以我们需要把头文件复制到SDK中的标准头文件位置。
+
+{{{
+$cd /usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks/
+}}}
+
+建一个cpheader.sh脚本，把下面的内容拷贝进去：
+*注意*，按照实际安装路径，修改脚本的路径。
+{{{
+for i in *.framework
+do
+     f=`basename $i .framework`
+     echo $f
+     mkdir -p /usr/share/iPhoneOS5.0.sdk/usr/include/$f
+     if [ -d $i/Headers ]; then
+     cp -Rf -p $i/Headers/* /usr/share/iPhoneOS5.0.sdk/usr/include/$f/
+     fi
+done
+}}}
+
+运行脚本，拷贝头文件。
+{{{
+$sh cpheader.sh
+}}}
+
+脚本运行后，头文件会被放在/usr/share/iPhoneOS5.0.sdk/usr/include/<framework name>目录中
+
+=Emacs设置=
+从这里下载：
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ios-complete-for-emacs.tar.gz
+
+解压：
+{{{
+mkdir -p ~/.emacs.d
+tar zxvf ios-complete-for-emacs.tar.gz -C ~/.emacs.d
+cat ~/.emacs.d/DotEmacs >~/.emacs
+}}}
+
+*注意*，按照iphone sdk的实际安装路径修改.emacs.
+
+
+=使用=
+开启emacs，写一些代码，包含正确的头文件，当需要自动补全的时候，按"Ctrl+Enter"，
+如果需要在函数参数中跳转，按"tab"。
