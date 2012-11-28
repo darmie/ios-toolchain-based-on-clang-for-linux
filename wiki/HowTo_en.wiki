@@ -143,7 +143,7 @@ ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bund
 There is also a <a href="http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/UICatalog.tar.gz">UICatalog.tar.gz</a> sample code provided.
 
 
-==the iOS API documents.==
+==the iOS API documents.(Optional)==
 Download API files from:http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
 Extract it:
@@ -153,6 +153,11 @@ cd com.*iOSLibrary.docset/Contents/Resources/Documents/
 firefox ./index.html
 }}}
 
+
+==Emacs auto complete setup(Optional)==
+If you use emacs as your programming editor, you can set up auto complete for it.
+
+http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/emacs_complete_en
 
 ==Enjoy it.==
  
