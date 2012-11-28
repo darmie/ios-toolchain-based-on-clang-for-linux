@@ -11,7 +11,7 @@ auto-complete-clang也修改了很多，现在可以较好的支持objc代码，
 
 =调整iPhoneOS5.0.sdk中的头文件位置=
 
-所有framework相关的头文件都在 */usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks*，这个位置的头文件，clang是找不到的，所以我们需要把头文件复制到SDK中的标准头文件位置。
+所有framework相关的头文件都在 */usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks* ，这个位置的头文件，clang是找不到的，所以我们需要把头文件复制到SDK中的标准头文件位置。
 
 {{{
 $cd /usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks/
