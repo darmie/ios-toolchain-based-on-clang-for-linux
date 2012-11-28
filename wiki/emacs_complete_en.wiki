@@ -2,7 +2,7 @@ Here I provides a emacs auto complete package based on auto-complete, auto-compl
 
 I had add some objc snippet to yasnippet to help you write code more quick and convenient.
 
-Also auto-complete-clang.el had been modified a lot to make objc auto-complete better.
+Also auto-complete-clang.el had been modified a lot to make objc auto-complete better, for example, multi args function auto-complete.
 
 Assumption you did not had such mode installed for emacs. If you already had these mode installed, modified it according to your environment.
 
@@ -51,4 +51,3 @@ Run emacs, write some code, include proper header files.
 When you want to auto-complete symbols,  press <font color="red"> "Ctrl+Enter"</font>.
 
 You can use 'tab' key to jump to next args.
-
