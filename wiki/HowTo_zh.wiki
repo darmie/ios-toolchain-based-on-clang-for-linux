@@ -1,6 +1,7 @@
 =Linux系统基于clang的ios toolchain=
 
 <font color="blue">Cjacker <cjacker@gmail.com> 2012-11-26 </font>
+
 Clang提供了较完整的Objective C 2.0支持，包括了blocks等gcc不支持的高级特性。
 
 这里提供了一个完整的说明，一步一步的在Linux系统上构建一个基于clang的iOS工具链和开发环境。
@@ -147,7 +148,7 @@ ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bund
 
 还有一个常见的 <a href="http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/UICatalog.tar.gz">UICatalog.tar.gz</a>示例代码，也可以尝试一下。
 
-==iOS API 文档==
+==iOS API 文档(可选)==
 http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
 解压:
@@ -157,6 +158,10 @@ cd com.*iOSLibrary.docset/Contents/Resources/Documents/
 firefox ./index.html
 }}}
 
+==Emacs自动补全设置(可选)==
+如果你使用emacs，也可以配置emacs进行iOS API的自动补全。
+
+http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/emacs_complete_en
 
 ==Enjoy it.==
  
