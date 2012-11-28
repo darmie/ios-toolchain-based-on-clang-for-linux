@@ -6,7 +6,8 @@ Also auto-complete-clang.el had been modified a lot to make objc auto-complete b
 
 Assumption you did not had such mode installed for emacs. If you already had these mode installed, modified it according to your environment.
 
-Assumption you installed all toolchain components as "Howto". If not, you need change the path as where they installed.
+Assumption you installed all toolchain components as "Howto". If not, you need change the path as where they installed. also include the iphone sdk path in .emacs.
+
 
 =Fix header locations in iPhoneOS5.0.sdk=
 All framworks header files installed in   */usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks* , to help clang find proper header files, we need copy all framework headers to standard include path.
