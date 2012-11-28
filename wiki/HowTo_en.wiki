@@ -59,7 +59,7 @@ or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-lin
 
 ==Step 4: The utilities==
 ===ldid, the code sign tool===
-ldid is codesign tool from saurik. Here is a modified version to support Mach-O armv7 binary produced by clang/cctools. also with other changes to find 'arm-apple-ios-codesign_allocate' properly.
+ldid is codesign tool from saurik. Here is a modified version with some changes to find 'arm-apple-ios-codesign_allocate' properly.
 
 Download 'ldid-1.0.611.tar.bz2' from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.611.tar.bz2
 
