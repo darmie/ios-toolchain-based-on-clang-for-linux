@@ -114,7 +114,7 @@ clang++ -target arm-apple-ios -isysroot $IPHONEOS_SDK $@
 chmod +x /usr/bin/ios-clang
 chmod +x /usr/bin/ios-clang++
 }}}
-*注* ： 如果你使用iPhone 4.2 SDK，你可能还需要加入 *-arch armv6* ，否则ldid可能会签名失败。
+
 
 
 ==为iOS编译一个简单的应用==
