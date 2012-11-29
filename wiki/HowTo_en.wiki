@@ -23,9 +23,7 @@ Before we start, you need a workable C/C++ compiler installed.
 
 ==Step 1 : The compiler==
 
-If your distribution already provides  clang/llvm packages，be sure it is 3.1 release or above.  Lower version may also work but not tested. 
-
-clang/llvm 3.1 is recommended.
+Clang/llvm 3.1 release is recommended, If your distribution already provides  clang/llvm packages，be sure it is 3.1 release or above.  Lower version may also work but not tested. 
 
 If you decide to build clang/llvm from scratch, please refer to <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_en"> this link</a>.
 
