@@ -72,17 +72,17 @@ $make install
 
 ===proj2make, the xcode project converter ===
 proj2make is a xcode project converter I modified a lot from pbtomake, it can convert ios xcode project to the proper Makefile that we need.
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/proj2make-4.1.tar.gz
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/proj2make-4.2.tar.gz
 {{{
-$tar zxvf proj2make-4.1.tar.gz
-$cd proj2make-4.1
+$tar zxvf proj2make-4.2.tar.gz
+$cd proj2make-4.2
 $make
 $install -m 0755 proj2make /usr/bin
 }}}
 
 If you want to convert a xcode project, enter the folder of that project, and run
 {{{
-$proj2make
+$proj2make -i *.xcodeproj
 }}}
 
 *NOTE* : It does not handle/compile .xib file or storyboard files.
