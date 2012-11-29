@@ -26,6 +26,9 @@ Download the patch from:
 
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/clang-iphoneos-linker.patch
 
+For clang/llvm 3.1 version ,you need this patch.
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/clang-iphoneos-linker-for-3.1.patch
+
 This patch fix a problem:
 
 1. Clang will link to crt1.3.1.o and there is a symbol missing in this file, and need link to dylib1.o also in Makefile, so we directly link to crt1.o.
