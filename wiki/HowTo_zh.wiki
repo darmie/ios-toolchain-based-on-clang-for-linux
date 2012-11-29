@@ -31,7 +31,7 @@ Clang提供了较完整的Objective C 2.0支持，包括了blocks等gcc不支持
 ==Step 2 : 汇编器和链接器==
 
 我已经移植了OpenDarwin的cctools-836和ld64-85.2.2到Linux系统，移植的过程比较复杂，这里就不详细讲了。
-可以从这里下载到移植后的代码压缩包 : http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-for-linux.tar.gz
+可以从这里下载到移植后的代码压缩包 : http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.1-for-linux.tar.gz
 
 编译安装：
 
@@ -61,7 +61,7 @@ $tar xvf iPhoneOS5.0.sdk.tar.xz -C /usr/share
 ===ldid, 代码签名工具===
 ldid是saurik编些的一个代码签名工具，这里提供了一个修改过的版本，修复了一些问题，并加入了工程文件的支持。
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.611.tar.bz2
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.612.tar.gz
 
 编译安装：
 {{{	
