@@ -119,12 +119,13 @@ chmod +x /usr/bin/ios-clang++
 Currently, you already had a iOS toolchain include assembler/linker, compiler, SDK and utilities, you can start development now.
 For some special situation, for example, you need porting some codes with GCC-extensions, you may need a gcc compiler, this is the root cause why we may need llvm-gcc.
 
-Acctually, llvm provides a GCC plugin named 'dragonegg' to replaces GCC's optimizers and code generators with those from the LLVM project. But unfortunately,  gcc does support 'arm-apple-darwin9' as target. 
+Acctually, llvm provides a GCC plugin named 'dragonegg' to replaces GCC's optimizers and code generators with those from the LLVM project. But unfortunately,  gcc does support 'arm-apple-darwin9' as target， so we can not use GCC+dragonegg to support iOS development.
 
 Download llvm-gcc-4.2
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/llvm-gcc-for-ios-4.2.tar.xz
 
-Build it:
+Build it, NOTE!!!, the installation path is /opt/llvm-gcc to avoid replace files already installed by other packages. you should adjust configure args according to your environment.
+
 {{{
 $cd llvm-gcc-4.2
 $mkdir build
@@ -144,7 +145,6 @@ $make install
 You will get arm-apple-darwin9-gcc/arm-apple-darwin9-g++ in /opt/llvm-gcc/bin folders.
 Remember add your installation path to PATH env var.
 
-*NOTE* , you need adjust configure args according to your environment.
 </td>
 </table>
 
