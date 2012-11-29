@@ -31,7 +31,7 @@ If you decide to build clang/llvm from scratch, please refer to <a href="http://
 ==Step 2 : The assembler and linker==
 I had ported cctools-836 and ld64-85.2.2 from opendarwin to linux. the process how to merge/patch and porting is a little bit complicated, let's just skip it.
 
-Here the final tarbal: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-for-linux.tar.gz
+Here the final tarbal: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.1-for-linux.tar.gz
 
 Download and build it:
 
@@ -59,9 +59,9 @@ or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-lin
 
 ==Step 4: The utilities==
 ===ldid, the code sign tool===
-ldid is codesign tool from saurik. Here is a modified version with some changes to find 'arm-apple-darwin9-codesign_allocate' properly.
+ldid is codesign tool from saurik. Here is a modified version with some changes to find 'arm-apple-darwin9-codesign_allocate' properly, also add autoconf/automake support.
 
-Download 'ldid-1.0.611.tar.bz2' from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.611.tar.bz2
+Download 'ldid-1.0.611.tar.bz2' from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.612.tar.gz
 
 Build and install it:
 {{{	
