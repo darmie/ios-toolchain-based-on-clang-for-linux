@@ -26,6 +26,9 @@ $svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt -r 168581
 
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/clang-iphoneos-linker.patch
 
+对clang/llvm 3.1版本，需要使用这个补丁：
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/clang-iphoneos-linker-for-3.1.patch
 
 {{{
 $cd llvm-svn
