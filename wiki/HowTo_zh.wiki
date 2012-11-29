@@ -117,7 +117,41 @@ chmod +x /usr/bin/ios-clang
 chmod +x /usr/bin/ios-clang++
 }}}
 
+<table border="1">
+<td>
+==<font color="blue">安装llvm-gcc（可选）</font>==
+现在，我们已经完成了iOS工具链的搭建，包括了汇编器、链接器、编译器和SDK以及其他的辅助工具，现在的环境已经可以支持iOS应用的开发了。
 
+如果你希望迁移一些使用了GCC扩展的C/C++代码到iOS，可能还需要llvm-gcc。
+
+实际上，LLVM提供了一个叫Dragonegg的GCC插件来替换掉GCC的代码生成器，但是，gcc本身并不支持arm-apple-darwin9架构，所以，没办法通过GCC+dragonegg来替代llvm-gcc。
+
+
+从这里下载llvm-gcc-4.2版本
+
+ http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/llvm-gcc-for-ios-4.2.tar.xz
+
+编译安装，注意，这里llvm-gcc的配置参数中安装路径是/opt/llvm-gcc，这是为了避免llvm-gcc覆盖系统中已有的文件。其他的配置参数，请按照你实际的安装情况进行修改。
+
+{{{
+$cd llvm-gcc-4.2
+$mkdir build
+$cd build
+$../configure  --target=arm-apple-darwin9 \
+    --prefix=/opt/llvm-gcc \
+    --with-sysroot=/usr/share/iPhoneOS5.0.sdk \
+    --enable-languages=c,c++,objc,obj-c++ \
+    --with-as=/usr/bin/arm-apple-darwin9-as \
+    --with-ld=/usr/bin/arm-apple-darwin9-ld \
+    --enable-wchar_t=no \
+    --with-gxx-include-dir=/usr/include/c++/4.2.1
+$make
+$make install
+}}}
+
+安装后，在/opt/llvm-gcc/bin目录，会有arm-apple-darwin9-gcc命令等，记得将这个路径加到你系统的PATH环境变量。
+</td>
+</table>
 
 ==为iOS编译一个简单的应用==
 
