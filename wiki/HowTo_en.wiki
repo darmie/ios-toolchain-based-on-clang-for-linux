@@ -113,7 +113,9 @@ chmod +x /usr/bin/ios-clang
 chmod +x /usr/bin/ios-clang++
 }}}
 
-==Install llvm-gcc(Optional)==
+<table border="1">
+<td>
+==<font color="blue">Install llvm-gcc(Optional)</font>==
 Currently, you already had a iOS toolchain include assembler/linker, compiler, SDK and utilities, you can start development now.
 For some special situation, for example, you need porting some codes with GCC-extensions, you may need a gcc compiler, this is the root cause why we may need llvm-gcc.
 
@@ -139,8 +141,12 @@ $make
 $make install
 }}} 
 
-*NOTE* , you need adjust configure args according to your environment.
+You will get arm-apple-darwin9-gcc/arm-apple-darwin9-g++ in /opt/llvm-gcc/bin folders.
+Remember add your installation path to PATH env var.
 
+*NOTE* , you need adjust configure args according to your environment.
+</td>
+</table>
 
 ==Build app for iOS.==
 Download helloworld.tar.gz from:
