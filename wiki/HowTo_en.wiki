@@ -31,7 +31,7 @@ If you decide to build clang/llvm from scratch, please refer to <a href="http://
 ==Step 2 : The assembler and linker==
 I had ported cctools-836 and ld64-85.2.2 from opendarwin to linux. the process how to merge/patch and porting is a little bit complicated, let's just skip it.
 
-Here the final tarbal: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.1-for-linux.tar.gz
+Here the final tarbal: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.2-for-linux.tar.gz
 
 Download and build it:
 
@@ -87,31 +87,21 @@ $proj2make -i *.xcodeproj
 
 *NOTE* : It does not handle/compile .xib file or storyboard files.
 
-===ios-clang/ios-clang++===
+===iPhoneSDK-utils===
 To use clang compiler to compile sourcecode for IOS, some  args need to be passed to clang, '--target arm-apple-darwin9' tell clang to find proper assembler and linker, '-isysroot <sdk full path>' tell clang use <sdk full path> as root directory to find libraries and headers.
 
-Here we create two scripts to wrap it.
+Here provides a wrapper program to check your environment automatically, if it can not find  iPhone SDK, it will prompt to let you enter the full SDK path.
 
-<font color="blue">/usr/bin/ios-clang</font>
-{{{
-#!/bin/bash
-export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
-export IPHONEOS_DEPLOYMENT_TARGET=5.0
-clang -target arm-apple-darwin9 -isysroot $IPHONEOS_SDK $@
-}}}
-
-<font color="blue">/usr/bin/ios-clang++</font>
-{{{
-#!/bin/bash
-export IPHONEOS_SDK="/usr/share/iPhoneOS5.0.sdk"
-export IPHONEOS_DEPLOYMENT_TARGET=5.0
-clang++ -target arm-apple-darwin9 -isysroot $IPHONEOS_SDK $@
-}}}
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneSDK-utils-0.1.tar.gz
 
 {{{
-chmod +x /usr/bin/ios-clang
-chmod +x /usr/bin/ios-clang++
+$configure --prefix=/usr
+$make
+$make install
 }}}
+
+After installation finished ,you will get "ios-clang"/"ios-clang++", this is the compiler wrapper you should use will above toolchain.
+
 
 <table border="1">
 <td>
@@ -159,7 +149,7 @@ $tar zxvf helloworld.tar.gz
 $cd helloworld
 $make
 $make dist
-$make install
+$make install IPHONE_IP=<your own device IP>
 }}}
 
 <font color="red">
