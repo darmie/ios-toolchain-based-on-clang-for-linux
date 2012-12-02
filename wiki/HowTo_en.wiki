@@ -72,10 +72,10 @@ $make install
 
 ===proj2make, the xcode project converter ===
 proj2make is a xcode project converter I modified a lot from pbtomake, it can convert ios xcode project to the proper Makefile that we need.
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/proj2make-4.2.tar.gz
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/proj2make-4.3.tar.gz
 {{{
-$tar zxvf proj2make-4.2.tar.gz
-$cd proj2make-4.2
+$tar zxvf proj2make-4.3.tar.gz
+$cd proj2make-4.3
 $make
 $install -m 0755 proj2make /usr/bin
 }}}
@@ -176,11 +176,6 @@ cd com.*iOSLibrary.docset/Contents/Resources/Documents/
 firefox ./index.html
 }}}
 
-
-==Emacs auto complete setup(Optional)==
-If you use emacs as your programming editor, you can set up auto complete for it.
-
-http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/emacs_complete_en
 
 ==Enjoy it.==
  
