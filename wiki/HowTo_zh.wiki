@@ -63,7 +63,7 @@ $tar xvf iPhoneOS5.0.sdk.tar.xz -C /usr/share
 ===ldid, 代码签名工具===
 ldid是saurik编些的一个代码签名工具，这里提供了一个修改过的版本，修复了一些问题，并加入了工程文件的支持。
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.612.tar.gz
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.613.tar.bz2
 
 编译安装：
 {{{	
