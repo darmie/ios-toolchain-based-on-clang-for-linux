@@ -75,11 +75,11 @@ $make install
 ===proj2make, xcode工程到makefile转换器===
 proj2make是我从pbtomake修改而来的xcode工程转换器，它可以将xcode的ios工程转成我们需要的Makefile，并能够支持make dist/make install等操作。
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/proj2make-4.2.tar.gz
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/proj2make-4.3.tar.gz
 
 {{{
-$tar zxvf proj2make-4.2.tar.gz
-$cd proj2make-4.2
+$tar zxvf proj2make-4.3.tar.gz
+$cd proj2make-4.3
 $make
 $install -m 0755 proj2make /usr/bin
 }}}
@@ -183,11 +183,6 @@ xar -xf com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 cd com.*iOSLibrary.docset/Contents/Resources/Documents/
 firefox ./index.html
 }}}
-
-==Emacs自动补全设置(可选)==
-如果你使用emacs，也可以配置emacs进行iOS API的自动补全。
-
-http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/emacs_complete_en
 
 ==Enjoy it.==
  
