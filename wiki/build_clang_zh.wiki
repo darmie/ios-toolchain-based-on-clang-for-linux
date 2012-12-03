@@ -4,20 +4,20 @@ llvm官方提供了一份指南，详细的说明了怎么从svn代码构建clan
 
 http://llvm.org/docs/GettingStarted.html#checkout
 
-截止本文编写的时候，SVN r168581可以正常工作。
+截止本文编写的时候，SVN r169114可以正常工作。
 
 ===1, 取回代码===
 {{{
 $cd where-you-want-llvm-to-live
-$svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm-svn -r 168581
+$svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm-svn -r 169114
 
 $cd where-you-want-llvm-to-live
 $cd llvm-svn/tools
-$svn co http://llvm.org/svn/llvm-project/cfe/trunk clang -r 168581
+$svn co http://llvm.org/svn/llvm-project/cfe/trunk clang -r 169114
 
 $cd where-you-want-llvm-to-live
 $cd llvm-svn/projects
-$svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt -r 168581
+$svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt -r 169114
 }}}
 
 ===2. 打上link arg补丁===
