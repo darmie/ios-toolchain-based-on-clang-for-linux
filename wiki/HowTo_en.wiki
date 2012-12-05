@@ -63,7 +63,7 @@ or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-lin
 ===ldid, the code sign tool===
 ldid is codesign tool from saurik. Here is a modified version with some changes to find 'arm-apple-darwin9-codesign_allocate' properly, also add autoconf/automake support.
 
-Download 'ldid-1.0.611.tar.bz2' from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.613.tar.bz2
+Download from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.613.tar.bz2
 
 Build and install it:
 {{{	
