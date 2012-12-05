@@ -2,7 +2,7 @@
 
 <font color="blue">Cjacker <cjacker@gmail.com> 2012-11-26 </font>
 
-Clang for linux provides almost fully implementation for Objective C 2.0 includes blocks and other features gcc not supported.
+Clang for linux provides a fully implementation for Objective C 2.0 includes blocks and other features gcc not supported.
 
 Here is an tutorial of  'How to setup iOS toolchain based on clang for linux'.
 
@@ -10,7 +10,7 @@ Actually, the iOS toolchain under linux is as same and simple as other crosscomp
 
   # *Assembler and Linker*: cctools and ld64 from opendarwin.
   # *Compiler*: here we use llvm/clang.
-  # *SDK*, contains headers and libraries.
+  # *SDK*, include headers and libraries.
   # *Utilities*: such as ldid codesign tool.
 
 You also need a iOS device jailbreaked and with ssh installed.
@@ -61,4 +61,170 @@ or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-lin
 
 ==Step 4: The utilities==
 ===ldid, the code sign tool===
-ldid is 
+ldid is codesign tool from saurik. Here is a modified version with some changes to find 'arm-apple-darwin9-codesign_allocate' properly, also add autoconf/automake support.
+
+Download 'ldid-1.0.611.tar.bz2' from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.613.tar.bz2
+
+Build and install it:
+{{{	
+$./configure --prefix=/usr
+$make
+$make install
+}}}
+
+===iPhoneSDK-utils===
+====clang wrapper====
+To use clang compiler to compile sourcecode for IOS, some  args need to be passed to clang, '--target arm-apple-darwin9' tell clang to find proper assembler and linker, '-isysroot <sdk full path>' tell clang use <sdk full path> as root directory to find libraries and headers.
+
+Here provides a wrapper program to check your environment automatically, if it can not find  iPhone SDK, it will prompt to let you enter the full SDK path.
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneSDK-utils-0.2.tar.gz
+
+{{{
+$configure --prefix=/usr
+$make
+$make install
+}}}
+
+After installation finished ,you will get "ios-clang"/"ios-clang++", this is the compiler wrapper you should use will above toolchain.
+
+When you first invoke ios-clang/ios-clang++, you will be prompted to input your iPhoneOS SDK absolute path if it can not be found automatically.
+
+====ios-createProject====
+This is a convinent tool provided by iPhoneSDK-utils to help users to create App quickly.
+
+After iPhoneSDK-utils installed, try:
+
+{{{
+$ios-createProject
+}}}
+
+You will get messages like this:
+{{{
+iPhone Project Createor
+---------------------------
+[0.] Application
+[1.] Command line utility
+[2.] Notification Center widget
+[3.] Example Player
+[4.] Example UICatalog
+Choose a Template:
+}}}
+
+====ios-genLocalization====
+This is another tool provided by iPhoneSDK-utils to make iOS App localized.
+Run it in your project folder, note you need supply an argument: "app" for normal Application, "wee" for Notification Center Widget.
+{{{
+$ios-genLocalization
+}}}
+
+You will get messages like this:
+{{{
+Localization tools for iPhone App
+
+Languages
+0 . English (English)
+1 . zh_CN (Simp. Chinese)
+2 . zh_TW (Trad. Chinese)
+3 . ko (Korean)
+4 . Japanese (Japanese)
+5 . German (German)
+6 . French (French)
+7 . Italian (Italian)
+8 . Spanish (Spanish)
+Please choose one language:
+}}}
+
+===proj2make, the xcode project converter ===
+proj2make is a xcode project converter I modified a lot from pbtomake, it can convert ios xcode project to the proper Makefile that we need.
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/proj2make-4.3.tar.gz
+{{{
+$tar zxvf proj2make-4.3.tar.gz
+$cd proj2make-4.3
+$make
+$install -m 0755 proj2make /usr/bin
+}}}
+
+If you want to convert a xcode project, enter the folder of that project, and run
+{{{
+$proj2make -i *.xcodeproj
+}}}
+
+*NOTE* : It does not handle/compile .xib file or storyboard files.
+
+<table border="1">
+<td>
+==<font color="blue">Install llvm-gcc(Optional)</font>==
+Currently, you already had a iOS toolchain include assembler/linker, compiler, SDK and utilities, you can start development now.
+For some special situation, for example, you need porting some codes with GCC-extensions, you may need a gcc compiler, this is the root cause why we may need llvm-gcc.
+
+Acctually, llvm provides a GCC plugin named 'dragonegg' to replaces GCC's optimizers and code generators with those from the LLVM project. But unfortunately,  gcc does support 'arm-apple-darwin9' as target， so we can not use GCC+dragonegg to support iOS development.
+
+Download llvm-gcc-4.2
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/llvm-gcc-for-ios-4.2.tar.xz
+
+Build it, NOTE!!!, the installation path is /opt/llvm-gcc to avoid replace files already installed by other packages. you should adjust configure args according to your environment.
+
+{{{
+$cd llvm-gcc-4.2
+$mkdir build
+$cd build
+$../configure  --target=arm-apple-darwin9 \
+    --prefix=/opt/llvm-gcc \
+    --with-sysroot=/usr/share/iPhoneOS5.0.sdk \
+    --enable-languages=c,c++,objc,obj-c++ \
+    --with-as=/usr/bin/arm-apple-darwin9-as \
+    --with-ld=/usr/bin/arm-apple-darwin9-ld \
+    --enable-wchar_t=no \
+    --with-gxx-include-dir=/usr/include/c++/4.2.1
+$make
+$make install
+}}} 
+
+You will get arm-apple-darwin9-gcc/arm-apple-darwin9-g++ in /opt/llvm-gcc/bin folders.
+Remember add your installation path to PATH env var.
+
+</td>
+</table>
+
+==Build app for iOS.==
+Download helloworld.tar.gz from:
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/helloworld.tar.gz
+
+Extract it and build/install it, you need change Makefile to set <font color="blue">IPHONE_IP</font> to your own IPHONE_IP.
+
+{{{
+$tar zxvf helloworld.tar.gz 
+$cd helloworld
+$make
+$make dist
+$make install IPHONE_IP=<your own device IP>
+}}}
+
+<font color="red">
+*If ld failed with this message , please add <font color="blue">LDFLAGS += -ldylib1.o</font> to your project's Makefile. * </font>
+
+A patch to fix this problem had been provided in <a href = "http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en"> "Build clang from scratch" </a> Section.
+
+{{{
+ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bundle1.o)
+}}}
+
+
+
+There is also a <a href="http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/UICatalog.tar.gz">UICatalog.tar.gz</a> sample code provided.
+
+
+==the iOS API documents.(Optional)==
+Download API files from:http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
+
+Extract it:
+{{{
+xar -xf com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
+cd com.*iOSLibrary.docset/Contents/Resources/Documents/
+firefox ./index.html
+}}}
+
+
+==Enjoy it.==
+ 
