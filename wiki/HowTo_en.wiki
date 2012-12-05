@@ -78,7 +78,7 @@ To use clang compiler to compile sourcecode for IOS, some  args need to be passe
 
 Here provides a wrapper program to check your environment automatically, if it can not find  iPhone SDK, it will prompt to let you enter the full SDK path.
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneSDK-utils-0.1.tar.gz
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneSDK-utils-0.2.tar.gz
 
 {{{
 $configure --prefix=/usr
