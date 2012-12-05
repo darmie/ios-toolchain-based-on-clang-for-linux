@@ -72,6 +72,69 @@ $make
 $make install
 }}}
 
+===iPhoneSDK-utils===
+====clang wrapper====
+To use clang compiler to compile sourcecode for IOS, some  args need to be passed to clang, '--target arm-apple-darwin9' tell clang to find proper assembler and linker, '-isysroot <sdk full path>' tell clang use <sdk full path> as root directory to find libraries and headers.
+
+Here provides a wrapper program to check your environment automatically, if it can not find  iPhone SDK, it will prompt to let you enter the full SDK path.
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneSDK-utils-0.1.tar.gz
+
+{{{
+$configure --prefix=/usr
+$make
+$make install
+}}}
+
+After installation finished ,you will get "ios-clang"/"ios-clang++", this is the compiler wrapper you should use will above toolchain.
+
+When you first invoke ios-clang/ios-clang++, you will be prompted to input your iPhoneOS SDK absolute path if it can not be found automatically.
+
+====ios-createProject====
+This is a convinent tool provided by iPhoneSDK-utils to help users to create App quickly.
+
+After iPhoneSDK-utils installed, try:
+
+{{{
+$ios-createProject
+}}}
+
+You will get messages like this:
+{{{
+iPhone Project Createor
+---------------------------
+[0.] Application
+[1.] Command line utility
+[2.] Notification Center widget
+[3.] Example Player
+[4.] Example UICatalog
+Choose a Template:
+}}}
+
+====ios-genLocalization====
+This is another tool provided by iPhoneSDK-utils to make iOS App localized.
+Run it in your project folder, note you need supply an argument: "app" for normal Application, "wee" for Notification Center Widget.
+{{{
+$ios-genLocalization
+}}}
+
+You will get messages like this:
+{{{
+Localization tools for iPhone App
+
+Languages
+0 . English (English)
+1 . zh_CN (Simp. Chinese)
+2 . zh_TW (Trad. Chinese)
+3 . ko (Korean)
+4 . Japanese (Japanese)
+5 . German (German)
+6 . French (French)
+7 . Italian (Italian)
+8 . Spanish (Spanish)
+Please choose one language:
+}}}
+
 ===proj2make, the xcode project converter ===
 proj2make is a xcode project converter I modified a lot from pbtomake, it can convert ios xcode project to the proper Makefile that we need.
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/proj2make-4.3.tar.gz
@@ -88,22 +151,6 @@ $proj2make -i *.xcodeproj
 }}}
 
 *NOTE* : It does not handle/compile .xib file or storyboard files.
-
-===iPhoneSDK-utils===
-To use clang compiler to compile sourcecode for IOS, some  args need to be passed to clang, '--target arm-apple-darwin9' tell clang to find proper assembler and linker, '-isysroot <sdk full path>' tell clang use <sdk full path> as root directory to find libraries and headers.
-
-Here provides a wrapper program to check your environment automatically, if it can not find  iPhone SDK, it will prompt to let you enter the full SDK path.
-
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneSDK-utils-0.1.tar.gz
-
-{{{
-$configure --prefix=/usr
-$make
-$make install
-}}}
-
-After installation finished ,you will get "ios-clang"/"ios-clang++", this is the compiler wrapper you should use will above toolchain.
-
 
 <table border="1">
 <td>
