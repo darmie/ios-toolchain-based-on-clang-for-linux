@@ -17,7 +17,7 @@ $mkdir build
 $cd build
 $../configure  --target=arm-apple-darwin11 \
     --prefix=/opt/llvm-gcc \
-    --with-sysroot=/usr/share/iPhoneOS5.0.sdk \
+    --with-sysroot=/usr/share/iPhoneOS6.0.sdk \
     --enable-languages=c,c++,objc,obj-c++ \
     --with-as=/usr/bin/arm-apple-darwin11-as \
     --with-ld=/usr/bin/arm-apple-darwin11-ld \
