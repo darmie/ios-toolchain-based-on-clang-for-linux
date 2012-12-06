@@ -31,29 +31,33 @@ If you decide to build clang/llvm from scratch, please refer to <a href="http://
 
 
 ==Step 2 : The assembler and linker==
-I had ported cctools-836 and ld64-85.2.2 from opendarwin to linux. the process how to merge/patch and porting is a little bit complicated, let's just skip it.
+I had ported cctools-836 and ld64-128.2 from opendarwin to linux. the process how to merge/patch and porting is a little bit complicated, let's just skip it.
 
-Here the final tarbal: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.2-for-linux.tar.gz
+Here the final tarbal:http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-ld64-128.2-for-linux.tar.gz
+
+<font color="red"> *You need use Clang to compile it.</font>
 
 Download and build it:
 
 {{{
+$export CC=clang
+$export CXX=clang++
 $export CFLAGS=-fno-stack-protector
 $export CXXFLAGS=-fno-stack-protector
-$./configure --target=arm-apple-darwin9 --prefix=/usr
+$./configure --target=arm-apple-darwin11 --prefix=/usr
 $make
 $make install
 }}}
 
-<font color="red"> *NOTE* : if you use a different prefix, you should linke all "arm-apple-darwin9-`*`" to /usr/bin, otherwise clang can not find proper assembler and linker.  </font>
+<font color="red"> *NOTE* : if you use a different prefix, you should linke all "arm-apple-darwin11-`*`" to /usr/bin, otherwise clang can not find proper assembler and linker.  </font>
 
 ==Step 3: The iPhoneOS SDK.==
 
-You can use the pre-generated 5.0 SDK from : http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
+You can use the pre-generated 6.0 SDK from : http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS6.0.sdk.tar.gz
 
 Extract it to */usr/share"
 {{{
-$tar xvf iPhoneOS5.0.sdk.tar.xz -C /usr/share
+$tar xvf iPhoneOS6.0.sdk.tar.xz -C /usr/share
 }}}
 
 or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en">this link</a> to generate it by yourself
@@ -61,7 +65,7 @@ or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-lin
 
 ==Step 4: The utilities==
 ===ldid, the code sign tool===
-ldid is codesign tool from saurik. Here is a modified version with some changes to find 'arm-apple-darwin9-codesign_allocate' properly, also add autoconf/automake support.
+ldid is codesign tool from saurik. Here is a modified version with some changes to find 'arm-apple-darwin11-codesign_allocate' properly, also add autoconf/automake support.
 
 Download from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.613.tar.bz2
 
@@ -74,11 +78,11 @@ $make install
 
 ===iPhoneSDK-utils===
 ====clang wrapper====
-To use clang compiler to compile sourcecode for IOS, some  args need to be passed to clang, '--target arm-apple-darwin9' tell clang to find proper assembler and linker, '-isysroot <sdk full path>' tell clang use <sdk full path> as root directory to find libraries and headers.
+To use clang compiler to compile sourcecode for IOS, some  args need to be passed to clang, '--target arm-apple-darwin11' tell clang to find proper assembler and linker, '-isysroot <sdk full path>' tell clang use <sdk full path> as root directory to find libraries and headers.
 
 Here provides a wrapper program to check your environment automatically, if it can not find  iPhone SDK, it will prompt to let you enter the full SDK path.
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneSDK-utils-0.2.tar.gz
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneSDK-utils-0.4.tar.gz
 
 {{{
 $configure --prefix=/usr
@@ -158,7 +162,7 @@ $proj2make -i *.xcodeproj
 Currently, you already had a iOS toolchain include assembler/linker, compiler, SDK and utilities, you can start development now.
 For some special situation, for example, you need porting some codes with GCC-extensions, you may need a gcc compiler, this is the root cause why we may need llvm-gcc.
 
-Acctually, llvm provides a GCC plugin named 'dragonegg' to replaces GCC's optimizers and code generators with those from the LLVM project. But unfortunately,  gcc does support 'arm-apple-darwin9' as target， so we can not use GCC+dragonegg to support iOS development.
+Acctually, llvm provides a GCC plugin named 'dragonegg' to replaces GCC's optimizers and code generators with those from the LLVM project. But unfortunately,  gcc does support 'arm-apple-darwin11' as target， so we can not use GCC+dragonegg to support iOS development.
 
 Download llvm-gcc-4.2
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/llvm-gcc-for-ios-4.2.tar.xz
@@ -169,19 +173,19 @@ Build it, NOTE!!!, the installation path is /opt/llvm-gcc to avoid replace files
 $cd llvm-gcc-4.2
 $mkdir build
 $cd build
-$../configure  --target=arm-apple-darwin9 \
+$../configure  --target=arm-apple-darwin11 \
     --prefix=/opt/llvm-gcc \
     --with-sysroot=/usr/share/iPhoneOS5.0.sdk \
     --enable-languages=c,c++,objc,obj-c++ \
-    --with-as=/usr/bin/arm-apple-darwin9-as \
-    --with-ld=/usr/bin/arm-apple-darwin9-ld \
+    --with-as=/usr/bin/arm-apple-darwin11-as \
+    --with-ld=/usr/bin/arm-apple-darwin11-ld \
     --enable-wchar_t=no \
     --with-gxx-include-dir=/usr/include/c++/4.2.1
 $make
 $make install
 }}} 
 
-You will get arm-apple-darwin9-gcc/arm-apple-darwin9-g++ in /opt/llvm-gcc/bin folders.
+You will get arm-apple-darwin11-gcc/arm-apple-darwin11-g++ in /opt/llvm-gcc/bin folders.
 Remember add your installation path to PATH env var.
 
 </td>
