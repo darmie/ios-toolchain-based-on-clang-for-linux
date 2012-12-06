@@ -157,40 +157,6 @@ $proj2make -i *.xcodeproj
 
 *NOTE* : It does not handle/compile .xib file or storyboard files.
 
-<table border="1">
-<td>
-==<font color="blue">Install llvm-gcc(Optional)</font>==
-Currently, you already had a iOS toolchain include assembler/linker, compiler, SDK and utilities, you can start development now.
-For some special situation, for example, you need porting some codes with GCC-extensions, you may need a gcc compiler, this is the root cause why we may need llvm-gcc.
-
-Acctually, llvm provides a GCC plugin named 'dragonegg' to replaces GCC's optimizers and code generators with those from the LLVM project. But unfortunately,  gcc does support 'arm-apple-darwin11' as target， so we can not use GCC+dragonegg to support iOS development.
-
-Download llvm-gcc-4.2
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/llvm-gcc-for-ios-4.2.tar.xz
-
-Build it, NOTE!!!, the installation path is /opt/llvm-gcc to avoid replace files already installed by other packages. you should adjust configure args according to your environment.
-
-{{{
-$cd llvm-gcc-4.2
-$mkdir build
-$cd build
-$../configure  --target=arm-apple-darwin11 \
-    --prefix=/opt/llvm-gcc \
-    --with-sysroot=/usr/share/iPhoneOS5.0.sdk \
-    --enable-languages=c,c++,objc,obj-c++ \
-    --with-as=/usr/bin/arm-apple-darwin11-as \
-    --with-ld=/usr/bin/arm-apple-darwin11-ld \
-    --enable-wchar_t=no \
-    --with-gxx-include-dir=/usr/include/c++/4.2.1
-$make
-$make install
-}}} 
-
-You will get arm-apple-darwin11-gcc/arm-apple-darwin11-g++ in /opt/llvm-gcc/bin folders.
-Remember add your installation path to PATH env var.
-
-</td>
-</table>
 
 ==Build app for iOS.==
 run ios-createProject
