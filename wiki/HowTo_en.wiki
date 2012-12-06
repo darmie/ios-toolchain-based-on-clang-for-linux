@@ -53,7 +53,7 @@ $make install
 
 ==Step 3: The iPhoneOS SDK.==
 
-You can use the pre-generated 6.0 SDK from : http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS6.0.sdk.tar.gz
+You can use the pre-generated 6.0 SDK from : http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS6.0.sdk.tar.xz
 
 Extract it to */usr/share"
 {{{
@@ -62,6 +62,7 @@ $tar xvf iPhoneOS6.0.sdk.tar.xz -C /usr/share
 
 or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en">this link</a> to generate it by yourself
 
+App compiles with iOS 6.0 sdk should be runnable under 4.x,5.x if you did not use iOS6 new API and frameworks.
 
 ==Step 4: The utilities==
 ===ldid, the code sign tool===
