@@ -164,7 +164,7 @@ run ios-createProject
 $ios-createProject
 }}}
 
-then input 0 and the Project name "HelloWorld", enter HelloWorld folder
+then input 0 and the Project name "HelloWorld" to create a helloworld App, enter HelloWorld folder
 
 run:
 {{{
