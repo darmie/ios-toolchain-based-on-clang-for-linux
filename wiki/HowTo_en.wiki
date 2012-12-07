@@ -33,18 +33,20 @@ If you decide to build clang/llvm from scratch, please refer to <a href="http://
 ==Step 2 : The assembler and linker==
 I had ported cctools-836 and ld64-128.2 from opendarwin to linux. the process how to merge/patch and porting is a little bit complicated, let's just skip it.
 
-Here the final tarbal:http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-ld64-128.2-for-linux.tar.gz
+Here the final tarbal:
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.10-ld64-128.2-for-linux.tar.gz
 
 <font color="red"> *You need use Clang to compile it.</font>
 
-Download and build it:
+Download and build it: LDFLAGS ported to the path contains libLTO.so, change it according to your clang/llvm configurations.
 
 {{{
 $export CC=clang
 $export CXX=clang++
 $export CFLAGS=-fno-stack-protector
 $export CXXFLAGS=-fno-stack-protector
-$./configure --target=arm-apple-darwin11 --prefix=/usr
+$LDFLAGS+=/usr/lib/llvm ./configure --target=arm-apple-darwin11 --prefix=/usr
 $make
 $make install
 }}}
