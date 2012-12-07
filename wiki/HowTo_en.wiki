@@ -81,7 +81,7 @@ App compiles with iOS 6.0 sdk should be runnable under 4.x,5.x if you did not us
 ===ldid, the code sign tool===
 ldid is codesign tool from saurik. Here is a modified version with some changes to find 'arm-apple-darwin11-codesign_allocate' properly, also add autoconf/automake support.
 
-Download from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.613.tar.bz2
+Download from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.614.tar.bz2
 
 Build and install it:
 {{{	
