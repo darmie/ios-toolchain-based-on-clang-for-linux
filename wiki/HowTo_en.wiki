@@ -39,7 +39,7 @@ http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.1
 
 Download and build it: 
 
-LDFLAGS ported to the path contains libLTO.so, change it according to your clang/llvm configurations.
+LDFLAGS points to the path contains libLTO.so, change it according to your clang/llvm configurations.
 
 <font color="red">*NOTE*
   # make sure clang/llvm is installed and works. clang will be used as a compiler.
