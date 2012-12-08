@@ -349,7 +349,7 @@ int main(int argc, char **argv)
   string version = "5.0";
 
   int should_init = 0;
-  if(endWith(string(argv[0]),"iosclangwrapper"))
+  if(endWith(string(argv[0]),"wrapper"))
     should_init = 1;
 
   //if ~/.iphonesdk not exists, detect it.  
