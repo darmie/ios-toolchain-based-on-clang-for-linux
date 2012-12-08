@@ -87,17 +87,17 @@ for iOS 4.x, you may need pass "-arch armv6" arg to compilers.
 ==<font color="blue"> Step 4: The utilities </font>==
 iPhoneSDK-utils provides below utilities:
 
-  #*ldid*: Codesign tool, with armv7/armv7s support and other changes from orig version.
+  # *ldid* : Codesign tool, with armv7/armv7s support and other changes from orig version.
 
-  #*Clang wrapper*: ios-clang, ios-clang++ to automatically find SDK and construct proper compilation args.
+  # *Clang wrapper* : ios-clang, ios-clang++ to automatically find SDK and construct proper compilation args.
 
-  #*proj2make*: convert xcodeproj to proper Makefiles.
+  # *proj2make* : convert xcodeproj to proper Makefiles.
  
-  #*fixpng*: fix png files optimized by iOS.
+  # *fixpng* : fix png files optimized by iOS.
  
-  #*ios-createProject*: project templates.
+  # *ios-createProject* : project templates.
 
-  #*ios-genLocalization*: localize iOS app easily.
+  # *ios-genLocalization* : localize iOS app easily.
 
 Download from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneSDK-utils-0.5.tar.gz
 
