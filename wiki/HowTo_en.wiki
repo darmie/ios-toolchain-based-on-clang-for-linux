@@ -68,7 +68,7 @@ Since there is no file conflicts with system files, /usr as a prefix should be y
 
 You can use the pre-generated SDKs (with Arc support, header positions fixed).
 
-for iOS 4.x: 
+for iOS 4.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS4.2.sdk.tar.xz
 
 for iOS 5.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
 
