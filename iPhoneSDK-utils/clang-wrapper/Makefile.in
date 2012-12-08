@@ -36,7 +36,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = iPhoneSDK$(EXEEXT)
+bin_PROGRAMS = ios-clang-wrapper$(EXEEXT)
 subdir = clang-wrapper
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -48,9 +48,10 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_iPhoneSDK_OBJECTS = iPhoneSDK.$(OBJEXT)
-iPhoneSDK_OBJECTS = $(am_iPhoneSDK_OBJECTS)
-iPhoneSDK_DEPENDENCIES =
+am_ios_clang_wrapper_OBJECTS = clangwrapper.$(OBJEXT)
+ios_clang_wrapper_OBJECTS = $(am_ios_clang_wrapper_OBJECTS)
+am__DEPENDENCIES_1 =
+ios_clang_wrapper_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -60,8 +61,8 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(iPhoneSDK_SOURCES)
-DIST_SOURCES = $(iPhoneSDK_SOURCES)
+SOURCES = $(ios_clang_wrapper_SOURCES)
+DIST_SOURCES = $(ios_clang_wrapper_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -109,11 +110,16 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 PNG_LIBS = @PNG_LIBS@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+XML_CFLAGS = @XML_CFLAGS@
+XML_LIBS = @XML_LIBS@
 ZLIB_LIBS = @ZLIB_LIBS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -166,13 +172,9 @@ AM_CPPFLAGS = \
 	-DLIBDIR=\""$(libdir)"\" 			\
 	$(NULL)
 
-iPhoneSDK_SOURCES = iPhoneSDK.cpp
-iPhoneSDK_LDADD = \
-	$(NULL)
-
-EXTRA_DIST = \
-	xalloc.h
-
+ios_clang_wrapper_SOURCES = clangwrapper.cpp
+ios_clang_wrapper_LDADD = $(XML_LIBS)
+INCLUDES = $(XML_CFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -244,9 +246,9 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-iPhoneSDK$(EXEEXT): $(iPhoneSDK_OBJECTS) $(iPhoneSDK_DEPENDENCIES) 
-	@rm -f iPhoneSDK$(EXEEXT)
-	$(CXXLINK) $(iPhoneSDK_OBJECTS) $(iPhoneSDK_LDADD) $(LIBS)
+ios-clang-wrapper$(EXEEXT): $(ios_clang_wrapper_OBJECTS) $(ios_clang_wrapper_DEPENDENCIES) 
+	@rm -f ios-clang-wrapper$(EXEEXT)
+	$(CXXLINK) $(ios_clang_wrapper_OBJECTS) $(ios_clang_wrapper_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -254,7 +256,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iPhoneSDK.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/clangwrapper.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -472,8 +474,8 @@ uninstall-am: uninstall-binPROGRAMS
 
 install-data-hook:
 	cd $(DESTDIR)/$(bindir)
-	ln -sf $(bindir)/iPhoneSDK $(DESTDIR)/$(bindir)/ios-clang
-	ln -sf $(bindir)/iPhoneSDK $(DESTDIR)/$(bindir)/ios-clang++
+	ln -sf $(bindir)/ios-clang-wrapper $(DESTDIR)/$(bindir)/ios-clang
+	ln -sf $(bindir)/ios-clang-wrapper $(DESTDIR)/$(bindir)/ios-clang++
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
