@@ -2,7 +2,7 @@
 
 <font color="blue">Cjacker <cjacker@gmail.com> 2012-11-26 </font>
 
-Clang for linux provides an almost full implementation for Objective C 2.0 includes blocks and other features gcc doesn't supported.
+Clang for linux provides an almost full implementation for Objective C 2.0 includes blocks and other features gcc doesn't support.
 
 Here is an tutorial of  'How to setup iOS toolchain based on clang for linux'.
 
@@ -31,7 +31,7 @@ If your distribution already provides  clang/llvm packages，make sure it is 3.1
 
 
 ==<font color="blue"> Step 2 : The assembler and linker </font>==
-I had ported cctools-836 and ld64-128.2 from opendarwin to linux. the porting process is a little bit complicated, let's just skip it.
+I had ported cctools-836 and ld64-128.2 from opendarwin to linux. the porting process is a little bit complicated, also with a lot of codes modified for linux, let's just skip it.
 
 Here is the final tarball:
 
