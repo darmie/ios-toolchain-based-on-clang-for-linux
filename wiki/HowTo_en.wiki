@@ -2,7 +2,7 @@
 
 <font color="blue">Cjacker <cjacker@gmail.com> 2012-11-26 </font>
 
-Clang for linux provides a fully implementation for Objective C 2.0 includes blocks and other features gcc not supported.
+Clang for linux provides an almost full implementation for Objective C 2.0 includes blocks and other features gcc doesn't supported.
 
 Here is an tutorial of  'How to setup iOS toolchain based on clang for linux'.
 
@@ -13,7 +13,7 @@ Actually, the iOS toolchain under linux is as same and simple as other crosscomp
   # *SDK*, include headers and libraries.
   # *Utilities*: such as ldid codesign tool.
 
-You also need a iOS device jailbreaked and with ssh installed.
+You also need an iOS device jailbreaked and with ssh installed.
 
 By the way, the default ssh password is <font color="red"> *alpine* </font>.
 
