@@ -1,0 +1,5 @@
+2012-12-08 Cjacker <cjacker@gmail.com>
+	* import plutil of libplist-1.8, rename it to plistutil to avoid
+	name conflict with original libplist.
+	http://cgit.sukimashita.com/libplist.git/
+	* rename iPhoneSDK to ios-clang-wrapper

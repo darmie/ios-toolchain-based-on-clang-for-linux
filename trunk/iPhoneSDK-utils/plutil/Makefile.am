@@ -12,11 +12,11 @@ AM_CPPFLAGS =						\
 
 AM_CFLAGS = -DPLIST_BYTE_ORDER=0 
 
-bin_PROGRAMS = plutil 
+bin_PROGRAMS = plistutil 
 
-plutil_LDADD = $(XML_LIBS) 
+plistutil_LDADD = $(XML_LIBS) 
 
-plutil_SOURCES = base64.c \
+plistutil_SOURCES = base64.c \
 	bplist.c \
 	bytearray.c \
 	hashtable.c \
