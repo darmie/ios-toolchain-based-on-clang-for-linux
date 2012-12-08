@@ -27,13 +27,13 @@ Clang/llvm 3.3 svn is *strongly* recommended.
 
 Please refer to <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_en"> this link</a> and build a svn version for your linux distribution.
 
-If your distribution already provides  clang/llvm packages，make sure it is 3.1 release or above.  Lower version may also work but not tested. 
+If your distribution already provides  clang/llvm packages，make sure it is 3.1 release or above.  Lower version may also work but is not tested. 
 
 
 ==Step 2 : The assembler and linker==
 I had ported cctools-836 and ld64-128.2 from opendarwin to linux. the porting process is a little bit complicated, let's just skip it.
 
-Here the final tarbal:
+Here is the final tarball:
 
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.10-ld64-128.2-for-linux.tar.gz
 
