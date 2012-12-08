@@ -42,9 +42,9 @@ Download and build it:
 LDFLAGS points to the path contains libLTO.so, change it according to your clang/llvm configurations.
 
 <font color="red">*NOTE*
-  # make sure clang/llvm is installed and works. clang will be used as a compiler.
+  # make sure clang/llvm is installed and works. clang will be used to compile ld64 and lto support need llvm.
 
-  # make sure libobjc2 is installed from http://download.gna.org/gnustep/libobjc2-1.6.1.tar.bz2.
+  # make sure libobjc2 is installed from http://download.gna.org/gnustep/libobjc2-1.6.1.tar.bz2.  *otool*  had been modified to use libobjc2 to dump infomations.
 </font>
 
 
