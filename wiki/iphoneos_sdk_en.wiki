@@ -48,5 +48,5 @@ done
 }}}
 
 ===5.Non-public headers for a jailbreaked device===
-These are some non-public headers for jailbreaked device. you can download it and install it as you need.
+These are some non-public headers for jailbreaked device somewhere. you can download it and install it as you need.
  
