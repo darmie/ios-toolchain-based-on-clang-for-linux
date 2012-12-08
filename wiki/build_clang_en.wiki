@@ -1,23 +1,21 @@
-Get clang/llvm 3.1 release or fetch it from svn.
-
 Here is a User guide about how to catch the llvm/clang source codes via svn: 
 
 http://llvm.org/docs/GettingStarted.html#checkout
 
-Up to now, I checkout 169114 svn branch and it works.
+Up to now, I checkout 169597 svn branch and it works.
 
 ===1, Get the source.===
 {{{
 $cd where-you-want-llvm-to-live
-$svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm-svn -r 169114
+$svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm-svn -r 169597
 
 $cd where-you-want-llvm-to-live
 $cd llvm-svn/tools
-$svn co http://llvm.org/svn/llvm-project/cfe/trunk clang -r 169114
+$svn co http://llvm.org/svn/llvm-project/cfe/trunk clang -r 169597
 
 $cd where-you-want-llvm-to-live
 $cd llvm-svn/projects
-$svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt -r 169114
+$svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt -r 169597
 }}}
 
 ===2. Patch it===
