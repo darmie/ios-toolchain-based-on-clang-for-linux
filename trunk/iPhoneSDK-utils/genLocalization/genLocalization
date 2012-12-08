@@ -1,0 +1,95 @@
+#!/bin/bash
+
+if [ x"$1" = x ]; then
+echo "Usage:"
+echo -e "\tios-genLocalization app: for Normal iOS Applications"
+echo -e "\tios-genLocalization wee: for Wee Widget"
+exit 0
+fi
+
+if [ "$1" != "app" ] && [ "$1" != "wee" ]; then
+echo "Usage:"
+echo -e "\tios-genLocalization app: for Normal iOS Applications"
+echo -e "\tios-genLocalization wee: for Wee Widget"
+exit 0
+fi
+
+#actually, it can support more, but this should be enough
+echo "Localization tools for iPhone App"
+echo ""
+echo "Languages"
+#langs
+STRING_LANGS=("English" "zh_CN" "zh_TW" "ko" "Japanese" "German" "French" "Italian" "Spanish")
+#Comments
+STRING_COMMENTS=("English" "Simp. Chinese" "Trad. Chinese" "Korean" "Japanese" "German" "French" "Italian" "Spanish")
+i=0
+n=${#STRING_LANGS[@]}
+while [ "$i" -lt $n ] ; do
+    echo -e $i "." ${STRING_LANGS[$i]} "("${STRING_COMMENTS[$i]}")"
+    i=`expr $i + 1`
+done
+echo -e "Please choose one language:\c"
+read lang_n
+
+#detect it is a number or not.
+declare -i INT=1;
+INT=$lang_n >/dev/null 2>&1;
+if [ "$INT" != "$lang_n" ]; then
+    echo -e "Please choose one language:\c"
+    read lang_n
+    INT=$lang_n >/dev/null 2>&1;
+fi
+
+n=`expr $n - 1`
+while [ "$lang_n" -gt $n ] || [ "$lang_n" -lt 0 ]; do
+    echo -e "Please choose one language:\c"
+    read lang_n
+done
+
+choose_lang=${STRING_LANGS[$lang_n]}
+lang_dir=./Localizations/${choose_lang}.lproj
+
+mkdir -p $lang_dir 
+
+#we should do message merge here, but but but, msgmerge can not handle Chinese when --stringtable-output/input.SHIT!
+rm -rf $lang_dir/*
+
+#handle NSLocalizedString
+for i in `find . -name "*.m"`
+do
+    xgettext --language=ObjectiveC $i --omit-header --no-location --stringtable-output -k --keyword=NSLocalizedString:1 -o - >>$lang_dir/Localizable.strings
+done
+rm -rf $lang_dir/InfoPlist.strings
+
+#handle Info.plist for App
+if [ "$1" = "app" ]; then
+for i in "`ls *.plist`"; do
+   CONTENT=`sed -n 's/.*<\(.*\)>\(.*\)<.*/\1 \2/p' "$i"`
+   CONTENT=`echo $CONTENT|sed 's/ key /"; /g'|sed 's/key/ /g'|sed 's/ string /="/g'`
+   for i in $CONTENT; do
+    echo $i|grep "CFBundleName"|sed 's/=/ = /g' >> $lang_dir/InfoPlist.strings
+    echo $i|grep "CFBundleDisplayName"|sed 's/=/ = /g' >>$lang_dir/InfoPlist.strings
+   done
+done
+fi
+
+#handle Info.plist for Wee Widget
+if [ "$1" = "wee" ]; then
+for i in "`ls *.plist`"; do
+   CONTENT=`sed -n 's/.*<\(.*\)>\(.*\)<.*/\1 \2/p' "$i"`
+   CONTENT=`echo $CONTENT|sed 's/ key /" /g'|sed 's/key/ /g'|sed 's/ string /="/g'`
+   for i in $CONTENT; do
+    displayname=`echo $i|grep "CFBundleDisplayName"|sed 's/CFBundleDisplayName=//g'`
+    if [ x"$displayname" != x ]; then
+        echo $displayname " = " $displayname";" >$lang_dir/InfoPlist.strings
+    fi
+    #echo $i|grep "CFBundleDisplayName"|sed 's/=/ = /g' >>$lang_dir/InfoPlist.strings
+   done
+done
+fi
+
+
+#InfoPlist.strings 
+echo "Finished, now please translate the files:"
+echo "./Localizations/${choose_lang}.lproj/Localizable.strings"
+echo "./Localizations/${choose_lang}.lproj/InfoPlist.strings"
