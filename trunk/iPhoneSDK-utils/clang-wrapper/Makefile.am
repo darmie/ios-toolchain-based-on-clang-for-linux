@@ -10,17 +10,16 @@ AM_CPPFLAGS =						\
 	-DLIBDIR=\""$(libdir)"\" 			\
 	$(NULL)
 
-bin_PROGRAMS = iPhoneSDK 
+bin_PROGRAMS = ios-clang-wrapper 
 
-iPhoneSDK_SOURCES = iPhoneSDK.cpp
+ios_clang_wrapper_SOURCES = clangwrapper.cpp
 
 
-iPhoneSDK_LDADD = \
-	$(NULL)
+ios_clang_wrapper_LDADD = $(XML_LIBS)
+
+INCLUDES = $(XML_CFLAGS)
 
 install-data-hook:
 	cd $(DESTDIR)/$(bindir)
-	ln -sf $(bindir)/iPhoneSDK $(DESTDIR)/$(bindir)/ios-clang
-	ln -sf $(bindir)/iPhoneSDK $(DESTDIR)/$(bindir)/ios-clang++
-EXTRA_DIST =	\
-	xalloc.h
+	ln -sf $(bindir)/ios-clang-wrapper $(DESTDIR)/$(bindir)/ios-clang
+	ln -sf $(bindir)/ios-clang-wrapper $(DESTDIR)/$(bindir)/ios-clang++
