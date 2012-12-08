@@ -4,6 +4,8 @@ If you want to done this totally in linux, you may need these tools installed.
 
 *xar* can be downloaded from: https://code.google.com/p/xar/
 
+The following is for 5.0 sdk, which is almost same with 4.x/6.x sdk. 
+
 ===1. Extract iPhoneSDk pkg from xcode-xxx.img===
 Mount the xcode img from apple under MacOSX, usually it under */Volumes/Xcode*, find *iPhoneSDK5_0.pkg*  for ios 5 or other versions according to your iOS version.
 
@@ -27,11 +29,22 @@ mkdir -p /usr/share/iPhone5.0.sdk/usr/lib/arc
 tar zxvf libarclite_iphoneos.a.tar.gz -C /usr/share/iPhone5.0.sdk/usr/lib/arc
 }}}
 
-===4. IOKit Headers===
-IOKit Headers is token from iPhoneSimulatorSDK5_0.pkg, If you need develop some app for jailbreaked devices, you may need it.
-
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/IOKitHeaders5.0.tar.gz
-
+===4. fix framework headers positions(optional)===
+Headers of frameworks can be found automatically by clang, so this step is optional.
+If you need code completion in your editor(such as clang code completion for vim/emacs or something else), you may need fix headers positions. and copy all frameworks to standard include dir of SDK.
 {{{
-tar zxvf IOKitHeaders5.0.tar.gz -C  /usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks/IOKit.framework/
+# fix headers locations, optional.
+cd iPhoneOS5.0.sdk/System/Library/Frameworks
+for i in *.framework
+do
+     f=`basename $i .framework`
+     mkdir -p /usr/share/iPhoneOS5.0.sdk/usr/include/$f
+     if [ -d $i/Headers ]; then
+     cp -Rf -p $i/Headers/* /usr/share/iPhoneOS5.0.sdk/usr/include/$f/
+     fi
+done
 }}}
+
+===5.Non-public headers for a jailbreaked device===
+These are some non-public headers for jailbreaked device. you can download it and install it as you need.
+ 
