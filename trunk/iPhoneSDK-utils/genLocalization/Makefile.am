@@ -11,4 +11,4 @@ AM_CPPFLAGS =						\
 	$(NULL)
 
 install-data-hook:
-	install -m 0755 genLocalization $(DESTDIR)/$(bindir)/ios-genLocalization
+	install -D -m 0755 genLocalization $(DESTDIR)/$(bindir)/ios-genLocalization

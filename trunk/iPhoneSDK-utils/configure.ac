@@ -40,11 +40,15 @@ AC_CHECK_LIB([png],[png_create_read_struct],[
          ])
 AC_SUBST(PNG_LIBS)
 
+PKG_CHECK_MODULES(XML, [
+    libxml-2.0 
+])
 
 AC_OUTPUT([
 	   Makefile
 	   ldid/Makefile
 	   clang-wrapper/Makefile
+	   plutil/Makefile
 	   proj2make/Makefile
 	   createProject/Makefile
 	   genLocalization/Makefile
