@@ -66,16 +66,23 @@ Since there is no file conflicts with system files, /usr as a prefix should be y
 
 ==Step 3: The iPhoneOS SDK.==
 
-You can use the pre-generated 6.0 SDK from : http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS6.0.sdk.tar.xz
+You can use the pre-generated SDKs (with Arc support, header positions fixed).
+
+for iOS 4.x: 
+
+for iOS 5.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
+
+for iOS 6.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS6.0.sdk.tar.xz
 
 Extract it to */usr/share"
 {{{
-$tar xvf iPhoneOS6.0.sdk.tar.xz -C /usr/share
+$tar xvf iPhoneOS*.sdk.tar.xz -C /usr/share
 }}}
 
-or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en">this link</a> to generate it by yourself
+or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en">this link</a> to generate it by yourself.
 
-App compiles with iOS 6.0 sdk should be runnable under 4.x,5.x if you did not use iOS6 new API and frameworks.
+for iOS 4.x, you may need pass "-arch armv6" arg to compilers.
+
 
 ==Step 4: The utilities==
 ===ldid, the code sign tool===
