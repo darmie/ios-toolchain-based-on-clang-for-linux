@@ -1,0 +1,150 @@
+/* include/config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define if building universal (internal helper macro) */
+#undef AC_APPLE_UNIVERSAL_BUILD
+
+/* filesystem root of cross build environment */
+#undef CROSS_SYSROOT
+
+/* Emulated CPU subtype */
+#undef EMULATED_HOST_CPU_SUBTYPE
+
+/* Emulated CPU type */
+#undef EMULATED_HOST_CPU_TYPE
+
+/* Define to 1 if you have the declaration of `getc_unlocked', and to 0 if you
+   don't. */
+#undef HAVE_DECL_GETC_UNLOCKED
+
+/* For systems that don't have getc_unlocked, use getc  */
+#if !HAVE_DECL_GETC_UNLOCKED
+# define getc_unlocked(a) getc(a)
+#endif
+
+/* Define to 1 if you have the declaration of `strlcat', and to 0 if you
+   don't. */
+#undef HAVE_DECL_STRLCAT
+
+/* Define to 1 if you have the declaration of `strlcpy', and to 0 if you
+   don't. */
+#undef HAVE_DECL_STRLCPY
+
+/* Define to 1 if you have the <errno.h> header file. */
+#undef HAVE_ERRNO_H
+
+/* Define to 1 if you have the `getattrlist' function. */
+#undef HAVE_GETATTRLIST
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <limits.h> header file. */
+#undef HAVE_LIMITS_H
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `NSIsSymbolNameDefined' function. */
+#undef HAVE_NSISSYMBOLNAMEDEFINED
+
+/* Have Objective-C support */
+#undef HAVE_OBJC
+
+/* Define to 1 if you have the <openssl/md5.h> header file. */
+#undef HAVE_OPENSSL_MD5_H
+
+/* Define to 1 if you have the `qsort' function. */
+#undef HAVE_QSORT
+
+/* Define to 1 if you have the `qsort_r' function. */
+#undef HAVE_QSORT_R
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the `strlcat' function. */
+#undef HAVE_STRLCAT
+
+/* Define to 1 if you have the `strlcpy' function. */
+#undef HAVE_STRLCPY
+
+/* Define to 1 if you have the `strmode' function. */
+#undef HAVE_STRMODE
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* The size of `long', as computed by sizeof. */
+#undef SIZEOF_LONG
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* max unsigned long long */
+#undef ULLONG_MAX
+
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+#  undef WORDS_BIGENDIAN
+# endif
+#endif
+
+/* Declare functions that are missing declarations */
+#if !HAVE_DECL_STRLCPY || ! HAVE_DECL_STRLCAT
+#include <sys/types.h>
+#endif
+#if !HAVE_DECL_STRLCPY
+#ifdef __cplusplus
+extern "C"
+#endif
+size_t strlcpy(char *dst, const char *src, size_t size);
+#endif
+#if !HAVE_DECL_STRLCAT
+#ifdef __cplusplus
+extern "C"
+#endif
+size_t strlcat(char *dst, const char *src, size_t size);
+#endif
+
