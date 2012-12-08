@@ -27,7 +27,7 @@ Clang/llvm 3.3 svn is *strongly* recommended.
 
 Please refer to <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_en"> this link</a> and build a svn version for your linux distribution.
 
-If your distribution already provides  clang/llvm packages，be sure it is 3.1 release or above.  Lower version may also work but not tested. 
+If your distribution already provides  clang/llvm packages，make sure it is 3.1 release or above.  Lower version may also work but not tested. 
 
 
 ==Step 2 : The assembler and linker==
@@ -42,9 +42,9 @@ Download and build it:
 LDFLAGS ported to the path contains libLTO.so, change it according to your clang/llvm configurations.
 
 <font color="red">*NOTE*
-  # be sure clang/llvm installed and works. clang will be used as a compiler.
+  # make sure clang/llvm is installed and works. clang will be used as a compiler.
 
-  # be sure libobjc2 installed from http://download.gna.org/gnustep/libobjc2-1.6.1.tar.bz2.
+  # make sure libobjc2 is installed from http://download.gna.org/gnustep/libobjc2-1.6.1.tar.bz2.
 </font>
 
 
