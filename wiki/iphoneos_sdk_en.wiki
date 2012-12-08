@@ -22,7 +22,9 @@ rm -rf Payload
 ===3. ARC support===
 If you want arc support via *'clang -fobjc-arc'*,  you need add *libarclite_iphoneos.a* to sdk. it is extracted from Xcode.
 
-Download it from here: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos.a.tar.gz
+Download it from here: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos-5.0.tar.gz
+
+for iOS 6.0 sdk: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos-6.0.tar.gz
 
 {{{
 mkdir -p /usr/share/iPhone5.0.sdk/usr/lib/arc
