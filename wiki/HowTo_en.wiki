@@ -21,7 +21,7 @@ Before we start, you need a workable C/C++ compiler installed.
 
 
 
-==Step 1 : The compiler==
+==<font color="blue"> Step 1 : The compiler </font>==
 
 Clang/llvm 3.3 svn is *strongly* recommended.
 
@@ -30,7 +30,7 @@ Please refer to <a href="http://code.google.com/p/ios-toolchain-based-on-clang-f
 If your distribution already provides  clang/llvm packages，make sure it is 3.1 release or above.  Lower version may also work but is not tested. 
 
 
-==Step 2 : The assembler and linker==
+==<font color="blue"> Step 2 : The assembler and linker </font>==
 I had ported cctools-836 and ld64-128.2 from opendarwin to linux. the porting process is a little bit complicated, let's just skip it.
 
 Here is the final tarball:
@@ -64,7 +64,7 @@ $make install
 Since there is no file conflicts with system files, /usr as a prefix should be your first choice.
 </font>
 
-==Step 3: The iPhoneOS SDK.==
+==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
 
 You can use the pre-generated SDKs (with Arc support, header positions fixed).
 
@@ -84,7 +84,7 @@ or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-lin
 for iOS 4.x, you may need pass "-arch armv6" arg to compilers.
 
 
-==Step 4: The utilities==
+==<font color="blue"> Step 4: The utilities </font>==
 ===ldid, the code sign tool===
 ldid is codesign tool from saurik. Here is a modified version with some changes to find 'arm-apple-darwin11-codesign_allocate' properly, also add autoconf/automake support.
 
@@ -179,7 +179,7 @@ $make
 *NOTE* : It does not handle/compile .xib file or storyboard files.
 
 
-==Build app for iOS.==
+==<font color="blue"> Build app for iOS. </font>==
 run ios-createProject
 {{{
 $ios-createProject
