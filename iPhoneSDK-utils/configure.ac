@@ -66,4 +66,5 @@ AC_OUTPUT([
 	   createProject/Makefile
 	   genLocalization2/Makefile
 	   iphone-fixpng/Makefile
+	   pngcrush/Makefile
 ])
