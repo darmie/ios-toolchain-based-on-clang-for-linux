@@ -93,7 +93,9 @@ $make install
 }}}
 
 ==<font color="blue"> Step 5: API reference. (Optional) </font>==
-Download API files from:http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
+Download API reference from:
+
+http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
 Extract it:
 {{{
