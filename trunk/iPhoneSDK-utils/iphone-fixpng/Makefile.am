@@ -10,8 +10,8 @@ AM_CPPFLAGS =						\
 	-DLIBDIR=\""$(libdir)"\" 			\
 	$(NULL)
 
-bin_PROGRAMS = fixpng 
+bin_PROGRAMS = ios-fixpng 
 
-fixpng_SOURCES = fixpng.c 
+ios_fixpng_SOURCES = fixpng.c 
 
-fixpng_LDADD = @ZLIB_LIBS@ @PNG_LIBS@ 
+ios_fixpng_LDADD = @ZLIB_LIBS@ @PNG_LIBS@ 
