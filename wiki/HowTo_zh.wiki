@@ -86,46 +86,73 @@ $make
 $make install
 }}}
 
-==为iOS编译一个简单的应用==
 
-从这里下载HelloWorld.app的代码：
+==<font color="blue"> Step 5: API 参考文档 (可选) </font>==
+下载
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/helloworld.tar.gz
-
-解压编译、安装，然后到越狱设备上看看安装后的结果。
-
-{{{
-$tar zxvf helloworld.tar.gz 
-$cd helloworld
-$make
-$make dist
-$make install IPHONE_IP=<你的越狱设备IP>
-}}}
-
-安装时会提示你输入越狱设备的密码，你可以通过预储存ssh密码的方式避免每次都要输入。
-
-<font color="red">
-*如果出现如下的错误提示，说明你使用的是一个未打补丁的clang，请在Makefile中加入LDFLAGS += -ldylib1.o</font>
-
-这里提供了一个补丁，参考<a href = "http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_zh"> "如何自己构建clang" </a>。
-
-{{{
-ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bundle1.o)
-}}}
-
-
-
-还有一个常见的 <a href="http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/UICatalog.tar.gz">UICatalog.tar.gz</a>示例代码，也可以尝试一下。
-
-==iOS API 文档(可选)==
 http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
-解压:
+解压：
 {{{
 xar -xf com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 cd com.*iOSLibrary.docset/Contents/Resources/Documents/
 firefox ./index.html
 }}}
 
+
+==<font color="blue"> Build an iOS App. </font>==
+====1. Create project ====
+Run ios-createProject
+{{{
+$ios-createProject
+}}}
+
+You will get below messages:
+{{{
+iPhone Project Createor
+---------------------------
+[0.] Application
+[1.] Command line utility
+[2.] Notification Center widget
+[3.] Example Player
+[4.] Example UICatalog
+Choose a Template:
+}}}
+
+Input 0 and the Project name "HelloWorld" to create a helloworld App.
+
+
+====2. Build & install App====
+{{{
+$cd HelloWorld
+$make
+$make install IPHONE_IP=<your own device IP>
+}}}
+
+====3. Localize App ====
+Run ios-genLocalization in Project folder.
+{{{
+$ios-genLocalization
+}}}
+
+{{{
+Localization tool for iOs App
+
+Languages
+[ 0.] English   (English)
+[ 1.] zh_CN     (Simp. Chinese)
+[ 2.] zh_TW     (Trad. Chinese)
+[ 3.] ko        (Korean)
+[ 4.] Japanese  (Japanese)
+[ 5.] German    (German)
+[ 6.] French    (French)
+[ 7.] Italian   (Italian)
+[ 8.] Spanish   (Spanish)
+Enter your number : 
+}}}
+
+Please choose which language your App want to support, it will generate the related plist files. translate them and re-install your App to iOS device.
+
+
+
 ==Enjoy it.==
- 
