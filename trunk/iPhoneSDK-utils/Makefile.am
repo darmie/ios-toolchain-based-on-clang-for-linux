@@ -1,4 +1,4 @@
-SUBDIRS = ldid clang-wrapper genLocalization createProject proj2make plutil iphone-fixpng 
+SUBDIRS = ldid clang-wrapper genLocalization2 createProject proj2make plutil iphone-fixpng 
 
 #EXTRA_DIST =
 #DISTCLEANFILES =

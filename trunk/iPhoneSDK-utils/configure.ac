@@ -44,6 +44,19 @@ PKG_CHECK_MODULES(XML, [
     libxml-2.0 
 ])
 
+
+AC_CHECK_PROG([LLVMCONFIG], [llvm-config],[llvm-config],[llvm-config not found])
+if test "$LLVMCONFIG" = "llvm-config not found"; then
+AC_MSG_ERROR("Couldn't find llvm-config.")   
+else
+    LLVM_CXX_FLAGS=`llvm-config --cxxflags`
+    LLVM_LIBS=`llvm-config --libs`
+    LLVM_COMPONENTS=`llvm-config --ldflags --libs cppbackend|sed 'N;s/\n//'`
+    AC_SUBST(LLVM_COMPONENTS)
+    AC_SUBST(LLVM_LIBS)
+    AC_SUBST(LLVM_CXX_FLAGS)
+fi 
+
 AC_OUTPUT([
 	   Makefile
 	   ldid/Makefile
@@ -51,6 +64,6 @@ AC_OUTPUT([
 	   plutil/Makefile
 	   proj2make/Makefile
 	   createProject/Makefile
-	   genLocalization/Makefile
+	   genLocalization2/Makefile
 	   iphone-fixpng/Makefile
 ])
