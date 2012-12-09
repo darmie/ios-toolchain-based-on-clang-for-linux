@@ -69,6 +69,10 @@ or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-lin
 ==<font color="blue"> Step 4: The utilities </font>==
 iPhoneSDK-utils provides below utilities:
 
+*NOTE:*
+
+(Some of them is collected from internet. with some modifications.)
+
   # *ldid* : codesign tool, with armv7/armv7s support and other changes from orig version.
   # *ios-clang-wrapper* : automatically find SDK and construct proper compilation args.
   # *proj2make* : convert xcodeproj to proper Makefiles.
