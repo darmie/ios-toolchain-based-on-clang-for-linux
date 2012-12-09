@@ -104,7 +104,7 @@ firefox ./index.html
 
 
 ==<font color="blue"> Build iOS App. </font>==
-====1. create a project from template ====
+====1. Create a project from template ====
 Run ios-createProject
 {{{
 $ios-createProject
@@ -155,13 +155,6 @@ Enter your number :
 }}}
 
 Please choose which language your App want to support, it will generate the related plist files. translate them and re-install your App to iOS device.
-
-
-
-
-
-
-
 
 
 
