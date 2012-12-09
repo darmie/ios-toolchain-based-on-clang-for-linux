@@ -47,10 +47,6 @@ $make
 $make install
 }}}
 
-<font color="red"> If you use a different prefix, you should linke all "arm-apple-darwin11-`*`" to /usr/bin, otherwise clang can not find proper assembler and linker.  
-
-Since there is no file conflicts with system files, /usr as a prefix should be your first choice.
-</font>
 
 ==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
 
@@ -69,8 +65,6 @@ $tar xvf iPhoneOS*.sdk.tar.xz -C /usr/share
 
 or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en">this link</a> to generate it by yourself.
 
-for iOS 4.x, you may need pass "-arch armv6" arg to compilers.
-
 
 ==<font color="blue"> Step 4: The utilities </font>==
 iPhoneSDK-utils provides below utilities:
@@ -79,6 +73,7 @@ iPhoneSDK-utils provides below utilities:
   # *ios-clang-wrapper* : automatically find SDK and construct proper compilation args.
   # *proj2make* : convert xcodeproj to proper Makefiles.
   # *ios-fixpng* : fix png files optimized by iOS.
+  # *ios-pngcrush*: pincrush, like Apple's pngcrush.
   # *ios-createProject* : project templates
   # *ios-genLocalization* : iOS app localization tool based on clang lexer.
   # *ios-plutil* : plist compiler/decompiler.
