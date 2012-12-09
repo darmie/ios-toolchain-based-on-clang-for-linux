@@ -18,6 +18,7 @@ $cd llvm-svn/projects
 $svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt -r 169597
 }}}
 
+~~
 ===2. Patch it===
 
 Download the patch from:
@@ -35,7 +36,7 @@ This patch fix a problem:
 $cd llvm-svn
 $cat clang-iphoneos-linker.patch|patch -p1
 }}}
-
+~~
 ===3. Configure/build and install it. ===
 {{{
 $./configure --prefix=/usr  --enable-optimized
