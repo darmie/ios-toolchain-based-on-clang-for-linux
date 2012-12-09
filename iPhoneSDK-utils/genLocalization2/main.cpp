@@ -154,7 +154,6 @@ void handleInfoPlist(string output)
     char bundletype[10];
     bzero(bundletype,10);
     get_value_of_key_from_plist(bundletype, "CFBundlePackageType", project_info_plist.c_str());
-    fprintf(stderr,"PACKAGE: %s\n", bundletype);
     char cfbundlename[10];
     char cfbundledisplayname[10];
     bzero(cfbundlename,10);
@@ -187,10 +186,8 @@ void handleStrings(vector<string> strings, string output)
   for(int i = 0; i < strings.size(); i++) {
     plist_t string = plist_new_string(strings.at(i).c_str());
     plist_dict_insert_item(pl_dict, strings.at(i).c_str(), string);
-    plist_free(string);
   }
   plist_to_xml(pl_dict, &plist_xml, &size_out);
-  plist_free(pl_dict);
   FILE *f = fopen(output.c_str(), "w");
   fprintf(f, "%s\n", plist_xml);
   fclose(f);
@@ -208,7 +205,7 @@ int main(int argc, char **argv)
   cout << "Localization tool for iOs App" <<endl<<endl
        << "Languages" <<endl;
   for(int i = 0; i < lang_count; i++) {
-    printf("[%2d.] %s %s\n", i, lang[i].c_str(), lang_desc[i].c_str());
+    printf("[%2d.] %s\t(%s)\n", i, lang[i].c_str(), lang_desc[i].c_str());
   }
   short input;
   do 
