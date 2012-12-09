@@ -32,38 +32,52 @@ Clang提供了较完整的Objective C 2.0支持，包括了blocks等gcc不支持
 
 ==Step 2 : 汇编器和链接器==
 
-我已经移植了OpenDarwin的cctools-836和ld64-85.2.2到Linux系统，移植的过程比较复杂，这里就不详细讲了。
-可以从这里下载到移植后的代码压缩包 : http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.1-for-linux.tar.gz
+我已经移植了OpenDarwin的cctools-836和ld64-128.2到Linux系统，移植的过程比较复杂，这里就不详细讲了。
 
-编译安装：
+可以从这里下载到移植后的代码压缩包 :
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.12-ld64-128.2-for-linux.tar.gz
+
+
+编译安装(需要使用clang/clang++编译)：
+LDFLAGS 指向libLTO.so所在的路径，根据自己系统的情况调整即可，如果是标准Clang/LLVM的安装，应该不需要设置，默认就在/usr/lib目录。
 
 {{{
-$export CFLAGS=-fno-stack-protector
-$export CXXFLAGS=-fno-stack-protector
-$./configure --target=arm-apple-darwin9 --prefix=/usr
+$LDFLAGS+=/usr/lib/llvm ./configure --target=arm-apple-darwin11 --prefix=/usr
 $make
 $make install
 }}}
 
-<font color="red"> *注意* ： 如果你使用了不同的prefix设置，你可能需要把所有的 *arm-apple-darwin9* 命令链接到/usr/bin目录，否则，clang可能找不到合适的汇编器和链接器。 </font>
-
 ==Step 3: iPhoneOS SDK.==
+你可以直接下载一个已经准备好的SDK环境(包含ARC支持和头文件位置的调整)
 
-你可以从这里下载一个预先生成好的 5.0 SDK : http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
+iOS 4.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS4.2.sdk.tar.xz
 
-将它解压到 */usr/share"
+iOS 5.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
+
+iOS 6.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS6.0.sdk.tar.xz
+
+解压到 */usr/share"
 {{{
-$tar xvf iPhoneOS5.0.sdk.tar.xz -C /usr/share
+$tar xvf iPhoneOS*.sdk.tar.xz -C /usr/share
 }}}
 
 或者按照 <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_zh">这个链接的说明</a> 来自己生成一个SDK环境。
 
 
 ==Step 4: 辅助工具==
-===ldid, 代码签名工具===
-ldid是saurik编些的一个代码签名工具，这里提供了一个修改过的版本，修复了一些问题，并加入了工程文件的支持。
+iPhoneSDK-utils 提供了以下工具：
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ldid-1.0.613.tar.bz2
+  # *ldid* : 签名工具，已做修改，支持armv7/v7s。
+  # *ios-clang-wrapper* : sdk环境和clang参数的自动判别的wrapper，提供编译命令ios-clang/ios-clang++
+  # *proj2make* : 转换xcodeproj工程到makefile.
+  # *ios-fixpng* : 修复iOS的png文件
+  # *ios-pngcrush*: 来自pincrush，优化png文件。
+  # *ios-createProject* : 工程模板
+  # *ios-genLocalization* : 基于clang词法分析的国际化工具。
+  # *ios-plutil* : plist 编译器/反编译器。
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneSDK-utils-0.9.tar.gz
 
 编译安装：
 {{{	
@@ -71,77 +85,6 @@ $./configure --prefix=/usr
 $make
 $make install
 }}}
-
-===proj2make, xcode工程到makefile转换器===
-proj2make是我从pbtomake修改而来的xcode工程转换器，它可以将xcode的ios工程转成我们需要的Makefile，并能够支持make dist/make install等操作。
-
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/proj2make-4.3.tar.gz
-
-{{{
-$tar zxvf proj2make-4.3.tar.gz
-$cd proj2make-4.3
-$make
-$install -m 0755 proj2make /usr/bin
-}}}
-
-如果你需要转换一个xcode的ios工程，进入工程目录，运行以下命令
-{{{
-$proj2make -i *.xcodeprojc
-}}}
-
-*注意* : proj2make并不是万能的，它可能会出错，可能会有遗漏，也无法编译处理xib/storyboard文件，但是，它提供了一个很好的基础，大部分iOS开发文档提供的sampelcode是可以正常转换并编译的（因为Linux系统没有ibtool，所以，即使samplecode可以编译，可能仍然无法运行）
-
-===iPhoneSDK-utils===
-为了使用clang来编译iOS工程，我们需要给clang传递一些参数。'--target arm-apple-darwin9' 告诉clang找到合适的编译器和汇编器， '-isysroot <sdk full path>' 通知clang使用 <sdk full path> 作为开发库和头文件的根目录。
-
-这里提供了一个工具可以自动探测你的环境，如果找不到iPhone SDK，会提示你输入SDK的全路径。
-
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneSDK-utils-0.1.tar.gz
-
-{{{
-$configure --prefix=/usr
-$make
-$make install
-}}}
-
-安装后，会有两个新命令ios-clang/ios-clang++，你应该使用这两个命令来编译iPhone App。
-
-
-<table border="1">
-<td>
-==<font color="blue">安装llvm-gcc（可选）</font>==
-现在，我们已经完成了iOS工具链的搭建，包括了汇编器、链接器、编译器和SDK以及其他的辅助工具，现在的环境已经可以支持iOS应用的开发了。
-
-如果你希望迁移一些使用了GCC扩展的C/C++代码到iOS，可能还需要llvm-gcc。
-
-实际上，LLVM提供了一个叫Dragonegg的GCC插件来替换掉GCC的代码生成器，但是，gcc本身并不支持arm-apple-darwin9架构，所以，没办法通过GCC+dragonegg来替代llvm-gcc。
-
-
-从这里下载llvm-gcc-4.2版本
-
- http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/llvm-gcc-for-ios-4.2.tar.xz
-
-编译安装，注意，这里llvm-gcc的配置参数中安装路径是/opt/llvm-gcc，这是为了避免llvm-gcc覆盖系统中已有的文件。其他的配置参数，请按照你实际的安装情况进行修改。
-
-{{{
-$cd llvm-gcc-4.2
-$mkdir build
-$cd build
-$../configure  --target=arm-apple-darwin9 \
-    --prefix=/opt/llvm-gcc \
-    --with-sysroot=/usr/share/iPhoneOS5.0.sdk \
-    --enable-languages=c,c++,objc,obj-c++ \
-    --with-as=/usr/bin/arm-apple-darwin9-as \
-    --with-ld=/usr/bin/arm-apple-darwin9-ld \
-    --enable-wchar_t=no \
-    --with-gxx-include-dir=/usr/include/c++/4.2.1
-$make
-$make install
-}}}
-
-安装后，在/opt/llvm-gcc/bin目录，会有arm-apple-darwin9-gcc命令等，记得将这个路径加到你系统的PATH环境变量。
-</td>
-</table>
 
 ==为iOS编译一个简单的应用==
 
