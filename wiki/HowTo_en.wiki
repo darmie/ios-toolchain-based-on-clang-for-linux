@@ -103,8 +103,8 @@ firefox ./index.html
 }}}
 
 
-==<font color="blue"> Build iOS App. </font>==
-====1. Create a project from template ====
+==<font color="blue"> Build an iOS App. </font>==
+====1. Create project ====
 Run ios-createProject
 {{{
 $ios-createProject
@@ -125,7 +125,7 @@ Choose a Template:
 Input 0 and the Project name "HelloWorld" to create a helloworld App.
 
 
-====2. Build App====
+====2. Build & install App====
 {{{
 $cd HelloWorld
 $make
