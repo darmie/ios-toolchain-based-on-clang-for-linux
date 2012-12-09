@@ -82,7 +82,7 @@ iPhoneSDK-utils provides below utilities:
   # *ios-genLocalization* : iOS app localization tool based on clang lexer.
   # *ios-plutil* : plist compiler/decompiler.
 
-Download from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneSDK-utils-0.8.tar.gz
+Download from: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneSDK-utils-0.9.tar.gz
 
 Build and install it:
 {{{	
