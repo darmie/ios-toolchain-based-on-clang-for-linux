@@ -118,18 +118,7 @@ $make
 $make install IPHONE_IP=<your own device IP>
 }}}
 
-<font color="red">
-for iOS 4.x, you may need add "CFLAGS += -arch armv6" to Makefile.
-</font>
 
-<font color="red">
-*If the compilatoin failed with this message , please add <font color="blue">LDFLAGS += -ldylib1.o</font> to your project's Makefile. * </font>
-
-A patch to fix this problem had been provided in <a href = "http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_en"> "Build clang from scratch" </a> Section.
-
-{{{
-ld: symbol dyld_stub_binding_helper not defined (usually in crt1.o/dylib1.o/bundle1.o)
-}}}
 
 If you want to make a localized App, run ios-genLocalization in project folder:
 {{{
