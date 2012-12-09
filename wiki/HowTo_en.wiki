@@ -12,6 +12,7 @@ Actually, the iOS toolchain under linux is as same and simple as other crosscomp
   # *Compiler*: here we use llvm/clang.
   # *SDK*, include headers and libraries.
   # *Utilities*: such as ldid codesign tool.
+  # *Documents*: API reference and related documents.
 
 You also need an iOS device jailbreaked and with ssh installed.
 
@@ -91,14 +92,25 @@ $make
 $make install
 }}}
 
+==<font color="blue"> Step 5: API reference. (Optional) </font>==
+Download API files from:http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
-==<font color="blue"> Build app for iOS. </font>==
-run ios-createProject
+Extract it:
+{{{
+xar -xf com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
+cd com.*iOSLibrary.docset/Contents/Resources/Documents/
+firefox ./index.html
+}}}
+
+
+==<font color="blue"> Build iOS App. </font>==
+====1. create a project from template ====
+Run ios-createProject
 {{{
 $ios-createProject
 }}}
 
-You will get messages like this:
+You will get below messages:
 {{{
 iPhone Project Createor
 ---------------------------
@@ -110,47 +122,47 @@ iPhone Project Createor
 Choose a Template:
 }}}
 
-then input 0 and the Project name "HelloWorld" to create a helloworld App, enter HelloWorld folder
+Input 0 and the Project name "HelloWorld" to create a helloworld App.
 
-run:
+
+====2. Build App====
 {{{
+$cd HelloWorld
 $make
 $make install IPHONE_IP=<your own device IP>
 }}}
 
-
-
-If you want to make a localized App, run ios-genLocalization in project folder:
+====3. Localize App ====
+Run ios-genLocalization in Project folder.
 {{{
-Localization tools for iPhone App
+$ios-genLocalization
+}}}
+
+{{{
+Localization tool for iOs App
 
 Languages
-0 . English (English)
-1 . zh_CN (Simp. Chinese)
-2 . zh_TW (Trad. Chinese)
-3 . ko (Korean)
-4 . Japanese (Japanese)
-5 . German (German)
-6 . French (French)
-7 . Italian (Italian)
-8 . Spanish (Spanish)
-Please choose one language:
+[ 0.] English   (English)
+[ 1.] zh_CN     (Simp. Chinese)
+[ 2.] zh_TW     (Trad. Chinese)
+[ 3.] ko        (Korean)
+[ 4.] Japanese  (Japanese)
+[ 5.] German    (German)
+[ 6.] French    (French)
+[ 7.] Italian   (Italian)
+[ 8.] Spanish   (Spanish)
+Enter your number : 
 }}}
 
+Please choose which language your App want to support, it will generate the related plist files. translate them and re-install your App to iOS device.
 
 
 
 
 
-==<font color="blue"> the iOS API documents.(Optional) </font>==
-Download API files from:http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
 
-Extract it:
-{{{
-xar -xf com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
-cd com.*iOSLibrary.docset/Contents/Resources/Documents/
-firefox ./index.html
-}}}
+
+
 
 
 ==Enjoy it.==
