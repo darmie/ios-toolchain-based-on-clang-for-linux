@@ -22,19 +22,30 @@ rm -rf Payload
 ===3. ARC 支持===
 如果你要打开ARC的支持（通过clang -fobjc-arc），你需要将以下libarclite_iphoneos.a这个静态库包含到sdk中，它也是从xcode取来的。
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos.a.tar.gz
+for iOS 5.0 sdk: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos-5.0.tar.gz
+
+for iOS 6.0 sdk: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/libarclite_iphoneos-6.0.tar.gz
 
 {{{
 mkdir -p /usr/share/iPhone5.0.sdk/usr/lib/arc
 tar zxvf libarclite_iphoneos.a.tar.gz -C /usr/share/iPhone5.0.sdk/usr/lib/arc
 }}}
 
-===4. IOKit Headers===
-IOKit 头文件是从iPhoneSimulatorSDK5_0.pkg解出来的，默认的SDK并不提供这些头文件.
-
-可以在这里下载。
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/IOKitHeaders5.0.tar.gz
+===4. 调整Framework头文件位置(可选)===
+Clang可以自动发现Framework的头文件，调整头文件位置主要是为了去支持一些代码补全工具，比如clang code completion for vim/emacs等等，这些工具需要把Framework的头文件拷贝到系统标准路径。
 
 {{{
-tar zxvf IOKitHeaders5.0.tar.gz -C  /usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks/IOKit.framework/
+# fix headers locations, optional.
+cd iPhoneOS5.0.sdk/System/Library/Frameworks
+for i in *.framework
+do
+     f=`basename $i .framework`
+     mkdir -p /usr/share/iPhoneOS5.0.sdk/usr/include/$f
+     if [ -d $i/Headers ]; then
+     cp -Rf -p $i/Headers/* /usr/share/iPhoneOS5.0.sdk/usr/include/$f/
+     fi
+done
 }}}
+
+===5.未公开的API和头文件===
+网上可以找到一些未公开的API和头文件，如果需要，可以自行下载安装。
