@@ -104,7 +104,7 @@ int node_detach(node_t* parent, node_t* child) {
 
 int node_insert(node_t* parent, unsigned int index, node_t* child)
 {
-	if (!parent || !child) return;
+	if (!parent || !child) return 0;
 	child->isLeaf = TRUE;
 	child->isRoot = FALSE;
 	child->parent = parent;
