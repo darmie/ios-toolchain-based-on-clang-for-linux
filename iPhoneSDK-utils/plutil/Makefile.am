@@ -12,11 +12,11 @@ AM_CPPFLAGS =						\
 
 AM_CFLAGS = -DPLIST_BYTE_ORDER=0 
 
-bin_PROGRAMS = plistutil 
+bin_PROGRAMS = ios-plutil 
 
-plistutil_LDADD = $(XML_LIBS) 
+ios_plutil_LDADD = $(XML_LIBS) 
 
-plistutil_SOURCES = base64.c \
+ios_plutil_SOURCES = base64.c \
 	bplist.c \
 	bytearray.c \
 	hashtable.c \
