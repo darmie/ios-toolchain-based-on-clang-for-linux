@@ -8,12 +8,12 @@ AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_SRCDIR(clangwrapper/clangwrapper.cpp)
 
 AM_INIT_AUTOMAKE([1.10 no-define no-dist-gzip dist-bzip2 tar-ustar])
+AC_CONFIG_MACRO_DIR([m4])
 AM_MAINTAINER_MODE
 
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
-AC_PROG_RANLIB
 AM_PROG_CC_C_O
 # Checks for libraries.
 
