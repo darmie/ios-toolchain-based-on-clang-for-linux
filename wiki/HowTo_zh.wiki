@@ -71,7 +71,7 @@ iPhoneSDK-utils 提供了以下工具：
   # *ldid* : 签名工具，已做修改，支持armv7/v7s。
   # *ios-clang-wrapper* : sdk环境和clang参数的自动判别的wrapper，提供编译命令ios-clang/ios-clang++
   # *proj2make* : 转换xcodeproj工程到makefile.
-  # *ios-fixpng* : 修复iOS的png文件
+  # *ios-pngrevert* : 修复iOS的png文件
   # *ios-pngcrush*: 来自pincrush，优化png文件。
   # *ios-createProject* : 工程模板
   # *ios-genLocalization* : 基于clang词法分析的国际化工具。
