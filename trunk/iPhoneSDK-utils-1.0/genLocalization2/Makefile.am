@@ -28,8 +28,6 @@ CLANGLIBS = \
                 -lclangStaticAnalyzerCore\
                 -lclangAnalysis\
                 -lclangARCMigrate\
-                -lclangRewriteFrontend\
-                -lclangRewriteCore\
                 -lclangEdit\
                 -lclangAST\
                 -lclangLex\
