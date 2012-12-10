@@ -1,20 +1,6 @@
-AM_CPPFLAGS =                       \
-    -DBINDIR=\"$(bindir)\"              \
-    -DDATADIR=\"$(datadir)\"            \
-    -DPREFIX=\""$(prefix)"\"            \
-    -DSYSCONFDIR=\""$(sysconfdir)"\"        \
-    -DLIBDIR=\""$(libdir)"\"            \
-    $(NULL)
-
-
-AM_CFLAGS = @LLVM_CXX_FLAGS@ -fno-rtti 
-AM_CXXFLAGS = @LLVM_CXX_FLAGS@ -fno-rtti 
-
-INCLUDES = -I$(top_srcdir)/libplutil -I$(top_srcdir)/libhelper $(XML_CFLAGS)
-
 bin_PROGRAMS = ios-genLocalization
 
-CLANGLIBS = \
+CLANG_LIBS = \
                 -lclangTooling\
                 -lclangFrontendTool\
                 -lclangFrontend\
@@ -33,8 +19,23 @@ CLANGLIBS = \
                 -lclangLex\
                 -lclangBasic
 
-CLANGLIBS += @LLVM_LIBS@
+ios_genLocalization_CPPFLAGS =	\
+	$(XML_CFLAGS)	\
+	$(LLVM_CXX_FLAGS)	\
+	-I$(top_srcdir)/libhelper	\
+	-I$(top_srcdir)/libplutil	\
+	-fno-rtti
 
-ios_genLocalization_LDADD = @LLVM_COMPONENTS@ $(CLANGLIBS) $(XML_LIBS) -L$(top_srcdir)/libplutil -lplutil  -L$(top_srcdir)/libhelper -lhelper
+ios_genLocalization_LDADD =	\
+       	$(CLANG_LIBS)	\
+	$(LLVM_COMPONENTS)	\
+	$(LLVM_LIBS)	\
+       	$(XML_LIBS)	\
+       	$(top_builddir)/libplutil/libplutil.la	\
+      	$(top_builddir)/libhelper/libhelper.la
 
-ios_genLocalization_SOURCES = main.cpp getLocalizedStringFromFile.cpp
+ios_genLocalization_SOURCES =	\
+	main.cpp	\
+       	getLocalizedStringFromFile.cpp
+
+EXTRA_DIST = getLocalizedStringFromFile.h

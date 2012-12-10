@@ -1,6 +1,4 @@
-##############################
-# The main binary
-##############################
+SUBDIRS = templates
 
 AM_CPPFLAGS =						\
 	-DBINDIR=\"$(bindir)\"			 	\
@@ -10,8 +8,14 @@ AM_CPPFLAGS =						\
 	-DLIBDIR=\""$(libdir)"\" 			\
 	$(NULL)
 
-install-data-hook:
-	install -D -m 0755 createProject $(DESTDIR)/$(bindir)/ios-createProject
-	sed -i "s#DATA_DIR#$(datadir)#g" $(DESTDIR)/$(bindir)/ios-createProject
-	mkdir -p $(DESTDIR)/$(datadir)/iPhoneTemplates
-	install -D -m 0644 iPhoneTemplates/*.template $(DESTDIR)/$(datadir)/iPhoneTemplates
+mkprog_in_files = ios-createProject.sh.in
+mkprog_file = $(mkprog_in_files:%.sh.in=%)
+$(mkprog_file): $(mkprog_in_files)
+	sed -e "s|\@TEMPLATES_DIR\@|$(TEMPLATES_DIR)|" $<> $@
+
+bin_SCRIPTS = $(mkprog_file)
+
+EXTRA_DIST = $(mkprog_in_files)
+
+CLEANFILES = $(mkprog_file)
+DISTCLEANFILES = $(mkprog_file)
