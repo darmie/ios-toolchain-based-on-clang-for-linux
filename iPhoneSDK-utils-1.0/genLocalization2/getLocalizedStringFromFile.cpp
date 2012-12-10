@@ -1,9 +1,10 @@
 #include <iostream>
 
+#include "llvm/Config/config.h"
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/Host.h"
 
-#include "clang/Basic/DiagnosticOptions.h"
+//#include "clang/Basic/DiagnosticOptions.h"
 #include "clang/Frontend/TextDiagnosticPrinter.h"
 
 #include "clang/Basic/LangOptions.h"
@@ -50,21 +51,33 @@
 
 #include "clang/Parse/ParseAST.h"
 #include "clang/Frontend/CompilerInstance.h"
+#include "clang/Frontend/Utils.h"
 
 
 std::vector<std::string> getLocalizedStringFromFile(std::string filename, std::string triple, std::vector<std::string> includepaths)
 {
     clang::DiagnosticOptions diagnosticOptions;
+
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 2
     clang::TextDiagnosticPrinter *pTextDiagnosticPrinter =
         new clang::TextDiagnosticPrinter(
-            llvm::outs(),
-            &diagnosticOptions);
+            llvm::outs(), &diagnosticOptions);
+#else 
+    clang::TextDiagnosticPrinter *pTextDiagnosticPrinter =
+        new clang::TextDiagnosticPrinter(
+            llvm::outs(), diagnosticOptions);
+#endif
     llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> pDiagIDs;
-
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 2 
     clang::DiagnosticsEngine *pDiagnosticsEngine =
         new clang::DiagnosticsEngine(pDiagIDs,
             &diagnosticOptions,
             pTextDiagnosticPrinter);
+#else
+    clang::DiagnosticsEngine *pDiagnosticsEngine =
+        new clang::DiagnosticsEngine(pDiagIDs,
+            pTextDiagnosticPrinter);
+#endif
 
     clang::LangOptions languageOptions;
     clang::FileSystemOptions fileSystemOptions;
@@ -76,19 +89,42 @@ std::vector<std::string> getLocalizedStringFromFile(std::string filename, std::s
 
     clang::TargetOptions targetOptions;
     targetOptions.Triple = triple;//"arm-apple-darwin11";//llvm::sys::getDefaultTargetTriple();
-
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 2 
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
             &targetOptions);
     llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> headerSearchOptions(new clang::HeaderSearchOptions());
-
     for(int i = 0 ; i < includepaths.size(); i++)
         headerSearchOptions->AddPath(includepaths.at(i),
                 clang::frontend::Angled,
                 false,
                 false,
                 false);
+    clang::HeaderSearch headerSearch(headerSearchOptions,
+                                     fileManager,
+                                     *pDiagnosticsEngine,
+                                     languageOptions,
+                                     pTargetInfo);
+#else
+    clang::TargetInfo *pTargetInfo =
+        clang::TargetInfo::CreateTargetInfo(
+            *pDiagnosticsEngine,
+            targetOptions);
+    clang::HeaderSearchOptions headerSearchOptions;
+    for(int i = 0 ; i < includepaths.size(); i++)
+        headerSearchOptions.AddPath(includepaths.at(i),
+                clang::frontend::Angled,
+                false,
+                false,
+                false);
+    clang::HeaderSearch headerSearch(fileManager,
+                                     *pDiagnosticsEngine,
+                                     languageOptions,
+                                     pTargetInfo);
+    ApplyHeaderSearchOptions(headerSearch, headerSearchOptions, languageOptions, pTargetInfo->getTriple());
+#endif
+
 /*    headerSearchOptions->AddPath("/usr/share/iPhoneOS5.0.sdk/usr/include/c++/4.2.1/tr1/",
             clang::frontend::Angled,
             false,
@@ -100,15 +136,10 @@ std::vector<std::string> getLocalizedStringFromFile(std::string filename, std::s
             false,
             false);
 */
-    clang::HeaderSearch headerSearch(headerSearchOptions,
-                                     fileManager, 
-                                     *pDiagnosticsEngine,
-                                     languageOptions,
-                                     pTargetInfo);
     clang::CompilerInstance compInst;
 
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >=2
     llvm::IntrusiveRefCntPtr<clang::PreprocessorOptions> pOpts (new clang::PreprocessorOptions());
-
     clang::Preprocessor preprocessor(
         pOpts,
         *pDiagnosticsEngine,
@@ -124,6 +155,24 @@ std::vector<std::string> getLocalizedStringFromFile(std::string filename, std::s
         *headerSearchOptions,
         frontendOptions);
 
+#else
+    clang::PreprocessorOptions pOpts;
+
+    clang::Preprocessor preprocessor(
+        *pDiagnosticsEngine,
+        languageOptions,
+        pTargetInfo,
+        sourceManager,
+        headerSearch,
+        compInst);
+
+   clang::FrontendOptions frontendOptions;
+   clang::InitializePreprocessor(
+        preprocessor,
+        pOpts,
+        headerSearchOptions,
+        frontendOptions);
+#endif
 
 
     const clang::FileEntry *pFile = fileManager.getFile(filename);
