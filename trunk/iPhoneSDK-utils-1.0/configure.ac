@@ -2,7 +2,10 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT(iPhoneSDK-utils, 1.0, http://www.i-soft.com.cn)
+AC_INIT(iphonesdk-utils, 1.0, http://www.i-soft.com.cn)
+
+AC_CONFIG_HEADERS(config.h)
+AC_CONFIG_SRCDIR(clangwrapper/clangwrapper.cpp)
 
 AM_INIT_AUTOMAKE([1.10 no-define no-dist-gzip dist-bzip2 tar-ustar])
 AM_MAINTAINER_MODE
@@ -11,10 +14,14 @@ AM_MAINTAINER_MODE
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_RANLIB
+AM_PROG_CC_C_O
 # Checks for libraries.
 
 # Checks for header files.
 AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h])
+
+LT_PREREQ([2.2.6])
+LT_INIT(disable-static)
 
 # Checks for typedefs, structures, and compiler characteristics.
 #AC_CHECK_HEADER_STDBOOL
@@ -50,10 +57,10 @@ PKG_CHECK_MODULES(XML, [
     libxml-2.0 
 ])
 
+AC_CHECK_PROG([llvm_config], [llvm-config],[yes],[no])
 
-AC_CHECK_PROG([LLVMCONFIG], [llvm-config],[llvm-config],[llvm-config not found])
-if test "$LLVMCONFIG" = "llvm-config not found"; then
-AC_MSG_ERROR("Couldn't find llvm-config.")   
+if test "x$llvm-config" = "xno"; then
+    AC_MSG_ERROR("Couldn't find llvm-config.")   
 else
     LLVM_CXX_FLAGS=`llvm-config --cxxflags`
     LLVM_LIBS=`llvm-config --libs`
@@ -62,6 +69,9 @@ else
     AC_SUBST(LLVM_LIBS)
     AC_SUBST(LLVM_CXX_FLAGS)
 fi 
+
+TEMPLATES_DIR="$datadir/iPhoneTemplates"
+AC_SUBST(TEMPLATES_DIR)
 
 AC_OUTPUT([
 	   Makefile
@@ -72,6 +82,7 @@ AC_OUTPUT([
 	   plutil/Makefile
 	   proj2make/Makefile
 	   createProject/Makefile
+	   createProject/templates/Makefile
 	   genLocalization2/Makefile
 	   pngcrush/Makefile
 ])

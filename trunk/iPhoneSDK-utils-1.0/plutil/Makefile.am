@@ -1,19 +1,11 @@
-##############################
-# The main binary
-##############################
-
-AM_CPPFLAGS =						\
-	-DBINDIR=\"$(bindir)\"			 	\
-	-DDATADIR=\"$(datadir)\"			\
-	-DPREFIX=\""$(prefix)"\" 			\
-	-DSYSCONFDIR=\""$(sysconfdir)"\" 		\
-	-DLIBDIR=\""$(libdir)"\" 			\
-	$(NULL)
-
 bin_PROGRAMS = ios-plutil 
 
-ios_plutil_LDADD = $(XML_LIBS) -L$(top_srcdir)/libplutil -lplutil
-
 ios_plutil_SOURCES = plutil.c 
-	
-INCLUDES = -I$(top_srcdir)/libplutil $(XML_CFLAGS)
+
+ios_plutil_CFLAGS = \
+	$(XML_CFLAGS)		\
+	-I$(top_srcdir)/libplutil
+
+ios_plutil_LDADD =	\
+	$(XML_LIBS)	\
+       	$(top_builddir)/libplutil/libplutil.la

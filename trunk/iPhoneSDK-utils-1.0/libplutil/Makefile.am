@@ -1,20 +1,11 @@
-##############################
-# The main binary
-##############################
+noinst_LTLIBRARIES=libplutil.la
 
-AM_CPPFLAGS =						\
-	-DBINDIR=\"$(bindir)\"			 	\
-	-DDATADIR=\"$(datadir)\"			\
-	-DPREFIX=\""$(prefix)"\" 			\
-	-DSYSCONFDIR=\""$(sysconfdir)"\" 		\
-	-DLIBDIR=\""$(libdir)"\" 			\
-	$(NULL)
+libplutil_la_CFLAGS = $(XML_CFLAGS)
 
-noinst_LIBRARIES=libplutil.a
+#this must check
+libplutil_la_CFLAGS += -DPLIST_BYTE_ORDER=0 
 
-AM_CFLAGS = -DPLIST_BYTE_ORDER=0 
-
-libplutil_a_SOURCES=base64.c \
+libplutil_la_SOURCES=base64.c \
 	bplist.c \
 	bytearray.c \
 	hashtable.c \
@@ -26,5 +17,19 @@ libplutil_a_SOURCES=base64.c \
 	plist.c \
 	ptrarray.c \
 	xplist.c
-	
-INCLUDES = $(XML_CFLAGS)
+
+noinst_HEADERS =	\
+	base64.h	\
+	bytearray.h	\
+	common.h	\
+	hashtable.h	\
+	iterator.h	\
+	list.h	\
+	node.h	\
+	node_iterator.h	\
+	node_list.h	\
+	object.h	\
+	plist.h	\
+	plutil.h	\
+	ptrarray.h
+

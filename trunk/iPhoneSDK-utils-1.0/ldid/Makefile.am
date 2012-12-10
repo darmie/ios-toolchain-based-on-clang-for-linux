@@ -1,26 +1,12 @@
-##############################
-# The main binary
-##############################
-
-AM_CPPFLAGS =						\
-	-DBINDIR=\"$(bindir)\"			 	\
-	-DDATADIR=\"$(datadir)\"			\
-	-DPREFIX=\""$(prefix)"\" 			\
-	-DSYSCONFDIR=\""$(sysconfdir)"\" 		\
-	-DLIBDIR=\""$(libdir)"\" 			\
-	$(NULL)
-
 bin_PROGRAMS = ldid
-
 ldid_SOURCES = \
 	       ldid.cpp	\
 	       lookup2.c	\
 	       sha1.c
 
+ldid_CPPFLAGS = -I$(top_srcdir)/libhelper
+ldid_LDADD = $(top_builddir)/libhelper/libhelper.la
 
-ldid_LDADD = -L$(top_srcdir)/libhelper -lhelper 
-
-INCLUDES = -I$(top_srcdir)/libhelper
 EXTRA_DIST =	\
 	sha1.h			\
 	minimal/hexdump.h	\
