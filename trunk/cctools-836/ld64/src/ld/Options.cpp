@@ -2270,6 +2270,10 @@ void Options::parse(int argc, const char* argv[])
 			else if ( (strcmp(arg, "-ios_version_min") == 0) || (strcmp(arg, "-iphoneos_version_min") == 0) ) {
 				setIOSVersionMin(argv[++i]); 
 			}
+			else if ( (strcmp(arg, "-aspen_version_min") == 0) ) {
+                //for backward compitable with llvm-gcc.
+                ++i;
+			}
 			else if ( strcmp(arg, "-ios_simulator_version_min") == 0 ) {
 				setIOSVersionMin(argv[++i]);
 			}
