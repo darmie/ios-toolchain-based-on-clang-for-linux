@@ -342,13 +342,19 @@ AC_CHECK_FUNC([uuid_generate_random],[],
 			     [No uuid_generate_random function found])])])
 AC_SUBST([UUID_LIBS])
 
-# LTO
-AC_CHECK_LIB([LTO],[lto_get_version],[
-	     LTO_LIBS=-lLTO
-	     LTO_DEFS="-DLTO_SUPPORT=1"
-	     ])
-AC_SUBST(LTO_LIBS)
-AC_SUBST(LTO_DEFS)
+# Check LTO
+AC_CHECK_PROG([llvm_config], [llvm-config],[yes],[no])
+if test "x$llvm-config" = "xno"; then
+        AC_MSG_ERROR("Could not find llvm-config.")
+else
+        LLVM_LIBDIR=`llvm-config --libdir`
+        if test -f $LLVM_LIBDIR/libLTO.so;then
+                LTO_LIBS="-L`llvm-config --libdir` -lLTO"
+                LTO_DEFS="-DLTO_SUPPORT=1"
+                AC_SUBST(LTO_LIBS)
+                AC_SUBST(LTO_DEFS)
+        fi
+fi
 
 AC_CONFIG_FILES([Makefile include/Makefile libstuff/Makefile])
 AC_CONFIG_FILES([ar/Makefile])
