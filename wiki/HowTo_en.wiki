@@ -39,10 +39,8 @@ http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.2
 
 Download and build it (<font color="red"> need clang/clang++ to compile. </font>)
 
-LDFLAGS points to the path contains libLTO.so, change it according to your clang/llvm configurations.
-
 {{{
-$LDFLAGS+=/usr/lib/llvm ./configure --target=arm-apple-darwin11 --prefix=/usr
+$./configure --target=arm-apple-darwin11 --prefix=/usr
 $make
 $make install
 }}}
