@@ -1,0 +1,155 @@
+builddir = @builddir@
+top_builddir = @top_builddir@
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+
+prefix		= @prefix@
+exec_prefix	= @exec_prefix@
+bindir		= @bindir@
+
+VPATH = @srcdir@:@srcdir@/src
+
+CC		= @CC@
+CXX             = @CXX@
+CFLAGS          = @CFLAGS@ -D__DARWIN_UNIX03
+CXXFLAGS	= @CXXFLAGS@ -D__DARWIN_UNIX03
+WARNINGS	= @WARNINGS@
+MDYNAMICNOPIC   = @MDYNAMICNOPIC@
+CPPFLAGS        = @CPPFLAGS@
+DEFS            = @DEFS@ @ENDIAN_FLAG@
+LDFLAGS         = @LDFLAGS@
+HAVE_PRIVEXT    = @HAVE_PRIVEXT@
+HAVE_FOREIGN_HEADERS    = @HAVE_FOREIGN_HEADERS@
+UUID_LIBS	= @UUID_LIBS@
+SSL_LIBS	= @SSL_LIBS@
+LTO_DEFS	= @LTO_DEFS@ 
+LTO_LIBS	= @LTO_LIBS@ 
+
+ifeq ($(HAVE_PRIVEXT),NO)
+INCPRIVEXT      = -include $(top_srcdir)/include/extern.h
+endif
+
+ifeq ($(HAVE_FOREIGN_HEADERS),YES)
+FORHDRS         = -I$(top_srcdir)/include/foreign
+endif
+
+INSTALL		= @INSTALL@
+INSTALL_PROGRAM	= @INSTALL_PROGRAM@
+transform       = @program_transform_name@
+LDPROG          = $(shell echo ld_classic | sed '$(transform)')
+ASPROG          = $(shell echo as | sed '$(transform)')
+
+MYINCLUDES      = -I$(builddir) -I$(srcdir) -I$(srcdir) -I$(srcdir)/src/ld \
+			-I$(srcdir)/src/abstraction -I$(srcdir)/src/ld/parsers -I$(top_builddir)/include \
+			-I$(top_srcdir)/include $(INCPRIVEXT) $(FORHDRS)
+MYWARNINGS      = 
+MYDEFS          = -DDEBUG -DBINDIR="\"$(bindir)\"" -DLDPROG="\"$(LDPROG)\"" \
+		  -DASPROG="\"$(ASPROG)\"" $(LTO_DEFS)
+
+MYLIBS		= -luuid $(SSL_LIBS) $(UUID_LIBS) $(LTO_LIBS)
+
+MYCOMPILEFLAGS	= $(WARNINGS) $(MYWARNINGS) $(DEFS) $(MYDEFS) \
+	$(CPPFLAGS) $(MYINCLUDES) $(CFLAGS) $(MDYNAMICNOPIC) 
+
+MYLINKFLAGS	= $(LDFLAGS) $(MYLIBS)
+
+CXXFILES = src/ld/ld.cpp \
+	src/ld/passes/tlvp.cpp \
+	src/ld/passes/order.cpp \
+	src/ld/passes/branch_island.cpp \
+	src/ld/OutputFile.cpp \
+	src/ld/passes/objc.cpp \
+	src/ld/passes/branch_shim.cpp \
+	src/ld/passes/stubs/stubs.cpp \
+	src/ld/parsers/macho_relocatable_file.cpp \
+	src/ld/parsers/archive_file.cpp \
+	src/ld/helper.cpp \
+	src/ld/parsers/macho_dylib_file.cpp \
+	src/ld/parsers/opaque_section_file.cpp \
+	src/ld/passes/dtrace_dof.cpp \
+	src/ld/InputFiles.cpp \
+	src/ld/SymbolTable.cpp \
+	src/ld/Resolver.cpp \
+	src/ld/passes/got.cpp \
+	src/ld/passes/dylibs.cpp \
+	src/ld/passes/huge.cpp \
+    src/ld/passes/compact_unwind.cpp \
+	src/ld/Options.cpp
+
+ifdef LTO_DEFS
+CXXFILES += src/ld/parsers/lto_file.cpp
+endif
+
+CFILES = src/ld/debugline.c \
+	src/ld/strlcat.c \
+	src/ld/strlcpy.c \
+	src/ld/qsort.c \
+	src/ld/heapsort_r.c
+
+
+OBJS = $(CXXFILES:.cpp=.o)
+OBJS += $(CFILES:.c=.o) 
+
+unwinddumpCXXFILES = src/other/unwinddump.cpp
+unwinddumpOBJS = $(unwinddumpCXXFILES:.cpp=.o)
+
+dyldinfoCXXFILES = src/other/dyldinfo.cpp
+dyldinfoCFILES = src/ld/strlcpy.c
+dyldinfoOBJS = $(dyldinfoCXXFILES:.cpp=.o)
+dyldinfoOBJS += $(dyldinfoCFILES:.c=.o)
+
+machocheckerCXXFILES = src/other/machochecker.cpp
+machocheckerOBJS = $(machocheckerCXXFILES:.cpp=.o)
+
+ObjectDumpCXXFILES = src/other/ObjectDump.cpp src/ld/parsers/macho_relocatable_file.cpp
+ifdef LTO_DEFS
+ObjectDumpCXXFILES += src/ld/parsers/lto_file.cpp src/ld/helper.cpp
+endif
+
+ObjectDumpCFILES =  src/ld/debugline.c \
+    src/ld/strlcat.c \
+    src/ld/strlcpy.c \
+    src/ld/qsort.c \
+    src/ld/heapsort_r.c
+
+ObjectDumpOBJS = $(ObjectDumpCXXFILES:.cpp=.o)
+ObjectDumpOBJS += $(ObjectDumpCFILES:.c=.o)
+
+.cpp.o:
+	$(CXX) $(MYCOMPILEFLAGS) $(CXXFLAGS) -c -o $@ $<
+
+.c.o:
+	$(CC) $(MYCOMPILEFLAGS) -c -o $@ $<
+
+.PHONY: default clean distclean install
+
+default: ld unwinddump dyldinfo machochecker ObjectDump
+
+ld: $(OBJS)
+	$(CXX) -o $@ $^ $(MYLINKFLAGS)
+
+unwinddump: $(unwinddumpOBJS)
+	$(CXX) -o $@ $^ $(MYLINKFLAGS)
+dyldinfo: $(dyldinfoOBJS)
+	$(CXX) -o $@ $^ $(MYLINKFLAGS)
+machochecker: $(machocheckerOBJS)
+	$(CXX) -o $@ $^ $(MYLINKFLAGS)
+ObjectDump: $(ObjectDumpOBJS)
+	$(CXX) -o $@ $^ $(MYLINKFLAGS)
+
+install: ld unwinddump dyldinfo machochecker ObjectDump
+	mkdir -p $(DESTDIR)/$(bindir)
+	$(INSTALL_PROGRAM) ld \
+		$(DESTDIR)/$(bindir)/`echo ld | sed '$(transform)'`
+	$(INSTALL_PROGRAM) unwinddump \
+		$(DESTDIR)/$(bindir)/`echo unwinddump | sed '$(transform)'`
+	$(INSTALL_PROGRAM) dyldinfo \
+		$(DESTDIR)/$(bindir)/`echo dyldinfo | sed '$(transform)'`
+	$(INSTALL_PROGRAM) machochecker \
+		$(DESTDIR)/$(bindir)/`echo machochecker | sed '$(transform)'`
+	$(INSTALL_PROGRAM) ObjectDump \
+		$(DESTDIR)/$(bindir)/`echo ObjectDump | sed '$(transform)'`
+
+clean:
+	find . -name "*.o"|xargs rm -rf
+	rm -f ld unwinddump dyldinfo machochecker ObjectDump
