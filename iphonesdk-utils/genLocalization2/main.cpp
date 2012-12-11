@@ -113,9 +113,12 @@ vector<string> getAllTranslatableString()
 
   string cxxinclude = find_dir_in_dir(standard_include + "/c++","4.2.1" , "4", "");
   cxxinclude = standard_include + "/c++/" + cxxinclude;
+
   string cxxinclude1 = find_dir_in_dir(cxxinclude,"tr1" , "tr", "");
   cxxinclude1 = cxxinclude + "/" + cxxinclude1;
-
+  
+  string tripleinclude = find_dir_in_dir(cxxinclude, "arm-apple-darwin11", "armv", "");
+  tripleinclude = cxxinclude + "/" + tripleinclude; 
  
   string triple = as.substr(as.find("arm"), as.length()-3-as.find("arm"));
 
@@ -123,6 +126,7 @@ vector<string> getAllTranslatableString()
   includepaths.push_back(standard_include);
   includepaths.push_back(cxxinclude);
   includepaths.push_back(cxxinclude1);
+  includepaths.push_back(tripleinclude);
 
   //local headers in local dirs.
   scan_dir_for_dir(".");
