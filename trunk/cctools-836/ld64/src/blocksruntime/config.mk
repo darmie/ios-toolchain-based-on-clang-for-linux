@@ -1,0 +1,30 @@
+# AUTOMATICALLY GENERATED -- DO NOT EDIT
+PROGRAM=libBlocksRuntime
+VERSION=0.1
+TARGET=linux
+DISTFILE=libBlocksRuntime-0.1.tar.gz
+PREFIX=$$DESTDIR/usr/local
+LIBDIR=$$DESTDIR/usr/local/lib
+INCLUDEDIR=$$DESTDIR/usr/local/include
+MANDIR=$$DESTDIR/usr/local/share/man
+CFLAGS=-DBlocksRuntime_EXPORTS -fPIC -std=c99 -Wall -Wextra -W -pedantic -Wno-unused-parameter
+LDFLAGS=-shared -Wl,-export-dynamic -Wl,-soname,libBlocksRuntime.so.0 -o libBlocksRuntime.so.0.0 
+LDADD=
+LIBDEPENDS=
+SOURCES=runtime.c data.c
+OBJS=runtime.o data.o
+DEPS=
+MANS=
+HEADERS=Block.h Block_private.h
+EXTRA_DIST=
+SUBDIRS=
+ABI_MAJOR=0
+ABI_MINOR=0
+ABI_VERSION=0.0
+CC=/usr/bin/cc
+CPP=
+LD=/usr/bin/cc
+LN=/bin/ln
+AR=/usr/bin/ar
+INSTALL=/usr/bin/install
+DIFF=diff -ruN -dEbwBp -x .svn -x .o -x config.h -x config.mk
