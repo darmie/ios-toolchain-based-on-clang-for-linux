@@ -9,9 +9,9 @@ TEMPLATE_FILES = $(TEMPLATES:%=%.template)
 templatedir = $(TEMPLATES_DIR)
 template_DATA = $(TEMPLATE_FILES)
 %.template:%
-	@cd $(abs_srcdir)/$^; tar zcf $(abs_builddir)/$@ *
+	@cd $(abs_srcdir)/$^; tar --exclude-vcs -zcf $(abs_builddir)/$@ *
 	@echo $@ genarated.
 
-EXTRA_DIST = $(TEMPLATES)
+EXTRA_DIST = $(TEMPLATE_FILES)
 CLEANFILES = $(TEMPLATE_FILES)
 DISTCLEANFILES = $(TEMPLATE_FILES)

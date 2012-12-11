@@ -22,4 +22,20 @@ EXTRA_DIST = 	\
 	CMaker.h	\
 	CPBPROJ.h	\
 	CTarget.h	\
-	BASE_PC
+	BASE_PC/Dohickies/CcLexFile.cpp	\
+	BASE_PC/Dohickies/CTokFile.cpp	\
+	BASE_PC/Dohickies/CLexFile.h	\
+	BASE_PC/Dohickies/CcLexFile.h	\
+	BASE_PC/Dohickies/CpbxLexFile.cpp	\
+	BASE_PC/Dohickies/CTokFile.h	\
+	BASE_PC/Dohickies/CSymbol.cpp	\
+	BASE_PC/Dohickies/CSymbol.c	\
+	BASE_PC/Dohickies/CpbxLexFile.h	\
+	BASE_PC/Dohickies/CLexFile.cpp	\
+	BASE_PC/Dohickies/CSymbol.h	\
+	BASE_PC/CBufFile.cpp	\
+	BASE_PC/base.h	\
+	BASE_PC/cutil.cpp	\
+	BASE_PC/tgtypes.h	\
+	BASE_PC/CBufFile.h	\
+	BASE_PC/cutil.h
