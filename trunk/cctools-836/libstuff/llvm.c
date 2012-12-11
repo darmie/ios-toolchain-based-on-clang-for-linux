@@ -15,8 +15,8 @@
  * libLLVM.dylib.
  */
 #define LIB_LLVM "libLTO.so"
-int _Local_NSGetExecutablePath(char *path, unsigned int *size)
-{
+int _Local_NSGetExecutablePath(char *path, unsigned int *size);
+/*{
    int bufsize = *size;
    int ret_size;
    ret_size = readlink("/proc/self/exe", path, bufsize);
@@ -27,7 +27,7 @@ int _Local_NSGetExecutablePath(char *path, unsigned int *size)
    }
    else
     return -1;
-}
+}*/
 
 
 

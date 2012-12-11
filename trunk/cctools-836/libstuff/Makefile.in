@@ -36,7 +36,7 @@ MYWARNINGS	=
 MYDEFS		=
 
 MYCOMPILEFLAGS	= $(WARNINGS) $(MYWARNINGS) $(DEFS) $(MYDEFS) \
-	$(CPPFLAGS) $(MYINCLUDES) $(CFLAGS) $(MDYNAMICNOPIC) 
+	$(CPPFLAGS) $(MYINCLUDES) $(CFLAGS) $(MDYNAMICNOPIC) $(LTO_DEFS) 
 
 CFILES = allocate.c errors.c arch.c execute.c bytesex.c rnd.c hppa.c		\
 	  swap_headers.c reloc.c version_number.c get_toc_byte_sex.c		\
