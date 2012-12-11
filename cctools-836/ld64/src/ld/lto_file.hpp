@@ -529,7 +529,7 @@ bool Parser::optimize(const std::vector<ld::Atom*>& allAtoms, std::vector<ld::At
 	if ( _NSGetExecutablePath(path, &bufSize) != -1 ) {
 		char* lastSlash = strrchr(path, '/');
 		if ( lastSlash != NULL ) {
-			strcpy(lastSlash+1, "as");
+			strcpy(lastSlash+1, ASPROG);
 			struct stat statInfo;
 			if ( stat(path, &statInfo) == 0 )
 				::lto_codegen_set_assembler_path(generator, path);
