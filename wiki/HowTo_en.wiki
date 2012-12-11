@@ -134,7 +134,7 @@ $make
 $make install IPHONE_IP=<your own device IP>
 }}}
 
-If you want to build a multi-arch FAT mach-o binary, add multiple "-arch armv<n>" to CFLAGS/CXXFLAGS in Makefile. armv<n> means armv6/armv7/armv7s.
+If you want to build a multi-arch FAT mach-o binary, add multiple "-arch armv(n)" to CFLAGS/CXXFLAGS in Makefile. armv(n) means armv6/armv7/armv7s.
 
 For iOS 4.x/5.x, armv6 armv7 can be used.  
 For iOS 6.x, armv7/armv7s can be used. (armv6 droped in iOS 6.x)
