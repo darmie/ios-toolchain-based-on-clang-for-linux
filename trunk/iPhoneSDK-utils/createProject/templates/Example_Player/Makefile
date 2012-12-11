@@ -56,7 +56,6 @@ ifneq ($(RESOURCES),)
 	cp -r $(RESOURCES) $(APPFOLDER)
 endif
 	cp $(INFOPLIST) $(APPFOLDER)/Info.plist
-	ldid -S $(PROJECTNAME)
 	cp $(PROJECTNAME) $(APPFOLDER)
 
 langs:

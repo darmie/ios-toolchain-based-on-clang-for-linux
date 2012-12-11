@@ -58,7 +58,6 @@ ifneq ($(RESOURCES),)
 	cp -r $(RESOURCES) $(WEE_BUNDLE_FOLDER)
 endif
 	cp $(INFOPLIST) $(WEE_BUNDLE_FOLDER)/Info.plist
-	ldid -S $(PROJECTNAME)
 	mv $(PROJECTNAME) $(WEE_BUNDLE_FOLDER)
 
 install: dist
