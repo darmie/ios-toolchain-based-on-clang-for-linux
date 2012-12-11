@@ -20,19 +20,16 @@ CLANG_LIBS = \
                 -lclangBasic
 
 ios_genLocalization_CPPFLAGS =	\
-	$(XML_CFLAGS)	\
 	$(LLVM_CXX_FLAGS)	\
 	-I$(top_srcdir)/libhelper	\
 	-I$(top_srcdir)/libplutil	\
 	-fno-rtti
 
 ios_genLocalization_LDADD =	\
-       	$(CLANG_LIBS)	\
-	$(LLVM_COMPONENTS)	\
-	$(LLVM_LIBS)	\
-       	$(XML_LIBS)	\
        	$(top_builddir)/libplutil/libplutil.la	\
-      	$(top_builddir)/libhelper/libhelper.la
+      	$(top_builddir)/libhelper/libhelper.la	\
+       	$(CLANG_LIBS)	\
+	$(LLVM_LIBS)
 
 ios_genLocalization_SOURCES =	\
 	main.cpp	\

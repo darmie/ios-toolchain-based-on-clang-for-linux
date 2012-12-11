@@ -4,6 +4,7 @@ libplutil_la_CFLAGS = $(XML_CFLAGS)
 
 #this must check
 libplutil_la_CFLAGS += -DPLIST_BYTE_ORDER=0 
+libplutil_la_LIBADD = $(XML_LIBS)
 
 libplutil_la_SOURCES=base64.c \
 	bplist.c \

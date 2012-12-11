@@ -7,5 +7,4 @@ ios_plutil_CFLAGS = \
 	-I$(top_srcdir)/libplutil
 
 ios_plutil_LDADD =	\
-	$(XML_LIBS)	\
        	$(top_builddir)/libplutil/libplutil.la
