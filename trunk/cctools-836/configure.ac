@@ -62,6 +62,14 @@ fi
 AC_PROG_CC
 AC_PROG_CXX
 
+if test "$CC" != "clang"; then
+AC_MSG_ERROR("You must use clang to compile it")
+fi
+
+if test "$CXX" != "clang++"; then
+AC_MSG_ERROR("You must use clang to compile it")
+fi
+
 AC_CHECK_TOOL([HOST_RANLIB], [ranlib], :)
 AC_CHECK_TOOL([HOST_AR], [ar], :)
 
