@@ -107,14 +107,16 @@ int main(int argc, char **argv)
   for(int i = 0; environ[i] != NULL; i++ ) {
     count++;
   }
-  char ** env_l = (char **)malloc((count+1) * sizeof(char*));
+
+  char ** env_l = (char **)malloc((count+2) * sizeof(char*));
   for(int i = 0; environ[i] != NULL; i++ ) {
     env_l[i] = environ[i];
   }
   string iphone_env = "IPHONEOS_DEPLOYMENT_TARGET=" + version;
-
+  string sign_code_when_build = "IOS_SIGN_CODE_WHEN_BUILD=1";
   env_l[count] = (strdup(iphone_env.c_str()));
-  env_l[count+1] = (char *)0;
+  env_l[count+1] = (strdup(sign_code_when_build.c_str()));
+  env_l[count+2] = (char *)0;
 
   //run command.
   execvpe(command.c_str(), cmd, env_l);
