@@ -38,6 +38,8 @@ I had ported cctools-836 and ld64-128.2 from opendarwin to linux. the porting pr
 Here is the final tarball:
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.16-ld64-128.2-for-linux.tar.gz
 
+Or the newest porting:
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.20-ld64-134.9-for-linux.tar.gz
 
 Download and build it (need clang/clang++ to compile.)
 
