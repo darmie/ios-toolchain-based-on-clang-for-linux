@@ -7,8 +7,7 @@ ios_clang_wrapper_CPPFLAGS = 				\
 	$(XML_CFLAGS)
 
 ios_clang_wrapper_LDADD =				\
-	$(top_builddir)/libhelper/libhelper.la		\
-	$(XML_LIBS)
+	$(top_builddir)/libhelper/libhelper.la
 
 install-data-hook:
 	ln -sf ios-clang-wrapper $(DESTDIR)/$(bindir)/ios-clang

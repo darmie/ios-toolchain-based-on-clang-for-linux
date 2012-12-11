@@ -60,14 +60,16 @@ PKG_CHECK_MODULES(XML, [
 AC_CHECK_PROG([llvm_config], [llvm-config],[yes],[no])
 
 if test "x$llvm-config" = "xno"; then
-    AC_MSG_ERROR("Couldn't find llvm-config.")   
+    AC_MSG_ERROR("Couldn't find llvm-config.")
 else
     LLVM_CXX_FLAGS=`llvm-config --cxxflags`
-    LLVM_LIBS=`llvm-config --libs`
-    LLVM_COMPONENTS=`llvm-config --ldflags --libs cppbackend|sed 'N;s/\n//'`
-    AC_SUBST(LLVM_COMPONENTS)
-    AC_SUBST(LLVM_LIBS)
+    LLVM_LIBDIR=`llvm-config --libdir`
+    LLVM_LIBS=`llvm-config --libs cppbackend`
+    LLVM_LDFLAGS=`llvm-config --ldflags`
+    LLVM_LIBS="-L${LLVM_LIBDIR} ${LLVM_LIBS} ${LLVM_LDFLAGS}"
+
     AC_SUBST(LLVM_CXX_FLAGS)
+    AC_SUBST(LLVM_LIBS)
 fi 
 
 TEMPLATES_DIR="$datadir/iPhoneTemplates"
