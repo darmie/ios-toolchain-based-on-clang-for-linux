@@ -37,7 +37,7 @@ I had ported cctools-836 and ld64-134.9 from opendarwin to linux. the porting pr
 
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.22-ld64-134.9-for-linux.tar.gz
 
-Download and build it (<font color="red"> need clang/clang++ to compile. </font>)
+Download and build it (<font color="red"> NEED clang/clang++ to compile. </font>)
 
 {{{
 $./configure --target=arm-apple-darwin11 --prefix=/usr
