@@ -64,8 +64,8 @@ if test "x$llvm-config" = "xno"; then
 else
     LLVM_CXX_FLAGS=`llvm-config --cxxflags`
     LLVM_LIBDIR=`llvm-config --libdir`
-    LLVM_LIBS=`llvm-config --libs cppbackend`
-    LLVM_LDFLAGS=`llvm-config --ldflags`
+    LLVM_LDFLAGS=`llvm-config --ldflags --libs cppbackend|sed 'N;s/\n//'`
+    LLVM_LIBS=`llvm-config --libs`
     LLVM_LIBS="-L${LLVM_LIBDIR} ${LLVM_LIBS} ${LLVM_LDFLAGS}"
 
     AC_SUBST(LLVM_CXX_FLAGS)
