@@ -35,16 +35,20 @@ If your distribution already provides  clang/llvm packages，make sure it is 3.1
 ==<font color="blue"> Step 2 : The assembler and linker </font>==
 I had ported the latest cctools-836 and ld64-134.9 from opendarwin to linux. the porting process is a little bit complicated, also with a lot of codes modified for linux, let's just skip it.
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.22-ld64-134.9-for-linux.tar.gz
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.25-ld64-134.9-for-linux.tar.gz
 
-Download and build it (<font color="red"> it will force to clang/clang++ to compile. </font>)
 
+Download and build it:
 {{{
 $./configure --target=arm-apple-darwin11 --prefix=/usr
 $make
 $make install
 }}}
 
+<font color="red"> 
+  # clang/clang++ are needed, since ld64-134.9 require blocks extension.
+  # There is a function proto in unistd.h from glibc use a variable name "__block", it is clang compiler reserved word, please change it to anything your want, for example "__libc_block".
+</font>
 
 ==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
 
