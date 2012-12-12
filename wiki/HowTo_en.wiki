@@ -53,7 +53,7 @@ $make install
 extern void encrypt (char *__block, int __edflag) __THROW __nonnull ((1));
 }}}
 
-<font color="red"> *If you can not build ld64-134.9, ld64-128.2 also provided in this tarball, just rename then folder ld64-128.2 to ld64, re-configure and make.</font>
+<font color="red"> *If you can not build ld64-134.9, ld64-128.2 also provided in this tarball, just rename the folder "ld64-128.2" to "ld64", re-configure and make.</font>
 
 ==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
 
