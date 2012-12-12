@@ -642,7 +642,7 @@ int main(int argc, const char *argv[]) {
                         timed = timev;
                     else {
                         dylib_command->dylib.timestamp = 0;
-                        timed = hash(reinterpret_cast<uint8_t *>(framework.GetBase()), framework.GetSize(), timev);
+                        timed = ::hash(reinterpret_cast<uint8_t *>(framework.GetBase()), framework.GetSize(), timev);
                     }
 
                     dylib_command->dylib.timestamp = framework.Swap(timed);
