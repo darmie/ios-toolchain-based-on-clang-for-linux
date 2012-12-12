@@ -47,8 +47,12 @@ $make install
 
 <font color="red"> 
   # clang/clang++ are needed, since ld64-134.9 require blocks extension.
-  # There is a function proto in unistd.h from glibc use a variable name "`__`block", it is clang compiler reserved word, please change it to anything your want, for example "`__`libc`_`block".
+  # There is a function proto in unistd.h from glibc use a variable name "`__`block", it is a reserved word of clang, please change it to anything your want, for example "`__`libc`_`block".
 </font>
+
+{{{
+extern void encrypt (char *__block, int __edflag) __THROW __nonnull ((1));
+}}}
 
 ==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
 
