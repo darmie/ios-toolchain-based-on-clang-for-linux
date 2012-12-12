@@ -27,17 +27,17 @@ Before we start, you need a workable C/C++ compiler installed.
 
 Clang/llvm 3.3 svn is *strongly* recommended.
 
-Please refer to <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_en"> this link</a> and build a svn version for your linux distribution.
+Please refer to <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_en"> this link</a> to build a svn version for your linux distribution.
 
-If your distribution already provides  clang/llvm packages，make sure it is 3.1 release or above.  Lower version may also work but is not tested. 
+If your distribution already provides  clang/llvm packages，make sure it is 3.1 release or above.  Lower version may work but isn't tested. 
 
 
 ==<font color="blue"> Step 2 : The assembler and linker </font>==
-I had ported cctools-836 and ld64-134.9 from opendarwin to linux. the porting process is a little bit complicated, also with a lot of codes modified for linux, let's just skip it.
+I had ported the latest cctools-836 and ld64-134.9 from opendarwin to linux. the porting process is a little bit complicated, also with a lot of codes modified for linux, let's just skip it.
 
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.22-ld64-134.9-for-linux.tar.gz
 
-Download and build it (<font color="red"> NEED clang/clang++ to compile. </font>)
+Download and build it (<font color="red"> it will force to clang/clang++ to compile. </font>)
 
 {{{
 $./configure --target=arm-apple-darwin11 --prefix=/usr
@@ -48,7 +48,9 @@ $make install
 
 ==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
 
-You can use the pre-generated SDKs (with Arc support, header positions fixed).
+You can use the pre-generated SDKs.
+
+DO NOT use higher version SDK with lower version Device.
 
 for iOS 4.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS4.2.sdk.tar.xz
 
@@ -71,7 +73,7 @@ iPhoneSDK-utils provides below utilities:
 
 (Some of them is collected from internet. with some modifications.)
 
-  # *ldid* : codesign tool, with armv7/armv7s support and other changes from orig version.
+  # *ldid* : codesign tool, with armv7/armv7s support and other changes from orig version. it will be called by ld64.
   # *ios-clang-wrapper* : automatically find SDK and construct proper compilation args.
   # *proj2make* : convert xcodeproj to proper Makefiles.
   # *ios-pngrevert* : fix png files optimized by iOS.
