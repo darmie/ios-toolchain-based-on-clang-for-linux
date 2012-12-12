@@ -41,7 +41,7 @@ http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.2
 LDFLAGS 指向libLTO.so所在的路径，根据自己系统的情况调整即可，如果是标准Clang/LLVM的安装，应该不需要设置，默认就在/usr/lib目录。
 
 {{{
-$LDFLAGS+=/usr/lib/llvm ./configure --target=arm-apple-darwin11 --prefix=/usr
+$./configure --target=arm-apple-darwin11 --prefix=/usr
 $make
 $make install
 }}}
