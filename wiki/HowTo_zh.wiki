@@ -36,7 +36,7 @@ Clang提供了较完整的Objective C 2.0支持，包括了blocks等gcc不支持
 
 可以从这里下载到移植后的代码压缩包 :
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.16-ld64-128.2-for-linux.tar.gz
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.22-ld64-128.2-for-linux.tar.gz
 
 
 编译安装(需要使用clang/clang++编译)：
