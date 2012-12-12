@@ -54,6 +54,10 @@ $make install
 extern void encrypt (char *__block, int __edflag) __THROW __nonnull ((1));
 }}}
 
+Or, you can use a older version:
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.16-ld64-128.2-for-linux.tar.gz
+
 ==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
 
 You can use the pre-generated SDKs.
