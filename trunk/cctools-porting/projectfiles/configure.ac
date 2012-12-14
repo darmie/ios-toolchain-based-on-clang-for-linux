@@ -6,6 +6,11 @@ AC_CANONICAL_TARGET
 
 AC_ARG_PROGRAM
 
+#force compiler to clang
+CC=clang
+CXX=clang++
+CPP="clang -E"
+
 AM_INIT_AUTOMAKE([1.10 no-define no-dist-gzip dist-bzip2 tar-ustar])
 
 AC_CONFIG_MACRO_DIR([m4])
@@ -47,8 +52,8 @@ esac
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
-AC_PROG_CC
-AC_PROG_CXX
+AC_PROG_CC([clang])
+AC_PROG_CXX([clang++])
 AM_PROG_CC_C_O
 AC_PROG_OBJC([clang])
 AM_PROG_AS([clang])
