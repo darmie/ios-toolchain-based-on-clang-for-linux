@@ -55,11 +55,6 @@ $make install
 extern void encrypt (char *__block, int __edflag) __THROW __nonnull ((1));
 }}}
 
-<font color="red"> *If you can not build ld64-134.9, here is a standalone version of ld64-128.2 for linux :
-
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/ld64-128.2-for-linux.tar.gz
-.</font>
-
 ==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
 
 You can use the pre-generated SDKs.
