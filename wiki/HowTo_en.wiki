@@ -123,6 +123,18 @@ firefox ./index.html
 }}}
 
 
+==<font color="blue"> Step 6: Emacs codes auto complete. (Optional) </font>==
+I modified emacs-auto-complete-clang-async to run clang-complete only one instance and have a significant performance improvement.
+
+here is a tarball include auto-complete/yasnippet/autopair.el/auto-complete-clang-async to provide a convenient development environment with Emacs.
+ 
+Download :
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/emacs-auto-complete.tar.gz
+
+Please refer to "README" in tarball to setup yourself.
+
+
 ==<font color="blue"> Build an iOS App. </font>==
 ====1. Create project ====
 Run ios-createProject
