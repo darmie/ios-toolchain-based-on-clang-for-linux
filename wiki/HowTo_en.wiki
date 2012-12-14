@@ -36,7 +36,9 @@ If your distribution already provides  clang/llvm packages，make sure it is 3.1
 I had ported the latest cctools-836 and ld64-134.9 from opendarwin to linux. the porting process is a little bit complicated, also with a lot of codes modified for linux, let's just skip it.
 
 cctools/ld64 porting tool had been upload to SVN, if you are interested in how to porting, please check out the codes from:
+{{{
 svn checkout http://ios-toolchain-based-on-clang-for-linux.googlecode.com/svn/trunk/cctools-porting
+}}}
 
 Here is a released tarball.
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-ld64-134.9-for-linux.tar.gz
