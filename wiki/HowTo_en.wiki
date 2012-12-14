@@ -35,7 +35,7 @@ If your distribution already provides  clang/llvm packages，make sure it is 3.1
 ==<font color="blue"> Step 2 : The assembler and linker </font>==
 I had ported the latest cctools-836 and ld64-134.9 from opendarwin to linux. the porting process is a little bit complicated, also with a lot of codes modified for linux, let's just skip it.
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.28-ld64-134.9-for-linux.tar.gz
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836.32-ld64-134.9-for-linux.tar.gz
 
 Download and build it:
 {{{
