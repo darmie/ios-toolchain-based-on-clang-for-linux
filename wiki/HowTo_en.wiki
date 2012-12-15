@@ -125,6 +125,8 @@ $make install
 }}}
 It will install arm-apple-darwin11-gdb/dsymutil to "/usr/bin" and some libraries to "/usr/lib"
 
+You can refer to <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/Howto_debug_en">this link</a> to start debug your App for iOS.
+
 By the way, I also tried lldb and enable remote-ios support under linux. It seems connected and works but there is too much different between gdb and lldb, I need more time to test it.
  
 ==<font color="blue"> Step 6: API reference. (Optional) </font>==
