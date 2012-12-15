@@ -16,10 +16,9 @@ CPPFLAGS += -fblocks
 CPPFLAGS += -g0 -O2
 CPPLAGS += -I"$(SRCDIR)"
 
-LDFLAGS += -framework CoreFoundation 
 LDFLAGS += -framework Foundation 
 LDFLAGS += -framework UIKit 
-LDFLAGS += -framework CoreGraphics
+//LDFLAGS += -framework CoreGraphics
 //LDFLAGS += -framework AVFoundation
 //LDFLAGS += -framework AddressBook
 //LDFLAGS += -framework AddressBookUI
@@ -81,6 +80,7 @@ $(PROJECTNAME):	$(OBJS)
 %.o:	%.cpp
 	$(CPP) -c $(CPPFLAGS) $< -o $@
 
+
 dist:	$(PROJECTNAME)
 	mkdir -p $(APPFOLDER)
 ifneq ($(RESOURCES),)
@@ -88,19 +88,20 @@ ifneq ($(RESOURCES),)
 endif
 	cp $(INFOPLIST) $(APPFOLDER)/Info.plist
 	cp $(PROJECTNAME) $(APPFOLDER)
+	find $(APPFOLDER) -name \*.png|xargs ios-pngcrush -c
+	find $(APPFOLDER) -name \*.plist|xargs ios-plutil -c
+	find $(APPFOLDER) -name \*.strings|xargs ios-plutil -c
 
 langs:
 	ios-genLocalization
 
 install: dist
-	ping -t 3 -c 1 $(IPHONE_IP)
 	ssh root@$(IPHONE_IP) 'rm -fr /Applications/$(INSTALLFOLDER)'
 	scp -r $(APPFOLDER) root@$(IPHONE_IP):/Applications/$(INSTALLFOLDER)
 	@echo "Application $(INSTALLFOLDER) installed"
 	ssh mobile@$(IPHONE_IP) 'uicache'
 
 uninstall:
-	ping -t 3 -c 1 $(IPHONE_IP)
 	ssh root@$(IPHONE_IP) 'rm -fr /Applications/$(INSTALLFOLDER)'
 	@echo "Application $(INSTALLFOLDER) uninstalled"
 
