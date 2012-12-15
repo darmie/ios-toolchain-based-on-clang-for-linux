@@ -1,7 +1,9 @@
 Here is a simple step by step tutorial for how to enable App debug for iOS toolchain:
 
 ==1. Prepare debugserver==
-Apple provides a "debugserver" with XCode, try to find "DeveloperDiskImage.dmg" in XCode*.dmg. use dmg2img and mount to extract all contents of it to a directory named "Developer". the debugserver is "Developer/usr/bin/debugserver".
+Apple provides a "debugserver" with XCode, try to find "DeveloperDiskImage.dmg" in XCode`*`.dmg. 
+
+use dmg2img and mount to extract all contents of it to a directory named "Developer". the debugserver is "Developer/usr/bin/debugserver".
 
 For security issue, by default, you can not use debugserver directly in iOS device, it need to be signed.
 
