@@ -78,6 +78,6 @@ when (gdb) prompt appear, enter
 (gdb)target remote-macosx <Your iPhone IP>:1000
 }}}
 
-If you are boring to enter this text everytime when you debug a App, you can add it to "~/.gdbinit", it will auto loaded when "arm-apple-darwin11-gdb" launched.
+If you are boring to enter this text everytime when you debug a App, you can add it to "~/.gdbinit", it will be loaded  automatically when "arm-apple-darwin11-gdb" launched.
 
 ==Enjoy debug!==
