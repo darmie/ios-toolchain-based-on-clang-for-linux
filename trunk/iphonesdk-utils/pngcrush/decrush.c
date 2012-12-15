@@ -32,6 +32,9 @@
 #include <errno.h>
 
 #include <zlib.h>
+#ifndef PATH_MAX
+#include <linux/limits.h>
+#endif
 
 #define MAX_CHUNKS 20
 #define BUFSIZE 1048576 // 1MB buffer size
@@ -62,40 +65,43 @@ void process_chunks(void);
 void write_png(char *);
 unsigned long mycrc(unsigned char *, unsigned char *, int);
 
-int main(int argc, char **argv){
+void decrush(char *file_in, char *file_out)
+{
+    printf("decrush PNG: %s\n", file_in);
+    if(!file_out) {
+        file_out = (char *)malloc(PATH_MAX);
+        sprintf(file_out, "%s.decrush", file_in);
+    }
+
 	int fd;
 	unsigned char *buf;
 	struct stat s;
 	
-	
-	if(argc!=3)
-    {
-        printf("Usage: %s <input> <output>\n\n",argv[0]);
-        exit(1);
-    }
-	
-	fd = open(argv[1], O_RDONLY, 0);
+	fd = open(file_in, O_RDONLY, 0);
 	
 	
 	if (fstat(fd, &s) < 0) {
-		die("Couldn't stat file\n");
+		return;//die("Couldn't stat file\n");
 	}
 	
 	buf = (unsigned char *)malloc(s.st_size);
 	if (read(fd, buf, s.st_size) != s.st_size) {
-		die("Couldn't read file\n");
+		return;//die("Couldn't read file\n");
 	}
 		
 	if (!check_png_header(buf)){
-		die("This is not a PNG file. I require a PNG file!\n");
+		return; //die("This is not a PNG file. I require a PNG file!\n");
 	}
 	
 	
 	chunks = malloc(sizeof(png_chunk *) * MAX_CHUNKS);
 	read_chunks(buf);
 	process_chunks();
-	write_png(argv[2]);
+	write_png(file_out);
 
+
+    unlink(file_in);
+    rename(file_out, file_in);
 }
 
 
@@ -130,8 +136,8 @@ void read_chunks(unsigned char* buf){
 		chunk->crc = ntohl(chunk->crc);
 		buf += 4;
 		
-		printf("Found chunk: %c%c%c%c\n", chunk->name[0], chunk->name[1], chunk->name[2], chunk->name[3]);
-		printf("Length: %d, CRC32: %08x\n", chunk->length, chunk->crc);
+		//printf("Found chunk: %c%c%c%c\n", chunk->name[0], chunk->name[1], chunk->name[2], chunk->name[3]);
+		//printf("Length: %d, CRC32: %08x\n", chunk->length, chunk->crc);
 		
 		*(chunks+i) = chunk;
 		
@@ -160,7 +166,7 @@ void process_chunks(){
 			unsigned char *deflatedbuf;
 			
 			inflatedbuf = (unsigned char *)malloc(BUFSIZE);
-			printf("processing IDAT chunk %d\n", i);
+			//printf("processing IDAT chunk %d\n", i);
 			infstrm.zalloc = Z_NULL;
 			infstrm.zfree = Z_NULL;
 			infstrm.opaque = Z_NULL;
@@ -171,7 +177,7 @@ void process_chunks(){
 			
 			// Inflate using raw inflation
 			if (inflateInit2(&infstrm,-8) != Z_OK){
-				die("ZLib error");
+				return ;//die("ZLib error");
 			}
 			
 			
@@ -181,7 +187,7 @@ void process_chunks(){
 					ret = Z_DATA_ERROR;     /* and fall through */
 				case Z_DATA_ERROR:
 				case Z_MEM_ERROR:
-					printf("ZLib error! %d\n", ret);
+					//printf("ZLib error! %d\n", ret);
 					inflateEnd(&infstrm);
 			}
 		 
@@ -207,7 +213,7 @@ void process_chunks(){
 			chunk->length = defstrm.total_out;
 			chunk->crc = mycrc(chunk->name, chunk->data, chunk->length);
 			
-			printf("New length: %d, new CRC: %08x\n", chunk->length, chunk->crc);
+			//printf("New length: %d, new CRC: %08x\n", chunk->length, chunk->crc);
 			
 		} else if (!memcmp(chunk->name, endchunk, 4)){
 			break;
@@ -238,11 +244,12 @@ void write_png(char *filename){
 			ret = write(fd, chunk->name, 4);
 			
 			if (chunk->length > 0){
-				printf("About to write data to fd length %d\n", chunk->length);
+				//printf("About to write data to fd length %d\n", chunk->length);
 				ret = write(fd, chunk->data, chunk->length);
 				if (!ret){
-					printf("%c%c%c%c size %d\n", chunk->name[0], chunk->name[1], chunk->name[2], chunk->name[3], chunk->length);
-					perror("write");
+					//printf("%c%c%c%c size %d\n", chunk->name[0], chunk->name[1], chunk->name[2], chunk->name[3], chunk->length);
+					//perror("write");
+					return ;
 				}
 			}
 			
@@ -260,8 +267,8 @@ void write_png(char *filename){
 
 
 void die(char *why){
-	printf(why);
-	exit(1);
+	//printf(why);
+	//exit(1);
 }
 
 unsigned long mycrc(unsigned char *name, unsigned char *buf, int len)

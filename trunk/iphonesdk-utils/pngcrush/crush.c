@@ -22,7 +22,7 @@ enum debuglevels {
 	LEVEL_INFO, LEVEL_RIDICULOUS, LEVEL_INSANE
 };
 
-static bool inplace = false;
+static bool inplace = true;
 static unsigned int verbose = 0;
 static bool chunked = true;
 static unsigned int global_num_rows = 8;
@@ -87,6 +87,7 @@ void swap_and_premultiply_alpha_transform(png_structp ptr, png_row_infop row_inf
 }
 
 void crush(char *infilename, char *outfilename) {
+    printf("crush PNG: %s\n", infilename);
 	if(!outfilename) {
 		outfilename = (char *)malloc(PATH_MAX);
 		sprintf(outfilename, "%s.crush", infilename);
@@ -325,6 +326,7 @@ out:
 	free(outfilename);
 }
 
+#if 0
 void usage(char *argv0) {
 	printf("pincrush\n");
 	printf("Syntax: %s [-v] [-c#] -i <infile> [infile ...]\n", argv0);
@@ -379,3 +381,4 @@ int main(int argc, char **argv, char **envp) {
 
 	return 0;
 }
+#endif
