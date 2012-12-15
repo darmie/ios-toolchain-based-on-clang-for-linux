@@ -1,6 +1,6 @@
-diff -Nur gdb-1822/src/bfd/Makefile.in gdb-1822.ll/src/bfd/Makefile.in
+diff -Nur gdb-1822/src/bfd/Makefile.in gdb-1822n/src/bfd/Makefile.in
 --- gdb-1822/src/bfd/Makefile.in	2007-01-25 06:05:42.000000000 +0800
-+++ gdb-1822.ll/src/bfd/Makefile.in	2012-12-15 12:18:32.447985858 +0800
++++ gdb-1822n/src/bfd/Makefile.in	2012-12-15 18:40:47.741418734 +0800
 @@ -260,7 +260,7 @@
  INCDIR = $(srcdir)/../include
  CSEARCH = -I. -I$(srcdir) -I$(INCDIR)
@@ -10,9 +10,9 @@ diff -Nur gdb-1822/src/bfd/Makefile.in gdb-1822.ll/src/bfd/Makefile.in
  bfdlib_LTLIBRARIES = libbfd.la
  AM_CFLAGS = $(WARN_CFLAGS)
  
-diff -Nur gdb-1822/src/binutils/Makefile.in gdb-1822.ll/src/binutils/Makefile.in
+diff -Nur gdb-1822/src/binutils/Makefile.in gdb-1822n/src/binutils/Makefile.in
 --- gdb-1822/src/binutils/Makefile.in	2006-02-01 09:20:23.000000000 +0800
-+++ gdb-1822.ll/src/binutils/Makefile.in	2012-12-15 12:18:32.459985871 +0800
++++ gdb-1822n/src/binutils/Makefile.in	2012-12-15 18:40:47.742418730 +0800
 @@ -316,7 +316,7 @@
  target_os = @target_os@
  target_vendor = @target_vendor@
@@ -49,21 +49,9 @@ diff -Nur gdb-1822/src/binutils/Makefile.in gdb-1822.ll/src/binutils/Makefile.in
  
  install-man:
  
-diff -Nur gdb-1822/src/configure.in gdb-1822.ll/src/configure.in
---- gdb-1822/src/configure.in	2008-05-24 05:32:17.000000000 +0800
-+++ gdb-1822.ll/src/configure.in	2012-12-15 12:18:32.459985871 +0800
-@@ -29,7 +29,7 @@
- AC_PROG_INSTALL
- ACX_PROG_LN
- AC_PROG_LN_S
--
-+CFLAGS += "-D__LITTLE_ENDIAN__=1"
- ### we might need to use some other shell than /bin/sh for running subshells
- ### If we are on Windows, search for the shell.  This will permit people
- ### to not have /bin/sh, but to be able to see /SOME/PATH/sh configure
-diff -Nur gdb-1822/src/gdb/c-exp.y gdb-1822.ll/src/gdb/c-exp.y
+diff -Nur gdb-1822/src/gdb/c-exp.y gdb-1822n/src/gdb/c-exp.y
 --- gdb-1822/src/gdb/c-exp.y	2009-01-10 10:26:47.000000000 +0800
-+++ gdb-1822.ll/src/gdb/c-exp.y	2012-12-15 12:18:32.448985859 +0800
++++ gdb-1822n/src/gdb/c-exp.y	2012-12-15 18:40:47.744418734 +0800
 @@ -1567,7 +1567,7 @@
        if (input_radix != 16 && !isdigit (lexptr[1]))
          goto symbol;            /* Nope, must be a symbol.  */
@@ -73,9 +61,9 @@ diff -Nur gdb-1822/src/gdb/c-exp.y gdb-1822.ll/src/gdb/c-exp.y
          goto symbol;            /* Nope, must be a symbol. */
        /* FALL THRU into number case.  */
  
-diff -Nur gdb-1822/src/gdb/defs.h gdb-1822.ll/src/gdb/defs.h
+diff -Nur gdb-1822/src/gdb/defs.h gdb-1822n/src/gdb/defs.h
 --- gdb-1822/src/gdb/defs.h	2011-08-26 07:49:52.000000000 +0800
-+++ gdb-1822.ll/src/gdb/defs.h	2012-12-15 12:18:32.449985861 +0800
++++ gdb-1822n/src/gdb/defs.h	2012-12-15 18:40:47.744418734 +0800
 @@ -73,6 +73,8 @@
  
  #include "bfd.h"
@@ -94,9 +82,9 @@ diff -Nur gdb-1822/src/gdb/defs.h gdb-1822.ll/src/gdb/defs.h
  
  int re_search_oneshot (regex_t *patbuf, const char *str, int size, int start, int range, void *regs);
  
-diff -Nur gdb-1822/src/gdb/dwarf2read.c gdb-1822.ll/src/gdb/dwarf2read.c
+diff -Nur gdb-1822/src/gdb/dwarf2read.c gdb-1822n/src/gdb/dwarf2read.c
 --- gdb-1822/src/gdb/dwarf2read.c	2012-05-22 02:30:53.000000000 +0800
-+++ gdb-1822.ll/src/gdb/dwarf2read.c	2012-12-15 12:18:41.474988817 +0800
++++ gdb-1822n/src/gdb/dwarf2read.c	2012-12-15 18:40:47.748418741 +0800
 @@ -84,6 +84,27 @@
     can be used for any other data associated to the objfile (symbol
     names, type names, location expressions to name a few).  */
@@ -143,9 +131,9 @@ diff -Nur gdb-1822/src/gdb/dwarf2read.c gdb-1822.ll/src/gdb/dwarf2read.c
  	       map->tuples, compare_map_entries_final_addr_index);
      }
    else if (map->entries == 1)
-diff -Nur gdb-1822/src/gdb/macosx/arm-macosx-nat-exec.c gdb-1822.ll/src/gdb/macosx/arm-macosx-nat-exec.c
+diff -Nur gdb-1822/src/gdb/macosx/arm-macosx-nat-exec.c gdb-1822n/src/gdb/macosx/arm-macosx-nat-exec.c
 --- gdb-1822/src/gdb/macosx/arm-macosx-nat-exec.c	2010-05-01 08:29:54.000000000 +0800
-+++ gdb-1822.ll/src/gdb/macosx/arm-macosx-nat-exec.c	2012-12-15 12:18:32.450985862 +0800
++++ gdb-1822n/src/gdb/macosx/arm-macosx-nat-exec.c	2012-12-15 18:40:47.748418741 +0800
 @@ -203,6 +203,7 @@
  			  &fp_regs->d[i]);
  }
@@ -171,9 +159,9 @@ diff -Nur gdb-1822/src/gdb/macosx/arm-macosx-nat-exec.c gdb-1822.ll/src/gdb/maco
  void
  macosx_complete_child_target (struct target_ops *target)
  {
-diff -Nur gdb-1822/src/gdb/macosx/arm-macosx-tdep.c gdb-1822.ll/src/gdb/macosx/arm-macosx-tdep.c
+diff -Nur gdb-1822/src/gdb/macosx/arm-macosx-tdep.c gdb-1822n/src/gdb/macosx/arm-macosx-tdep.c
 --- gdb-1822/src/gdb/macosx/arm-macosx-tdep.c	2012-01-10 07:54:35.000000000 +0800
-+++ gdb-1822.ll/src/gdb/macosx/arm-macosx-tdep.c	2012-12-15 12:18:32.451985863 +0800
++++ gdb-1822n/src/gdb/macosx/arm-macosx-tdep.c	2012-12-15 18:40:47.748418741 +0800
 @@ -60,6 +60,32 @@
  #include <sys/sysctl.h>
  #include "mach-o.h" /* for BFD mach definitions.  */
@@ -207,9 +195,9 @@ diff -Nur gdb-1822/src/gdb/macosx/arm-macosx-tdep.c gdb-1822.ll/src/gdb/macosx/a
  /* A boolean indicating if we must use software single stepping. Some 
     targets may not support using IMVA mismatching for a variety of reasons,
     and some remote targets may not implement the "s" packet.  */
-diff -Nur gdb-1822/src/gdb/macosx/macosx-nat-utils.c gdb-1822.ll/src/gdb/macosx/macosx-nat-utils.c
+diff -Nur gdb-1822/src/gdb/macosx/macosx-nat-utils.c gdb-1822n/src/gdb/macosx/macosx-nat-utils.c
 --- gdb-1822/src/gdb/macosx/macosx-nat-utils.c	2011-07-09 06:07:14.000000000 +0800
-+++ gdb-1822.ll/src/gdb/macosx/macosx-nat-utils.c	2012-12-15 12:18:32.452985864 +0800
++++ gdb-1822n/src/gdb/macosx/macosx-nat-utils.c	2012-12-15 18:40:47.748418741 +0800
 @@ -56,6 +56,11 @@
  #include "macosx-nat-utils.h"
  #include "macosx-nat-dyld.h"
@@ -237,9 +225,9 @@ diff -Nur gdb-1822/src/gdb/macosx/macosx-nat-utils.c gdb-1822.ll/src/gdb/macosx/
      }
  
    /* If the user didn't pass in anything, set some sensible defaults.  */
-diff -Nur gdb-1822/src/gdb/macosx/macosx-tdep.c gdb-1822.ll/src/gdb/macosx/macosx-tdep.c
+diff -Nur gdb-1822/src/gdb/macosx/macosx-tdep.c gdb-1822n/src/gdb/macosx/macosx-tdep.c
 --- gdb-1822/src/gdb/macosx/macosx-tdep.c	2012-07-18 06:14:03.000000000 +0800
-+++ gdb-1822.ll/src/gdb/macosx/macosx-tdep.c	2012-12-15 12:18:32.454985866 +0800
++++ gdb-1822n/src/gdb/macosx/macosx-tdep.c	2012-12-15 18:40:47.749418742 +0800
 @@ -99,6 +99,10 @@
  #endif
  #include "gdbarch.h"
@@ -278,9 +266,9 @@ diff -Nur gdb-1822/src/gdb/macosx/macosx-tdep.c gdb-1822.ll/src/gdb/macosx/macos
  
  /* Given a UUID plist from a dSYM and a UUID, returns the full path to the
     symbol-rich executable described in that plist, or NULL on error. Caller is
-diff -Nur gdb-1822/src/gdb/macosx/macosx-tdep.h gdb-1822.ll/src/gdb/macosx/macosx-tdep.h
+diff -Nur gdb-1822/src/gdb/macosx/macosx-tdep.h gdb-1822n/src/gdb/macosx/macosx-tdep.h
 --- gdb-1822/src/gdb/macosx/macosx-tdep.h	2012-06-29 11:27:31.000000000 +0800
-+++ gdb-1822.ll/src/gdb/macosx/macosx-tdep.h	2012-12-15 12:18:32.454985866 +0800
++++ gdb-1822n/src/gdb/macosx/macosx-tdep.h	2012-12-15 18:40:47.749418742 +0800
 @@ -15,6 +15,10 @@
  
  #include <CoreFoundation/CoreFoundation.h>
@@ -292,9 +280,9 @@ diff -Nur gdb-1822/src/gdb/macosx/macosx-tdep.h gdb-1822.ll/src/gdb/macosx/macos
  struct internal_nlist;
  struct external_nlist;
  struct objfile;
-diff -Nur gdb-1822/src/gdb/main.c gdb-1822.ll/src/gdb/main.c
+diff -Nur gdb-1822/src/gdb/main.c gdb-1822n/src/gdb/main.c
 --- gdb-1822/src/gdb/main.c	2010-06-29 10:36:58.000000000 +0800
-+++ gdb-1822.ll/src/gdb/main.c	2012-12-15 12:18:32.455985867 +0800
++++ gdb-1822n/src/gdb/main.c	2012-12-15 18:40:47.749418742 +0800
 @@ -730,7 +730,7 @@
       want the SAME function for all the gdbarch'es that are registered, so
       it actually lives a little above the gdbarch....  
@@ -317,9 +305,9 @@ diff -Nur gdb-1822/src/gdb/main.c gdb-1822.ll/src/gdb/main.c
  
    /* APPLE LOCAL BEGIN: Set the osabi via option.  */
    if (osabiarg != NULL)
-diff -Nur gdb-1822/src/gdb/Makefile.in gdb-1822.ll/src/gdb/Makefile.in
+diff -Nur gdb-1822/src/gdb/Makefile.in gdb-1822n/src/gdb/Makefile.in
 --- gdb-1822/src/gdb/Makefile.in	2011-04-28 15:39:47.000000000 +0800
-+++ gdb-1822.ll/src/gdb/Makefile.in	2012-12-15 12:18:32.459985871 +0800
++++ gdb-1822n/src/gdb/Makefile.in	2012-12-15 18:40:47.750418743 +0800
 @@ -154,7 +154,7 @@
  
  # APPLE LOCAL: We need to weak link to Carbon for the "open" command, and we
@@ -338,6 +326,15 @@ diff -Nur gdb-1822/src/gdb/Makefile.in gdb-1822.ll/src/gdb/Makefile.in
  
  # Did the user give us a --with-sysroot option?
  TARGET_SYSTEM_ROOT = @TARGET_SYSTEM_ROOT@
+@@ -356,7 +356,7 @@
+ # your system doesn't have fcntl.h in /usr/include (which is where it
+ # should be according to Posix).
+ DEFS = @DEFS@
+-GDB_CFLAGS = -I. -I$(srcdir) -I$(srcdir)/config -DLOCALEDIR="\"$(localedir)\"" $(DEFS)
++GDB_CFLAGS = -I. -I$(srcdir) -I$(srcdir)/config -DLOCALEDIR="\"$(localedir)\"" $(DEFS) -D__LITTLE_ENDIAN__=1
+ 
+ # M{H,T}_CFLAGS, if defined, have host- and target-dependent CFLAGS
+ # from the config directory.
 @@ -1000,7 +1000,7 @@
  
  TSOBS = inflow.o
@@ -356,9 +353,9 @@ diff -Nur gdb-1822/src/gdb/Makefile.in gdb-1822.ll/src/gdb/Makefile.in
  
  FRAMEWORK = gdb
  FRAMEWORK_PREFIX = 
-diff -Nur gdb-1822/src/gdb/mi/mi-cmd-stack.c gdb-1822.ll/src/gdb/mi/mi-cmd-stack.c
+diff -Nur gdb-1822/src/gdb/mi/mi-cmd-stack.c gdb-1822n/src/gdb/mi/mi-cmd-stack.c
 --- gdb-1822/src/gdb/mi/mi-cmd-stack.c	2011-07-14 06:17:21.000000000 +0800
-+++ gdb-1822.ll/src/gdb/mi/mi-cmd-stack.c	2012-12-15 12:18:32.456985868 +0800
++++ gdb-1822n/src/gdb/mi/mi-cmd-stack.c	2012-12-15 18:40:47.750418743 +0800
 @@ -286,7 +286,7 @@
  	    if (argc == 1)
  	      error ("mi_cmd_stack_list_frames_lite: No argument to -limit.");
@@ -395,9 +392,9 @@ diff -Nur gdb-1822/src/gdb/mi/mi-cmd-stack.c gdb-1822.ll/src/gdb/mi/mi-cmd-stack
  	      error ("mi_cmd_stack_list_frames_lite: Invalid argument to -names.");
  	    names = atoi (argv[1]);
  	    argc -= 2;
-diff -Nur gdb-1822/src/gdb/objc-exp.y gdb-1822.ll/src/gdb/objc-exp.y
+diff -Nur gdb-1822/src/gdb/objc-exp.y gdb-1822n/src/gdb/objc-exp.y
 --- gdb-1822/src/gdb/objc-exp.y	2009-03-19 09:48:32.000000000 +0800
-+++ gdb-1822.ll/src/gdb/objc-exp.y	2012-12-15 12:18:32.457985869 +0800
++++ gdb-1822n/src/gdb/objc-exp.y	2012-12-15 18:40:47.750418743 +0800
 @@ -1429,7 +1429,7 @@
        if (input_radix != 16 && !isdigit (lexptr[1]))
  	goto symbol;		/* Nope, must be a symbol.  */
@@ -407,9 +404,9 @@ diff -Nur gdb-1822/src/gdb/objc-exp.y gdb-1822.ll/src/gdb/objc-exp.y
  	goto symbol;		/* Nope, must be a symbol. */
        /* FALL THRU into number case.  */
  
-diff -Nur gdb-1822/src/gdb/symtab.c gdb-1822.ll/src/gdb/symtab.c
+diff -Nur gdb-1822/src/gdb/symtab.c gdb-1822n/src/gdb/symtab.c
 --- gdb-1822/src/gdb/symtab.c	2011-05-17 09:41:39.000000000 +0800
-+++ gdb-1822.ll/src/gdb/symtab.c	2012-12-15 12:18:32.457985869 +0800
++++ gdb-1822n/src/gdb/symtab.c	2012-12-15 18:40:47.751418744 +0800
 @@ -62,6 +62,59 @@
  /* APPLE LOCAL: So we can complain.  */
  #include "complaints.h"
@@ -470,9 +467,9 @@ diff -Nur gdb-1822/src/gdb/symtab.c gdb-1822.ll/src/gdb/symtab.c
  /* APPLE LOCAL begin cache lookup values for improved performance  */
  
  asection * cached_mapped_section = NULL;
-diff -Nur gdb-1822/src/gdb/thread.c gdb-1822.ll/src/gdb/thread.c
+diff -Nur gdb-1822/src/gdb/thread.c gdb-1822n/src/gdb/thread.c
 --- gdb-1822/src/gdb/thread.c	2010-04-02 10:34:02.000000000 +0800
-+++ gdb-1822.ll/src/gdb/thread.c	2012-12-15 12:18:32.458985870 +0800
++++ gdb-1822n/src/gdb/thread.c	2012-12-15 18:40:47.751418744 +0800
 @@ -49,6 +49,8 @@
  #include "macosx-nat-infthread.h"
  #endif
@@ -482,9 +479,9 @@ diff -Nur gdb-1822/src/gdb/thread.c gdb-1822.ll/src/gdb/thread.c
  /*#include "lynxos-core.h" */
  
  /* Definition of struct thread_info exported to gdbthread.h */
-diff -Nur gdb-1822/src/gdb/utils.c gdb-1822.ll/src/gdb/utils.c
+diff -Nur gdb-1822/src/gdb/utils.c gdb-1822n/src/gdb/utils.c
 --- gdb-1822/src/gdb/utils.c	2012-02-02 12:34:52.000000000 +0800
-+++ gdb-1822.ll/src/gdb/utils.c	2012-12-15 12:18:32.458985870 +0800
++++ gdb-1822n/src/gdb/utils.c	2012-12-15 18:40:47.752418745 +0800
 @@ -3974,14 +3974,14 @@
  // REG_EXTENDED, REG_BASIC, REG_NOSPEC, REG_ICASE, REG_NOSUB, REG_NEWLINE, 
  // REG_PEND used for subsequent re_comp's
@@ -502,9 +499,9 @@ diff -Nur gdb-1822/src/gdb/utils.c gdb-1822.ll/src/gdb/utils.c
  const char *
  re_comp (const char *str)
  {
-diff -Nur gdb-1822/src/include/libiberty.h gdb-1822.ll/src/include/libiberty.h
+diff -Nur gdb-1822/src/include/libiberty.h gdb-1822n/src/include/libiberty.h
 --- gdb-1822/src/include/libiberty.h	2009-01-14 06:04:36.000000000 +0800
-+++ gdb-1822.ll/src/include/libiberty.h	2012-12-15 12:18:32.458985870 +0800
++++ gdb-1822n/src/include/libiberty.h	2012-12-15 18:40:47.752418745 +0800
 @@ -93,6 +93,7 @@
     declaration without arguments.  If it is 0, we checked and failed
     to find the declaration so provide a fully prototyped one.  If it
@@ -522,9 +519,9 @@ diff -Nur gdb-1822/src/include/libiberty.h gdb-1822.ll/src/include/libiberty.h
  /* A well-defined basename () that is always compiled in.  */
  
  extern const char *lbasename (const char *);
-diff -Nur gdb-1822/src/libiberty/Makefile.in gdb-1822.ll/src/libiberty/Makefile.in
+diff -Nur gdb-1822/src/libiberty/Makefile.in gdb-1822n/src/libiberty/Makefile.in
 --- gdb-1822/src/libiberty/Makefile.in	2011-04-28 15:39:48.000000000 +0800
-+++ gdb-1822.ll/src/libiberty/Makefile.in	2012-12-15 12:18:32.460985872 +0800
++++ gdb-1822n/src/libiberty/Makefile.in	2012-12-15 18:40:47.752418745 +0800
 @@ -322,7 +322,7 @@
  @MAINT@	echo stamp > stamp-functions
  
@@ -534,9 +531,9 @@ diff -Nur gdb-1822/src/libiberty/Makefile.in gdb-1822.ll/src/libiberty/Makefile.
  
  install_to_libdir: all
  	${mkinstalldirs} $(DESTDIR)$(libdir)$(MULTISUBDIR)
-diff -Nur gdb-1822/src/opcodes/Makefile.in gdb-1822.ll/src/opcodes/Makefile.in
+diff -Nur gdb-1822/src/opcodes/Makefile.in gdb-1822n/src/opcodes/Makefile.in
 --- gdb-1822/src/opcodes/Makefile.in	2011-04-28 15:39:48.000000000 +0800
-+++ gdb-1822.ll/src/opcodes/Makefile.in	2012-12-15 12:18:32.460985872 +0800
++++ gdb-1822n/src/opcodes/Makefile.in	2012-12-15 18:40:47.752418745 +0800
 @@ -248,7 +248,7 @@
  target_vendor = @target_vendor@
  top_builddir = @top_builddir@
