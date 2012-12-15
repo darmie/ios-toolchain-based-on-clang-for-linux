@@ -91,15 +91,14 @@ iPhoneSDK-utils provides below utilities:
   # *ldid* : codesign tool, with armv7/armv7s support and other changes from orig version. it will be called by ld64.
   # *ios-clang-wrapper* : automatically find SDK and construct proper compilation args.
   # *proj2make* : convert xcodeproj to proper Makefiles.
-  # *ios-pngrevert* : fix png files optimized by iOS.
-  # *ios-pngcrush*: pincrush, like Apple's pngcrush.
+  # *ios-pngcrush*: pin crush/de-crush tool, like Apple's pngcrush.
   # *ios-createProject* : project templates
   # *ios-genLocalization* : iOS app localization tool based on clang lexer.
   # *ios-plutil* : plist compiler/decompiler.
 
 Download from: 
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-1.1.tar.bz2
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-1.2.tar.bz2
 
 
 Build and install it:
