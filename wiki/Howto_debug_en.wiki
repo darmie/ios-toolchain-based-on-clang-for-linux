@@ -24,7 +24,7 @@ For security issue, by default, you can not use debugserver directly in iOS devi
 </plist>
 }}}
 
-2. make sure the debugserver is not FAT mach-o, if it is, use lipo  to extract it.
+2. make sure the debugserver is not FAT mach-o, otherwise, use lipo  to extract it.
 
 3. sign it.
 {{{
