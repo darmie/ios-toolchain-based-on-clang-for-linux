@@ -22,3 +22,6 @@ $./configure --prefix=/usr  --enable-optimized
 $make 
 $make install
 }}}
+
+===3, Build lldb ===
+After you have a workable clang compiler, you can also install lldb for linux.
