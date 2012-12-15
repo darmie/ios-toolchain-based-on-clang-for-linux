@@ -127,11 +127,13 @@ void compile_stub(char *plistfile, int compile)
 
 void decompile(char *plistfile)
 {
+  printf("convert %s to xml\n", plistfile);
   compile_stub(plistfile, 0);
 } 
 
 void compile(char *plistfile)
 {
+  printf("convert %s to binary\n", plistfile);
   compile_stub(plistfile, 1);
 }
 

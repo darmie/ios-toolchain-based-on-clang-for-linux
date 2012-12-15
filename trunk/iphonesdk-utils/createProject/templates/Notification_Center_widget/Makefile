@@ -61,14 +61,12 @@ endif
 	mv $(PROJECTNAME) $(WEE_BUNDLE_FOLDER)
 
 install: dist
-	ping -t 3 -c 1 $(IPHONE_IP)
 	ssh root@$(IPHONE_IP) 'rm -fr /System/Library/WeeAppPlugins/$(INSTALLFOLDER)'
 	scp -r $(WEE_BUNDLE_FOLDER) root@$(IPHONE_IP):/System/Library/WeeAppPlugins/$(INSTALLFOLDER)
 	@echo "Application $(INSTALLFOLDER) installed"
 	ssh mobile@$(IPHONE_IP) 'killall -9 SpringBoard'
 
 uninstall:
-	ping -t 3 -c 1 $(IPHONE_IP)
 	ssh root@$(IPHONE_IP) 'rm -fr /System/Library/WeeAppPlugins/$(INSTALLFOLDER)'
 	@echo "Application $(INSTALLFOLDER) uninstalled"
 
