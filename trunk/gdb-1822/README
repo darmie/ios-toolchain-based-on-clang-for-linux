@@ -1,0 +1,17 @@
+gdb-1822 ported.
+
+1, download gdb-1822 from http://www.opensource.apple.com/tarballs/gdb/gdb-1822.tar.gz
+
+2, copy everything in "externalheaders" to src/include.
+
+3, apply gdb-1822-ported.patch.
+
+4, enter src folder, run
+./configure --target=arm-apple-darwin11 --prefix=/usr
+
+5, make;make install
+
+you will get a command "arm-apple-darwin11-gdb"
+
+please update debugserver to your iOS device and use this gdb to remote debug.
+
