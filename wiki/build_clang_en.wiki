@@ -23,7 +23,7 @@ $make
 $make install
 }}}
 
-=3, Build lldb =
+=3, Build lldb(Optional)=
 After you have a workable clang compiler, you can also install lldb for linux.
 
 ===3.1. Install libc++===
