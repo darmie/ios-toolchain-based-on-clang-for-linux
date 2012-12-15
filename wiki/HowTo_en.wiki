@@ -109,19 +109,24 @@ $make
 $make install
 }}}
 
-==<font color="blue"> Step 6: Debugger (Partially works)</font>==
-Debug is always difficult, remote debug is always more difficult. remote debug for iOS is more and more difficult...
+==<font color="blue"> Step 6: Debugger </font>==
+gdb-1822 from opendarwin had been ported to linux. thanks to opencflite(for CoreFoundation implementation) and maloader(for directly run dsymutil under linux).
 
-Luckyly, At least gdb-1822 finally ported. thanks to opencflite(for CoreFoundation implementation) and maloader(for directly run dsymutil under linux).
+I made a bundle include opencflite/maloader/gdb-1822 to make it build and install easily.
 
-How to build a gdb for ios/setup a debugserver and debug had been commit to svn:
+Download from:
 
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/gdb-1822-for-linux.tar.xz
+
+and build/install it:
 {{{
-svn checkout http://ios-toolchain-based-on-clang-for-linux.googlecode.com/svn/trunk/gdb-1822
+$make
+$make install
 }}}
+It will install arm-apple-darwin11-gdb/dsymutil to "/usr/bin" and some libraries to "/usr/lib"
 
-I am working on enable remote-ios debug of lldb under linux.
-
+By the way, I also tried lldb and enable remote-ios support under linux. It seems connected and works but there is too much different between gdb and lldb, I need more time to test it.
+ 
 ==<font color="blue"> Step 6: API reference. (Optional) </font>==
 Download API reference from:
 
