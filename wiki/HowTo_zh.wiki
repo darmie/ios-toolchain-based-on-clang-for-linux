@@ -35,7 +35,9 @@ Clang提供了较完整的Objective C 2.0支持，包括了blocks等gcc不支持
 我已经移植了OpenDarwin最新版本的cctools-836和ld64-134.9/ld64-128.2到Linux系统，移植的过程比较复杂，这里就不详细讲了。
 
 可以从这里下载到移植后的代码压缩包 :
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-ld64-134.9-for-linux.tar.gz
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-ld64-134.9-for-linux-1.0.tar.xz
+
 
 编译安装(需要使用clang/clang++编译)：
 LDFLAGS 指向libLTO.so所在的路径，根据自己系统的情况调整即可，如果是标准Clang/LLVM的安装，应该不需要设置，默认就在/usr/lib目录。
