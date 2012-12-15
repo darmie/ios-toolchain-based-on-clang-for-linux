@@ -1,0 +1,47 @@
+At first, make sure that you have a workable Clang compiler installed.
+
+==1. Install libc++==
+Get the codes:
+{{{
+$svn co http://llvm.org/svn/llvm-project/libcxx/trunk libcxx
+}}}
+
+Build and Install it:
+
+libcxx can be use libcxxabi or libsupc++ from libstdc++ as c++abi library. the svn code was forced to libsupc++. I use libcxxabi+libcxx as a toolchain support libraries, It need patch the project files. Here I give a example how to build libcxx with libsupc++.
+
+NOTE the LIBCXX_LIBSUPCXX_INCLUDE_PATHS is some paths seperated by semicolon, it point to the libstdc++ header files. change it according to your environment.
+
+{{{
+$cd libcxx
+$mkdir build && cd build
+$cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DLIBCXX_CXX_ABI=libsupc++ -DLIBCXX_LIBSUPCXX_INCLUDE_PATHS="/usr/include/c++/4.7.2/x86_64-pure64-linux;/usr/include/c++/4.7.2" ..
+}}}
+
+{{{
+$make && make install
+}}}
+
+==2.Build clang/llvm/lldb==
+Checkout SVN codes.
+{{{
+$cd where-you-want-llvm-to-live
+$svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm-svn
+
+$cd where-you-want-llvm-to-live
+$cd llvm-svn/tools
+$svn co http://llvm.org/svn/llvm-project/cfe/trunk clang
+$svn co http://llvm.org/svn/llvm-project/lldb/trunk lldb
+
+
+$cd where-you-want-llvm-to-live
+$cd llvm-svn/projects
+$svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt
+}}}
+
+Patch it, lldb had some bugs under linux and we also want to enable remote-ios support.
+{{{
+
+}}}
+
+==3.
