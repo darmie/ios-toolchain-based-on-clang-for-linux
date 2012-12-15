@@ -120,7 +120,7 @@ How to build a gdb for ios/setup a debugserver and debug had been commit to svn:
 svn checkout http://ios-toolchain-based-on-clang-for-linux.googlecode.com/svn/trunk/gdb-1822
 }}}
 
-I am working on enable remote-ios debug of lldb under linux, it seems works.
+I am working on enable remote-ios debug of lldb under linux.
 
 ==<font color="blue"> Step 6: API reference. (Optional) </font>==
 Download API reference from:
