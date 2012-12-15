@@ -18,8 +18,8 @@ $mkdir build && cd build
 $cmake -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_C_COMPILER=clang \
   -DCMAKE_CXX_COMPILER=clang++ \
-   -DLIBCXX_CXX_ABI=libsupc++ 
-   -DLIBCXX_LIBSUPCXX_INCLUDE_PATHS="/usr/include/c++/4.7.2/x86_64-pure64-linux;/usr/include/c++/4.7.2" ..
+  -DLIBCXX_CXX_ABI=libsupc++  \
+  -DLIBCXX_LIBSUPCXX_INCLUDE_PATHS="/usr/include/c++/4.7.2/x86_64-pure64-linux;/usr/include/c++/4.7.2" ..
 }}}
 
 {{{
