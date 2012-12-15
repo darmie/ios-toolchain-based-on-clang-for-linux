@@ -21,7 +21,7 @@ LDADD =  \
         $(top_srcdir)/libstuff/libstuff.la \
 		$(DL_LIBS) 
 		
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/include/foreign -I$(top_srcdir)/libstuff $(WARNINGS) $(LTO_DEFS) -D__DARWIN_UNIX03 $(ENDIAN_FLAG)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/include/foreign -I$(top_srcdir)/libstuff $(WARNINGS) $(LTO_DEFS) -D__DARWIN_UNIX03
 
 checksyms_SOURCES = checksyms.c
 lipo_SOURCES = lipo.c

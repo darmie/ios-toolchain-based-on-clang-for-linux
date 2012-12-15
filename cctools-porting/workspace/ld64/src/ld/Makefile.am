@@ -16,7 +16,6 @@ ld_CXXFLAGS =  \
 	-D__DARWIN_UNIX03 \
 	$(WARNINGS) \
 	$(LTO_DEFS) \
-	$(ENDIAN_FLAG) \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/include/foreign \
 	-I$(top_srcdir)/ld64/src \
@@ -32,7 +31,6 @@ ld_CFLAGS =  \
     -D__DARWIN_UNIX03 \
     $(WARNINGS) \
     $(LTO_DEFS) \
-    $(ENDIAN_FLAG) \
     -I$(top_srcdir)/include \
     -I$(top_srcdir)/include/foreign \
     -I$(top_srcdir)/ld64/src \

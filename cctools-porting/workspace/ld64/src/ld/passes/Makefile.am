@@ -16,7 +16,6 @@ libPasses_la_CXXFLAGS = \
 	-D__DARWIN_UNIX03 \
 	$(WARNINGS) \
 	$(LTO_DEFS) \
-	$(ENDIAN_FLAGS) \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/include/foreign \
 	-I$(top_srcdir)/ld64/src/abstraction \
