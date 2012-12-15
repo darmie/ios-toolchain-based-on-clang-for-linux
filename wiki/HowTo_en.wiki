@@ -110,9 +110,9 @@ $make install
 }}}
 
 ==<font color="blue"> Step 6: Debugger </font>==
-gdb-1822 from opendarwin had been ported to linux. thanks to opencflite(for CoreFoundation implementation) and maloader(for directly run dsymutil under linux).
+I had ported gdb-1822 from opendarwin to linux. thanks to opencflite(for CoreFoundation implementation) and maloader(for directly run dsymutil under linux).
 
-I made a bundle include opencflite/maloader/gdb-1822 to make it build and install easily.
+A package include opencflite/maloader/gdb-1822 had been provided to make it build and install easily.
 
 Download from:
 
