@@ -112,7 +112,7 @@ $make install
 ==<font color="blue"> Step 6: Debugger (Partially works)</font>==
 Debug is always difficult, remote debug is always more difficult. remote debug for iOS is more and more difficult...
 
-Luckyly, At lease gdb-1822 finally ported. thanks to opencflite(for CoreFoundation implementation) and maloader(for directly run dsymutil under linux).
+Luckyly, At least gdb-1822 finally ported. thanks to opencflite(for CoreFoundation implementation) and maloader(for directly run dsymutil under linux).
 
 How to build a gdb for ios/setup a debugserver and debug had been commit to svn:
 
