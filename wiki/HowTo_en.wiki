@@ -10,7 +10,7 @@ Actually, the iOS toolchain under linux is as same and simple as other crosscomp
 
   # *Assembler and Linker*: cctools and ld64 from opendarwin.
   # *Compiler*: here we use llvm/clang.
-  # *Debugger*: Soon, waiting lldb for linux and a replacement of dsymutil.
+  # *Debugger*: gdb/dsymutil.
   # *SDK*, include headers and libraries.
   # *Utilities*: such as ldid codesign tool.
   # *Documents*: API reference and related documents.
@@ -109,7 +109,20 @@ $make
 $make install
 }}}
 
-==<font color="blue"> Step 5: API reference. (Optional) </font>==
+==<font color="blue"> Step 6: Debugger (Partially works)</font>==
+Debug is always difficult, remote debug is always more difficult. remote debug for iOS is more and more difficult...
+
+Luckyly, At lease gdb-1822 finally ported. thanks to opencflite(for CoreFoundation implementation) and maloader(for directly run dsymutil under linux).
+
+How to build a gdb for ios/setup a debugserver and debug had been commit to svn:
+
+{{{
+svn checkout http://ios-toolchain-based-on-clang-for-linux.googlecode.com/svn/trunk/gdb-1822
+}}}
+
+I am working on enable remote-ios debug of lldb under linux, it seems works.
+
+==<font color="blue"> Step 6: API reference. (Optional) </font>==
 Download API reference from:
 
 http://devimages.apple.com/docsets/20120109/com.apple.adc.documentation.AppleiOS5_0.iOSLibrary.xar
@@ -122,7 +135,7 @@ firefox ./index.html
 }}}
 
 
-==<font color="blue"> Step 6: Emacs codes auto complete. (Optional) </font>==
+==<font color="blue"> Step 7: Emacs codes auto complete. (Optional) </font>==
 I modified emacs-auto-complete-clang-async to run clang-complete only one instance and have a significant performance improvement.
 
 here is a tarball include auto-complete/yasnippet/autopair.el/auto-complete-clang-async to provide a convenient development environment with Emacs.
