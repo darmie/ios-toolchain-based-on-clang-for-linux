@@ -6,7 +6,7 @@ otool_LDADD =  \
 
 otool_LDFLAGS = $(PTHREAD_FLAGS) 
 
-otool_CFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/include/foreign -I$(top_srcdir)/libstuff -I$(top_srcdir)/libobjc2 $(WARNINGS) $(LTO_DEFS) -D__DARWIN_UNIX03 $(ENDIAN_FLAG)
+otool_CFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/include/foreign -I$(top_srcdir)/libstuff -I$(top_srcdir)/libobjc2 $(WARNINGS) $(LTO_DEFS) -D__DARWIN_UNIX03
 
 otool_SOURCES =  \
 	main.c \
