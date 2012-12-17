@@ -82,7 +82,7 @@ or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-lin
 
 
 ==<font color="blue"> Step 4: The utilities </font>==
-iPhoneSDK-utils provides below utilities:
+iphonesdk-utils provides below utilities:
 
 *NOTE:*
 
