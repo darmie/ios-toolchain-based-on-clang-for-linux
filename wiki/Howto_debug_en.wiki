@@ -7,6 +7,8 @@ for iOS 5.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/
 
 for iOS 6.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/debugserver-for-ios-6.x.tar.xz
 
+And upload "Developer" dir to the root of your iOS device.
+
 If you want to prepare it by your self, try to find "DeveloperDiskImage.dmg" in XCode`*`.dmg, you can use dmg2img and mount to extract all contents of it to a directory named "Developer". the debugserver is "Developer/usr/bin/debugserver".
 
 For security issue, by default, you can not use debugserver directly in iOS device, it need to be signed.
