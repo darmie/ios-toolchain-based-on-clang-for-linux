@@ -23,6 +23,18 @@ AC_CONFIG_SRCDIR([APPLE_LICENSE])
 LT_PREREQ([2.2.6])
 LT_INIT(disable-static)
 
+AC_PROG_INSTALL
+
+AC_PROG_CC([clang])
+AC_PROG_CXX([clang++])
+AM_PROG_CC_C_O
+AC_PROG_OBJC([clang])
+AM_PROG_AS([clang])
+
+AC_CHECK_TOOL([HOST_RANLIB], [ranlib], :)
+AC_CHECK_TOOL([HOST_AR], [ar], :)
+
+#for libstuff emulated.c
 case $target_cpu in
      powerpc)
         AC_DEFINE(EMULATED_HOST_CPU_TYPE, 18, [Emulated CPU type])
@@ -49,24 +61,21 @@ case $target_cpu in
     ;;
 esac
 
-AC_PROG_INSTALL
-AC_PROG_LN_S
+#as reported, some users may use llvm-c/Disassembler.h from base system instead of the local copy in include dir.
+#add these macros for avoid compilation failed.
 
-AC_PROG_CC([clang])
-AC_PROG_CXX([clang++])
-AM_PROG_CC_C_O
-AC_PROG_OBJC([clang])
-AM_PROG_AS([clang])
+AC_DEFINE(__STDC_LIMIT_MACROS)
+AC_DEFINE(__STDC_CONSTANT_MACROS)
 
-AC_CHECK_TOOL([HOST_RANLIB], [ranlib], :)
-AC_CHECK_TOOL([HOST_AR], [ar], :)
-
+#for as wrapper.
 AC_SUBST([ASLIBEXECDIR], ['${libexecdir}/as'])
 
+#for ld_class involk in ld64 and other command call.
 if test "$target_alias"; then
 AC_SUBST([PROGRAM_PREFIX], ['${target_alias}-'])
 fi
-rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+
+#disable warnings.
 
 WARNINGS=""
 
@@ -149,6 +158,7 @@ CFLAGS=$ORIGCFLAGS
 
 AC_SUBST([WARNINGS], [$WARNINGS])
 
+
 AC_CHECK_LIB([dl],[dlopen],[
          DL_LIBS=-ldl
          ])
@@ -187,6 +197,7 @@ fi
 AC_SUBST(LTO_LIBS)
 AC_SUBST(LTO_DEFS)
 
+#compile ld_classic or not. only for 32bit.
 LD_CLASSIC=""
 cat > conftest.c <<EOF
 #if defined(__x86_64__) || (!defined(__i386__) && defined(__LP64__))
