@@ -52,7 +52,10 @@ $/Developer/usr/bin/debugserver 1000 /Applications/<Some>.app/<Some binary>
 Install gdb 1822 and dsymutil according to the <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/HowTo_en">HOWTO</a>.
 
 ==3. Enable debug informations when build==
+Remove -g0 from the CFLAGS in Makefile if it exists.
+
 Add "-g" to the CFLAGS in Makefile and recompile your project.
+
 and run:
 {{{
 dsymutil -o <binary>.dSYM <binary>
