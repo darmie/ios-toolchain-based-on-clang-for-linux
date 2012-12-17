@@ -91,7 +91,7 @@ iphonesdk-utils provides below utilities:
   # *ldid* : codesign tool, with armv7/armv7s support and other changes from orig version. it will be called by ld64.
   # *ios-clang-wrapper* : automatically find SDK and construct proper compilation args.
   # *proj2make* : convert xcodeproj to proper Makefiles.
-  # *ios-pngcrush*: pin crush/de-crush tool, like Apple's pngcrush.
+  # *ios-pngcrush*: png crush/de-crush tool, like Apple's pngcrush.
   # *ios-createProject* : project templates
   # *ios-genLocalization* : iOS app localization tool based on clang lexer.
   # *ios-plutil* : plist compiler/decompiler.
@@ -109,7 +109,7 @@ $make install
 }}}
 
 ==<font color="blue"> Step 6: Debugger </font>==
-I had ported gdb-1822 from opendarwin to linux. thanks to opencflite(for CoreFoundation implementation) and maloader(for directly run dsymutil under linux).
+I had ported gdb-1822 from opendarwin to linux. thanks to opencflite(for alternative CoreFoundation implementation) and maloader(for running mac binary under linux).
 
 A package include opencflite/maloader/gdb-1822 had been provided to make it build and install easily.
 
@@ -150,7 +150,10 @@ Download :
 
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/emacs-auto-complete.tar.gz
 
-Please refer to "README" in tarball to setup yourself.
+Please refer to "README" in tarball to setup by yourself.
+
+There is also a "clang_complete" plugin for vim to enable codes completion in vim. if you are a vim user, you can install that plugin and try it.
+
 
 
 ==<font color="blue"> Build an iOS App. </font>==
