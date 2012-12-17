@@ -10,7 +10,9 @@ http://opensource.apple.com/release/developer-tools-45/
 
 This URL shows the opensource components used in Xcode 4.5, I almost ported everything and we got a Non-UI copy of Xcode toolchain for linux now.
 
-Here is an tutorial of  'How to setup iOS toolchain for linux'.
+Here is an tutorial of  'How to setup iOS toolchain for linux'. 
+
+All these components shoule be easily port to Windows with cygwin except re-write some platform related functions. waiting for volunteers.
 
 Actually, the iOS toolchain under linux is as same and simple as other crosscompile toolchain for embeded devices. It should include these components:
 
