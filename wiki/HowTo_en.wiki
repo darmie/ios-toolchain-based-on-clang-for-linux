@@ -152,9 +152,23 @@ http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/emacs-auto-co
 
 Please refer to "README" in tarball to setup by yourself.
 
-There is also a "clang_complete" plugin for vim to enable codes completion in vim. if you are a vim user, you can install that plugin and try it.
+==<font color="blue"> Step 8: VIM codes auto complete. (Optional) </font>==
+If you are a vim user, you can use clang_complete plugin for vim to get a code completion support. make sure your vim/gvim already enable python support.
 
+Download it from:
+https://github.com/Rip-Rip/clang_complete
 
+extract all files to your ~/.vim dir.
+
+then create a App Project. and add these lines to `<`Project folder`>`/.clang_complete
+{{{
+-ccc-host-triple arm-apple-darwin11
+-I/usr/share/iPhoneOS5.0.sdk/usr/include
+}}}
+
+when you want to get the code completion hit, you can type "Ctrl-x Ctrl-u" to get a popup menu.
+
+You may also need autopair/snipMate plugin for VIM.
 
 ==<font color="blue"> Build an iOS App. </font>==
 ====1. Create project ====
