@@ -176,6 +176,35 @@ when you want to get the code completion hint, you can type "Ctrl-x Ctrl-u" to g
 
 You may also need autopair/snipMate plugin for VIM.
 
+==<font color="blue"> Test toolchain </font>==
+I tested this toolchain with many opensource iOS projects, Here is a Makefile for RestKit, a large opensource REST framework  for iOS.
+
+Download RestKit from:
+
+https://github.com/RestKit/RestKit
+
+Download the makefile from:
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/Makefile.restkit
+
+put it in RestKit dir and rename it to Makefile
+
+Prepare a iOS 6.x sdk, since the latest RestKit need some API only in iOS 6.x.
+
+You may need to modify ~/.iphonesdk to 
+{{{
+SDK_FULL_PATH=/usr/share/iPhoneOS6.0.sdk
+SDK_VERSION=6.0
+}}}
+
+then enter RestKit dir
+{{{
+$make
+}}}
+
+You will get a Release dir contains librestkit.dylib, librestkit.a and Header files of RestKit finally.
+
+
 ==<font color="blue"> Build an iOS App. </font>==
 ====1. Create project ====
 Run ios-createProject
