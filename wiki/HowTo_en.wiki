@@ -4,12 +4,18 @@
 
 Clang for linux provides an almost full implementation for Objective C 2.0 includes blocks and other features gcc doesn't support.
 
-Here is an tutorial of  'How to setup iOS toolchain based on clang for linux'.
+New version of xcode also use clang as its compiler:
+
+http://opensource.apple.com/release/developer-tools-45/
+
+This URL shows the opensource components used in Xcode 4.5, I almost ported everything and we got a Non-UI copy of Xcode toolchain for linux now.
+
+Here is an tutorial of  'How to setup iOS toolchain for linux'.
 
 Actually, the iOS toolchain under linux is as same and simple as other crosscompile toolchain for embeded devices. It should include these components:
 
-  # *Assembler and Linker*: cctools and ld64 from opendarwin.
-  # *Compiler*: here we use llvm/clang.
+  # *Assembler and Linker*: cctools and ld64 from apple opensource.
+  # *Compiler*:  Clang/LLVM
   # *Debugger*: gdb/dsymutil. (waiting for lldb)
   # *SDK*, include headers and libraries.
   # *Utilities*: such as ldid codesign tool.
@@ -33,9 +39,9 @@ If your distribution already provides  clang/llvm packages，make sure it is 3.1
 
 
 ==<font color="blue"> Step 2 : The assembler and linker </font>==
-I had ported the latest cctools-836 and ld64-134.9 from opendarwin to linux. the porting process is a little bit complicated, also with a lot of codes modified for linux, let's just skip it.
+I had ported the latest cctools-836 and ld64-134.9 from Apple opensource to linux. the porting process is a little bit complicated, also with a lot of codes modified for linux, let's just skip it.
 
-cctools/ld64 porting tool had been upload to SVN, if you are interested in how to porting, please check out the codes from:
+The porting tool and patches had been commit to SVN, if you are interested in how to porting, please check out the codes from:
 {{{
 svn checkout http://ios-toolchain-based-on-clang-for-linux.googlecode.com/svn/trunk/cctools-porting
 }}}
@@ -82,11 +88,10 @@ or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-lin
 
 
 ==<font color="blue"> Step 4: The utilities </font>==
-iphonesdk-utils provides below utilities:
+iphonesdk-utils is a utility collection for iOS development, provides below utilities:
 
 *NOTE:*
-
-(Some of them is collected from internet. with some modifications.)
+(Some of them are collected from internet with some modifications.)
 
   # *ldid* : codesign tool, with armv7/armv7s support and other changes from orig version. it will be called by ld64.
   # *ios-clang-wrapper* : automatically find SDK and construct proper compilation args.
@@ -99,7 +104,6 @@ iphonesdk-utils provides below utilities:
 Download from: 
 
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-1.2.tar.bz2
-
 
 Build and install it:
 {{{	
@@ -142,7 +146,7 @@ firefox ./index.html
 
 
 ==<font color="blue"> Step 7: Emacs codes auto complete. (Optional) </font>==
-I modified emacs-auto-complete-clang-async to run clang-complete only one instance and have a significant performance improvement.(The patch had been submit to original author)
+I modified emacs-auto-complete-clang-async to run clang-complete only one instance and have a significant performance improvement.(The patch had been submitted to original author)
 
 here is a tarball include auto-complete/yasnippet/autopair.el/auto-complete-clang-async to provide a convenient development environment with Emacs.
  
@@ -153,7 +157,7 @@ http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/emacs-auto-co
 Please refer to "README" in tarball to setup by yourself.
 
 ==<font color="blue"> Step 8: VIM codes auto complete. (Optional) </font>==
-If you are a vim user, you can use clang_complete plugin for vim to get a code completion support. make sure your vim/gvim already enable python support.
+If you are a vim user, you can use clang_complete plugin for vim to get code completion support. make sure your vim/gvim already enable python support.
 
 Download it from:
 https://github.com/Rip-Rip/clang_complete
@@ -166,7 +170,7 @@ then create a App Project. and add these lines to `<`Project folder`>`/.clang_co
 -I/usr/share/iPhoneOS5.0.sdk/usr/include
 }}}
 
-when you want to get the code completion hit, you can type "Ctrl-x Ctrl-u" to get a popup menu.
+when you want to get the code completion hint, you can type "Ctrl-x Ctrl-u" to get a popup menu.
 
 You may also need autopair/snipMate plugin for VIM.
 
