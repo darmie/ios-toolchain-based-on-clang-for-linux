@@ -142,7 +142,7 @@ firefox ./index.html
 
 
 ==<font color="blue"> Step 7: Emacs codes auto complete. (Optional) </font>==
-I modified emacs-auto-complete-clang-async to run clang-complete only one instance and have a significant performance improvement.
+I modified emacs-auto-complete-clang-async to run clang-complete only one instance and have a significant performance improvement.(The patch had been submit to original author)
 
 here is a tarball include auto-complete/yasnippet/autopair.el/auto-complete-clang-async to provide a convenient development environment with Emacs.
  
