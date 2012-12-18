@@ -56,6 +56,12 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_ARG_PROGRAM
 
+#as reported, some users may use llvm-c/Disassembler.h from base system instead of the local copy in include dir.
+#add these macros for avoid compilation failed.
+
+AC_DEFINE(__STDC_LIMIT_MACROS)
+AC_DEFINE(__STDC_CONSTANT_MACROS)
+
 
 AC_CHECK_TOOL([HOST_RANLIB], [ranlib], :)
 AC_CHECK_TOOL([HOST_AR], [ar], :)
