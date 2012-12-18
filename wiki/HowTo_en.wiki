@@ -102,10 +102,11 @@ iphonesdk-utils is a utility collection for iOS development, provides below util
   # *ios-createProject* : project templates
   # *ios-genLocalization* : iOS app localization tool based on clang lexer.
   # *ios-plutil* : plist compiler/decompiler.
+  # *ios-xcbuild* : build xcode project directly under linux. 
 
 Download from: 
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-1.2.tar.bz2
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-1.3.tar.bz2
 
 Build and install it:
 {{{	
