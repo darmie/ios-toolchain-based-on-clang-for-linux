@@ -87,7 +87,7 @@ int is_plist(char *plistfile)
 void compile_stub(char *plistfile, int compile)
 {
   if(!plistfile)
-    return;  
+    return; 
   FILE *file_in = fopen(plistfile, "rb");
   if(!file_in)
     return;
@@ -162,7 +162,7 @@ int main(int argc, char **argv)
   argv = argv + optind;
   int i;
   for(i = 0; i < argc; i++) {
-    if(willcompile == 1 && is_binary_plist(argv[i]) == 0) { 
+    if(willcompile == 1 && is_xml_plist(argv[i]) == 1) { 
       compile(argv[i]);
     }
     else if(willcompile == 0 && is_binary_plist(argv[i]) == 1) { 
