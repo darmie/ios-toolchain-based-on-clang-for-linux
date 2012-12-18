@@ -87,4 +87,5 @@ AC_OUTPUT([
 	   createProject/templates/Makefile
 	   genLocalization2/Makefile
 	   pngcrush/Makefile
+	   xcbuild/Makefile
 ])
