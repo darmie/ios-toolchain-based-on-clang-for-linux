@@ -979,7 +979,7 @@ int main(int argc, char* argv[])
     cout <<"Error, no target found in project" <<endl;
 
   if(target_count >1) {
-    cout <<"There is more than one targets in project files"<<endl;
+    cout <<"There are more than one targets in project files"<<endl;
     for(int i = 0; i < target_count; i++) {
       printf("%d, %s, %s, %s\n", i, targets[i].name.c_str(), targets[i].result.c_str(), targets[i].resulttype.c_str());
     }
