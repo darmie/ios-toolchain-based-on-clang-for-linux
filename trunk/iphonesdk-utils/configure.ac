@@ -82,7 +82,6 @@ AC_OUTPUT([
 	   ldid/Makefile
 	   clangwrapper/Makefile
 	   plutil/Makefile
-	   proj2make/Makefile
 	   createProject/Makefile
 	   createProject/templates/Makefile
 	   genLocalization2/Makefile
