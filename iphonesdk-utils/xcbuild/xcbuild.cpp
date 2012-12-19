@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <fstream>
 #include <list>
-#include "pbxprojdef.h"
+#include "libxcodeutils/pbxprojdef.h"
 #include <stdio.h>
 #include <libgen.h>
 #include <string.h>
@@ -12,6 +12,13 @@
 #include <sys/stat.h>
 
 using namespace std;
+
+//current supported build type.
+enum buildType {
+  APP,
+  STATICLIB,
+  EXEC
+};
 
 //this is a wrapper for system, if error happened when compilation, then exit.
 
@@ -223,7 +230,7 @@ void PBXProj::initTargets()
     
     const PBXText * explicitFileType =  dynamic_cast<const PBXText*>(pr_blk->valueForKey("explicitFileType"));
     if(explicitFileType)
-      target_detail.resulttype = explicitFileType->text();
+      target_detail.resulttype = m_replace(explicitFileType->text(),"\"","",-1);
     
     const PBXText * path = dynamic_cast<const PBXText*>(pr_blk->valueForKey("path"));
     if(path) {
@@ -318,6 +325,7 @@ void PBXProj::initTargets()
 		string full_path =local_path;
 		if(this->allFiles.find(local_path) != this->allFiles.end())
 		  full_path = this->allFiles.find(local_path)->second;
+      full_path = m_replace(full_path, "\"", "", -1);
 		file.path = full_path;
 	      }
 	    }
@@ -463,8 +471,6 @@ string PBXProj::getPublicHeaderPath(const PBXBlock *block)
   }  
   return productname;
 }
-
-
 
 string PBXProj::getPrivateHeaderPath(const PBXBlock *block)
 {
@@ -651,78 +657,12 @@ string PBXProj::getBuildSettings(const PBXBlock *block)
 
 static void printHelp(const char* cmd);
 
-void buildStaticLib(PBXNativeTarget target)
+void convertMakefile(PBXNativeTarget target, buildType type)
 {
-
-  string header_cmd = "rm -rf "+ target.public_header_path + " && mkdir -p " + target.public_header_path + "&& mkdir -p build/include";
-  cout << header_cmd <<endl;
-  runCommand(header_cmd.c_str());
-
-  cout << header_cmd <<endl;   
-  for(int i = 0; i < target.headers.size(); i++) {
-    string copy_header_cmd = "cp -r " + target.headers[i].path + " " + target.public_header_path; 
-    cout << copy_header_cmd <<endl;
-    runCommand(copy_header_cmd.c_str());
-  }
-
-  string compiler = "ios-clang";
-  string buildargs = target.buildargs;
-
-  buildargs += " -I.";
-  /*buildargs += " -I" + target.public_header_path;
-  buildargs += " -I" + string(::dirname(strdup(target.public_header_path.c_str())));*/
-  vector<string> headerpaths;
-  for(int i = 0; i < target.headerpaths.size(); i++) {
-    headerpaths.push_back(target.headerpaths[i].path);
-  }
-  sort(headerpaths.begin(), headerpaths.end());
-  headerpaths.erase(unique(headerpaths.begin(), headerpaths.end()), headerpaths.end());
-
-
-  for(int i = 0; i < headerpaths.size(); i++) {
-    buildargs = buildargs + " -I" + headerpaths[i];
-  }
-
-  string output = target.result.substr(0,target.result.find(".app"));
-
-  vector<string> objects;
-
-  for(int i = 0; i < target.sources.size(); i++) {
-    string compile_cmd = compiler + " " + buildargs +" -c " + target.sources[i].path + " "+ target.sources[i].cflag +" "+" -o "+ m_replace(target.sources[i].path,".m",".o",-1);
-    objects.push_back( m_replace(target.sources[i].path,".m",".o",-1));
-    cout <<compile_cmd<<endl;
-    runCommand(compile_cmd.c_str());
-  }  
-  
-  string ar_command = "arm-apple-darwin11-ar cr build/" + output + " ";
-  for(int i = 0; i < objects.size(); i++ ) {
-    ar_command = ar_command + " "+ objects[i] ;
-  }  
-  cout <<ar_command<<endl;
-  runCommand(ar_command.c_str());
-
-  //rename headers if headers not in build dir;
-  if(!beginWith(target.public_header_path, "./build")) {
-    string rename_header_command = "mv " + target.public_header_path +  " build/include";
-    cout <<rename_header_command <<endl;
-    runCommand(rename_header_command.c_str());
-  }
-}
-
-void convertStaticLib(PBXNativeTarget target)
-{
-  cout <<"not implement yet"<<endl; 
-  
-}
-
-void convertApp(PBXNativeTarget target)
-{
-
   string compiler = "ios-clang";
   string buildargs = target.buildargs;
   string output = target.result.substr(0,target.result.find(".app"));
 
-  
   vector<string> headerpaths;
   for(int i = 0; i < target.headerpaths.size(); i++) {
     headerpaths.push_back(target.headerpaths[i].path);
@@ -736,10 +676,16 @@ void convertApp(PBXNativeTarget target)
   }
 
   ofstream makefile("./Makefile");
-  makefile << "IPHONE_IP:=" <<endl;
-  makefile << "PROJECTNAME:="<<target.productName<<endl;
-  makefile << "APPFOLDER:=$(PROJECTNAME).app" <<endl;
-  makefile << "INSTALLFOLDER:=$(PROJECTNAME).app"<<endl;
+  if(type == APP)
+    makefile << "IPHONE_IP:=" <<endl;
+ 
+  makefile << "PROJECTNAME:="<<output<<endl;
+
+  if(type == APP) {
+    makefile << "APPFOLDER:=$(PROJECTNAME).app" <<endl;
+    makefile << "INSTALLFOLDER:=$(PROJECTNAME).app"<<endl;
+  }
+  
   makefile << endl;
   makefile << "CC:=ios-clang" <<endl;
   makefile << "CPP:=ios-clang++" <<endl;
@@ -755,201 +701,148 @@ void convertApp(PBXNativeTarget target)
  
   vector<string> sourcepaths;
   for(int i = 0; i < target.sources.size(); i++) {
-    sourcepaths.push_back(::dirname(strdup(target.sources[i].path.c_str())));
+    sourcepaths.push_back(target.sources[i].path);
   }
   
-  sort(sourcepaths.begin(), sourcepaths.end());
+/*  sort(sourcepaths.begin(), sourcepaths.end());
   sourcepaths.erase(unique(sourcepaths.begin(), sourcepaths.end()), sourcepaths.end());
-  
+ */
+  makefile << endl;
+  if(type == STATICLIB)
+    makefile << "all: $(PROJECTNAME) headers"<<endl<<endl;
+  else
+    makefile << "all: $(PROJECTNAME)"<<endl<<endl;
+
+  makefile << "OBJS+=  \\"<<endl;
   for(int i = 0; i < sourcepaths.size(); i++) {
-    makefile << "SRCDIR"<< i<< "="<< sourcepaths[i]<<endl;
-    makefile << "OBJS+=$(patsubst \%.m,\%.o,$(wildcard $(SRCDIR"<<i<<")/*.m))"<<endl;
-    makefile << "OBJS+=$(patsubst \%.c,\%.o,$(wildcard $(SRCDIR"<<i<<")/*.c))"<<endl;
-    makefile << "OBJS+=$(patsubst %.cpp,%.o,$(wildcard $(SRCDIR"<<i<<")/*.cpp))"<<endl;
-    makefile << endl;
-  }
-  
-  makefile << "all:  $(PROJECTNAME)"<<endl<<endl;;
-  makefile << "$(PROJECTNAME): $(OBJS)"<<endl;
-  makefile << "\t$(CC) $(CFLAGS) $(LDFLAGS) $(filter %.o,$^) -o $@"<<endl<<endl;;
-  makefile << "\%.o:  \%.m"<<endl;
-  makefile << "\t$(CC) -c $(CFLAGS) $< -o $@"<<endl<<endl;
-  makefile <<endl;
-  makefile << "\%.o:  \%.c"<<endl;
-  makefile << "\t$(CC) -c $(CFLAGS) $< -o $@"<<endl<<endl;
-  makefile <<endl;
-  makefile << "\%.o:  \%.cpp" <<endl;
-  makefile << "\t$(CPP) -c $(CPPFLAGS) $< -o $@"<<endl<<endl;
-  
-
-  makefile << "INFOPLIST:=" <<target.infoplist<<endl <<endl;
-
-
-  vector<string> resources;
-  for(int i = 0; i < target.resources.size(); i++) {
-    resources.push_back(target.resources[i].path);
-  }
-  sort(resources.begin(), resources.end());
-  resources.erase(unique(resources.begin(), resources.end()), resources.end());
-
-  makefile << "RESOURCES += \\" <<endl;
-  for(int i = 0; i < resources.size(); i++) {
-    if(i == resources.size()-1)
-      makefile << "\t"<< resources[i] <<endl;
+    string object = m_replace(sourcepaths[i], ".m", ".o", -1);
+    object = m_replace(object, ".c", ".o", -1);
+    object = m_replace(object, ".cpp", ".o", -1);
+    if(i == sourcepaths.size()-1)
+    makefile << "\t"<<object<<endl;
     else
-      makefile << "\t"<< resources[i] <<" \\"<<endl;
+    makefile << "\t"<<object<<" \\"<<endl;
   }
   makefile << endl;
+  makefile << "$(PROJECTNAME): \\"<<endl;
+    for(int i = 0; i < sourcepaths.size(); i++) {
+    string object = m_replace(sourcepaths[i], ".m", ".o", -1);
+    object = m_replace(object, ".c", ".o", -1);
+    object = m_replace(object, ".cpp", ".o", -1);
+    if(i == sourcepaths.size()-1)
+    makefile << "\t"<<object<<endl;
+    else
+    makefile << "\t"<<object<<" \\"<<endl;
+  }
 
-  makefile << "dist: $(PROJECTNAME)"<<endl;
-  makefile << "\tmkdir -p $(APPFOLDER)"<<endl;
-  makefile << "\tcp -r $(RESOURCES) $(APPFOLDER)"<<endl;
-  makefile << "\tcp $(INFOPLIST) $(APPFOLDER)/Info.plist"<<endl;
-  makefile << "\tcp $(PROJECTNAME) $(APPFOLDER)"<<endl;
-  makefile << "\tsed -i 's|$${EXECUTABLE_NAME}|" << output << "|g' " << "$(APPFOLDER)/Info.plist"<<endl;
-  makefile << "\tsed -i 's|$${PRODUCT_NAME}|" << output << "|g' " << "$(APPFOLDER)/Info.plist"<<endl;
-  transform(output.begin(), output.end(), output.begin(), ::tolower);
-  makefile << "\tsed -i 's|$${PRODUCT_NAME:identifier}|" << output << "|g' " << "$(APPFOLDER)/Info.plist"<<endl;
-  makefile << "\tsed -i 's|$${PRODUCT_NAME:rfc1034identifier}|" << output << "|g' " << "$(APPFOLDER)/Info.plist"<<endl;
-  makefile << "\tfind $(APPFOLDER) -name \\*.png|xargs ios-pngcrush -c"<<endl;
-  makefile << "\tfind $(APPFOLDER) -name \\*.plist|xargs ios-plutil -c"<<endl;
-  makefile << "\tfind $(APPFOLDER) -name \\*.strings|xargs ios-plutil -c"<<endl;
-  makefile << endl;
-  makefile << "langs:"<<endl;
-  makefile << "\tios-genLocalization"<<endl<<endl;
+  if(type == APP || type == EXEC) 
+    makefile << "\t$(CC) $(CFLAGS) $(LDFLAGS) $(filter %.o,$^) -o $@"<<endl<<endl;
+  else if(type == STATICLIB) {
+    makefile << "\tmkdir -p xcbuild"<<endl;
+    makefile << "\tarm-apple-darwin11-ar cr xcbuild/"<<output<<" $(filter %.o,$^)"<<endl<<endl;
+    }
+  for(int i = 0; i < sourcepaths.size(); i++) {
+    string object = m_replace(sourcepaths[i], ".m", ".o", -1);
+    object = m_replace(object, ".c", ".o", -1);
+    object = m_replace(object, ".cpp", ".o", -1);
+    makefile << object <<": "<<sourcepaths[i]<<endl;
+    if(endWith(sourcepaths[i],".cpp"))
+      makefile << "\t$(CPP) -c $(CPPFLAGS) "<< target.sources[i].cflag << " $< -o $@"<<endl<<endl;
+    else
+      makefile << "\t$(CC) -c $(CFLAGS) "<<target.sources[i].cflag<< " $< -o $@"<<endl<<endl;
+  }
 
-  makefile << "install: dist"<<endl;
-  makefile << "ifeq ($(IPHONE_IP),)"<<endl;
-  makefile << "\techo \"Please set IPHONE_IP\""<<endl;
-  makefile << "else"<<endl;
-  makefile << "\tssh root@$(IPHONE_IP) 'rm -fr /Applications/$(INSTALLFOLDER)'"<<endl;
-  makefile << "\tscp -r $(APPFOLDER) root@$(IPHONE_IP):/Applications/$(INSTALLFOLDER)"<<endl;
-  makefile << "\techo \"Application $(INSTALLFOLDER) installed\""<<endl;
-  makefile << "\tssh mobile@$(IPHONE_IP) 'uicache'"<<endl;
-  makefile << "endif" <<endl <<endl;
+  if(type == STATICLIB) {
+    makefile << "headers:"<<endl;
+    makefile << "\tmkdir -p xcbuild/headers" <<endl;
+    
+    for(int i = 0; i < target.headers.size(); i++) {
+      makefile << "\tcp -r " << target.headers[i].path << " xcbuild/headers" <<endl;
+    }
+    makefile <<endl;
+  }
 
-  makefile << "uninstall:"<<endl;
-  makefile << "ifeq ($(IPHONE_IP),)"<<endl;
-  makefile << "\techo \"Please set IPHONE_IP\""<<endl;
-  makefile << "else"<<endl;
-  makefile << "\tssh root@$(IPHONE_IP) 'rm -fr /Applications/$(INSTALLFOLDER)'"<<endl;
-  makefile << "\techo \"Application $(INSTALLFOLDER) uninstalled\"" <<endl;
-  makefile << "endif" <<endl <<endl;
+
+  if(type == APP) { // App need this.
+    makefile << "INFOPLIST:=" <<target.infoplist<<endl <<endl;
+
+    vector<string> resources;
+    for(int i = 0; i < target.resources.size(); i++) {
+      resources.push_back(target.resources[i].path);
+    }
+    sort(resources.begin(), resources.end());
+    resources.erase(unique(resources.begin(), resources.end()), resources.end());
+
+    makefile << "RESOURCES += \\" <<endl;
+    for(int i = 0; i < resources.size(); i++) {
+      if(i == resources.size()-1)
+        makefile << "\t"<< resources[i] <<endl;
+      else
+        makefile << "\t"<< resources[i] <<" \\"<<endl;
+    }
+    makefile << endl;
+
+    makefile << "dist: $(PROJECTNAME)"<<endl;
+    makefile << "\tmkdir -p $(APPFOLDER)"<<endl;
+    makefile << "\tcp -r $(RESOURCES) $(APPFOLDER)"<<endl;
+    makefile << "\tcp $(INFOPLIST) $(APPFOLDER)/Info.plist"<<endl;
+    makefile << "\tcp $(PROJECTNAME) $(APPFOLDER)"<<endl;
+    makefile << "\tsed -i 's|$${EXECUTABLE_NAME}|" << output << "|g' " << "$(APPFOLDER)/Info.plist"<<endl;
+    makefile << "\tsed -i 's|$${PRODUCT_NAME}|" << output << "|g' " << "$(APPFOLDER)/Info.plist"<<endl;
+    transform(output.begin(), output.end(), output.begin(), ::tolower);
+    makefile << "\tsed -i 's|$${PRODUCT_NAME:identifier}|" << output << "|g' " << "$(APPFOLDER)/Info.plist"<<endl;
+    makefile << "\tsed -i 's|$${PRODUCT_NAME:rfc1034identifier}|" << output << "|g' " << "$(APPFOLDER)/Info.plist"<<endl;
+    makefile << "\tfind $(APPFOLDER) -name \\*.png|xargs ios-pngcrush -c"<<endl;
+    makefile << "\tfind $(APPFOLDER) -name \\*.plist|xargs ios-plutil -c"<<endl;
+    makefile << "\tfind $(APPFOLDER) -name \\*.strings|xargs ios-plutil -c"<<endl;
+    makefile << endl;
+    makefile << "langs:"<<endl;
+    makefile << "\tios-genLocalization"<<endl<<endl;
+
+    makefile << "install: dist"<<endl;
+    makefile << "ifeq ($(IPHONE_IP),)"<<endl;
+    makefile << "\techo \"Please set IPHONE_IP\""<<endl;
+    makefile << "else"<<endl;
+    makefile << "\tssh root@$(IPHONE_IP) 'rm -fr /Applications/$(INSTALLFOLDER)'"<<endl;
+    makefile << "\tscp -r $(APPFOLDER) root@$(IPHONE_IP):/Applications/$(INSTALLFOLDER)"<<endl;
+    makefile << "\techo \"Application $(INSTALLFOLDER) installed\""<<endl;
+    makefile << "\tssh mobile@$(IPHONE_IP) 'uicache'"<<endl;
+    makefile << "endif" <<endl <<endl;
+
+    makefile << "uninstall:"<<endl;
+    makefile << "ifeq ($(IPHONE_IP),)"<<endl;
+    makefile << "\techo \"Please set IPHONE_IP\""<<endl;
+    makefile << "else"<<endl;
+    makefile << "\tssh root@$(IPHONE_IP) 'rm -fr /Applications/$(INSTALLFOLDER)'"<<endl;
+    makefile << "\techo \"Application $(INSTALLFOLDER) uninstalled\"" <<endl;
+    makefile << "endif" <<endl <<endl;
+  } //end APP
 
   makefile << "clean:"<<endl;
   makefile << "\tfind . -name \\*.o|xargs rm -rf"<<endl;
+  makefile << "\trm -rf xcbuild"<<endl;
   makefile << "\trm -rf $(APPFOLDER)"<<endl;
   makefile << "\trm -f $(PROJECTNAME)"<<endl<<endl;
-  
-  makefile << ".PHONY: all dist install uninstall clean"<<endl;
- 
+    
   makefile.close();  
-  cout <<"Makefile generated."<<endl; 
+  cout <<"Makefile generated."<<endl;
+  if(type == STATICLIB)
+    cout <<"Build result will be in ./xcbuild" <<endl;
 }
 
-void buildApp(PBXNativeTarget target)
-{
-  string resultdir = target.result;
-  
-  string compiler = "ios-clang";
-  string buildargs = target.buildargs;
-  string output = target.result.substr(0,target.result.find(".app"));
-  string sources = "";
 
-  for(int i = 0; i < target.frameworks.size(); i++) {
-    buildargs = buildargs + " -framework " + target.frameworks[i].path;
-  }
-
-  vector<string> headerpaths;
-  for(int i = 0; i < target.headerpaths.size(); i++) {
-    headerpaths.push_back(target.headerpaths[i].path);
-  }
-  sort(headerpaths.begin(), headerpaths.end());
-  headerpaths.erase(unique(headerpaths.begin(), headerpaths.end()), headerpaths.end());
-
-
-  for(int i = 0; i < headerpaths.size(); i++) {
-    buildargs = buildargs + " -I" + headerpaths[i];
-  } 
- 
-  for(int i = 0; i < target.sources.size(); i++) {
-    sources = sources + " " + target.sources[i].path;
-  }
-
-  string prepare_command = "rm -rf "+ resultdir + "&& mkdir " + resultdir;
-
-  string compile_command = compiler + buildargs + sources + " -o " + resultdir+"/"+output;
-
-  vector<string> resources;
-  for(int i = 0; i < target.resources.size(); i++) {
-    resources.push_back(target.resources[i].path);
-  }
-  sort(resources.begin(), resources.end());
-  resources.erase(unique(resources.begin(), resources.end()), resources.end());
- 
-  string resources_command = "cp -r ";
-  for(int i = 0; i < resources.size(); i++)
-    resources_command = resources_command + " " + resources[i];
-  resources_command = resources_command + " " + resultdir;
-
-  string plist_command = "cp -r " + target.infoplist + " " + resultdir + "/Info.plist";
-
-  string pngcrush_command = "find " + resultdir +" -name \\*.png|xargs ios-pngcrush -c";
-  string compile_localization_command = "find " + resultdir +" -name \\*.strings|xargs ios-plutil -c";
-  string compile_plist_command = "find " + resultdir +" -name \\*.plist|xargs ios-plutil -c";
-
-  string fix_infoplist_command = "sed -i 's|${EXECUTABLE_NAME}|"+ output +"|g' " + resultdir + "/Info.plist";
-  fix_infoplist_command += string(" && ") + string("sed -i 's|${PRODUCT_NAME}|")+ output +"|g' " + resultdir + "/Info.plist";
-  //convert it to lower case.
-  transform(output.begin(), output.end(), output.begin(), ::tolower);
-  fix_infoplist_command += string(" && ") + string("sed -i 's|${PRODUCT_NAME:identifier}|")+ output +"|g' " + resultdir +"/Info.plist";
-  fix_infoplist_command += string(" && ") + string("sed -i 's|${PRODUCT_NAME:rfc1034identifier}|")+ output +"|g' " + resultdir +"/Info.plist";
-  
-  cout <<prepare_command<<endl;
-  runCommand(prepare_command.c_str());
-
-  cout <<compile_command <<endl;
-  runCommand(compile_command.c_str());
-
-  cout <<resources_command<<endl; 
-  runCommand(resources_command.c_str());
-
-  cout <<plist_command<<endl;
-  runCommand(plist_command.c_str());
-
-  cout <<fix_infoplist_command<<endl;
-  runCommand(fix_infoplist_command.c_str());
-
-  cout <<pngcrush_command<<endl;
-  runCommand(pngcrush_command.c_str());
-
-  cout <<compile_localization_command<<endl;
-  runCommand(compile_localization_command.c_str());
-
-  cout <<compile_plist_command<<endl;
-  runCommand(compile_plist_command.c_str());
-
-  
-}
-
-void buildTarget(PBXNativeTarget target)
+void convertTarget(PBXNativeTarget target, int compile)
 {
   if(target.resulttype == "archive.ar")
-    buildStaticLib(target);
+    convertMakefile(target, STATICLIB);
   else if(target.resulttype == "wrapper.application")
-    buildApp(target);
+    convertMakefile(target, APP);
+  else if(target.resulttype == "compiled.mach-o.executable")
+    convertMakefile(target, EXEC);
   else
     cout <<"Not supported yet."<<endl;
-}
-
-void convertTarget(PBXNativeTarget target)
-{
-  if(target.resulttype == "archive.ar")
-    convertStaticLib(target);
-  else if(target.resulttype == "wrapper.application")
-    convertApp(target);
-  else
-    cout <<"Not supported yet."<<endl;
+  if(compile)
+    runCommand("make");
 }
 
 
@@ -1003,15 +896,9 @@ int main(int argc, char* argv[])
 	  cin.sync();
 	}
     } while(input > target_count || input < 0);
-    if(willcompile)
-      buildTarget(targets[input]);
-    else
-      convertTarget(targets[input]);
+      convertTarget(targets[input], willcompile);
   } else 
-    if(willcompile)
-      buildTarget(targets[0]);
-    else
-      convertTarget(targets[0]);
+      convertTarget(targets[0], willcompile);
   
   return 0;
 }
