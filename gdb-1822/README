@@ -32,6 +32,7 @@ Howto build a gdb for ios debug:
 2, copy everything in "externalheaders" to src/include.
 
 3, apply gdb-1822-ported.patch.
+   apply gdb-1822-force-sysroot-to-sdk.patch
 
 4, enter src folder, run
 ./configure --target=arm-apple-darwin11 --prefix=/usr
