@@ -124,14 +124,19 @@ private:
   string getPublicHeaderPath(const PBXBlock *block);
   string getPrivateHeaderPath(const PBXBlock *block);
   string getInfoPlist(const PBXBlock *block);
+  void initTargets();
+  vector<PBXNativeTarget> targets;
   PBXFile *pDoc;
   map<string,string> allFiles;
+  int targetcount;
 };
 
 PBXProj::PBXProj()
 {
   pDoc = NULL;
   allFiles.clear();
+  targetcount = 0;
+  targets.clear();
 }
 
 void PBXProj::loadProj(string path)
@@ -146,23 +151,25 @@ void PBXProj::loadProj(string path)
   const PBXBlock *block = PBXBlock::cast(value);
 
   getAllFilesFromMainGroup(block, ".");
+  initTargets();
 }
 
 int PBXProj::getTargetCount()
 {
-  const PBXArray *target = dynamic_cast<const PBXArray*>(pDoc->valueForKeyPath("rootObject.targets"));
-  if(target) 
-    return target->count();
-  else
-    return 0;
+  return this->targetcount;
 }
 
 vector<PBXNativeTarget> PBXProj::getTargets()
 {
-  vector<PBXNativeTarget> targets;
+  return this->targets;
+}
+void PBXProj::initTargets()
+{
   const PBXArray *target_arr = dynamic_cast<const PBXArray*>(pDoc->valueForKeyPath("rootObject.targets"));
   if(!target_arr)
-    return targets;
+    return;
+
+  this->targetcount =  target_arr->count();
 
   PBXValueList::const_iterator itor = target_arr->begin();
   PBXValueList::const_iterator end  = target_arr->end();
@@ -171,11 +178,14 @@ vector<PBXNativeTarget> PBXProj::getTargets()
     const PBXValue *value = pDoc->deref(ref);
     const PBXBlock *target_blk = PBXBlock::cast(value);
 
-    PBXItemList::const_iterator itor_blk = target_blk->begin();
-    PBXItemList::const_iterator end_blk  = target_blk->end();
-
     PBXNativeTarget target_detail;
-    
+
+    //ignore PBXAggregateTarget
+    const PBXText * isa =  dynamic_cast<const PBXText*>(target_blk->valueForKey("isa"));
+    if(isa->text() == string("PBXAggregateTarget")) {
+      this->targetcount -= 1; 
+      continue;  
+    }
     const PBXText * name = dynamic_cast<const PBXText*> (target_blk->valueForKey("name"));
     if(name)
       target_detail.name = name->text();
@@ -338,11 +348,8 @@ vector<PBXNativeTarget> PBXProj::getTargets()
       }
     }
 
-    targets.push_back(target_detail);
+    this->targets.push_back(target_detail);
   }
-
-
-  return targets;
 }
 
 void PBXProj::getAllFilesFromMainGroup(const PBXBlock *block, string current_path)
@@ -364,12 +371,16 @@ void PBXProj::getAllFilesFromMainGroup(const PBXBlock *block, string current_pat
     //    this->allFiles.push_back(local_path);
   } else if (block_type == "PBXGroup") {
     const PBXArray *arr = dynamic_cast<const PBXArray *>(block->valueForKey("children"));
+    if(!arr)
+      return;
     PBXValueList::const_iterator itor = arr->begin();
     PBXValueList::const_iterator end  = arr->end();
     for(; itor != end; itor++){
       const PBXValueRef * ref = dynamic_cast<const PBXValueRef*>(*itor);
       const PBXValue *value = pDoc->deref(ref);
       const PBXBlock *blk = PBXBlock::cast(value);
+      if(!blk)
+        return;
       this->getAllFilesFromMainGroup(blk, local_path);
     }
   }
