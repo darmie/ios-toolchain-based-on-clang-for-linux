@@ -96,18 +96,25 @@ langs:
 	ios-genLocalization
 
 install: dist
+ifeq ($(IPHONE_IP),)
+	echo "Please set IPHONE_IP"
+else
 	ssh root@$(IPHONE_IP) 'rm -fr /Applications/$(INSTALLFOLDER)'
 	scp -r $(APPFOLDER) root@$(IPHONE_IP):/Applications/$(INSTALLFOLDER)
-	@echo "Application $(INSTALLFOLDER) installed"
+	echo "Application $(INSTALLFOLDER) installed"
 	ssh mobile@$(IPHONE_IP) 'uicache'
+endif
 
 uninstall:
+ifeq ($(IPHONE_IP),)
+	echo "Please set IPHONE_IP"
+else
 	ssh root@$(IPHONE_IP) 'rm -fr /Applications/$(INSTALLFOLDER)'
-	@echo "Application $(INSTALLFOLDER) uninstalled"
-
+	echo "Application $(INSTALLFOLDER) uninstalled"
+endif
 clean:
-	@rm -f $(SRCDIR)/*.o
-	@rm -rf $(APPFOLDER)
-	@rm -f $(PROJECTNAME)
+	find . -name \*.o|xargs rm -rf
+	rm -rf $(APPFOLDER)
+	rm -f $(PROJECTNAME)
 
 .PHONY: all dist install uninstall clean

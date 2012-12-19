@@ -61,18 +61,25 @@ endif
 	mv $(PROJECTNAME) $(WEE_BUNDLE_FOLDER)
 
 install: dist
+ifeq ($(IPHONE_IP),)
+	echo "Please set IPHONE_IP"
+else
 	ssh root@$(IPHONE_IP) 'rm -fr /System/Library/WeeAppPlugins/$(INSTALLFOLDER)'
 	scp -r $(WEE_BUNDLE_FOLDER) root@$(IPHONE_IP):/System/Library/WeeAppPlugins/$(INSTALLFOLDER)
-	@echo "Application $(INSTALLFOLDER) installed"
+	echo "Application $(INSTALLFOLDER) installed"
 	ssh mobile@$(IPHONE_IP) 'killall -9 SpringBoard'
+endif
 
 uninstall:
+ifeq ($(IPHONE_IP),)
+	echo "Please set IPHONE_IP"
+else
 	ssh root@$(IPHONE_IP) 'rm -fr /System/Library/WeeAppPlugins/$(INSTALLFOLDER)'
-	@echo "Application $(INSTALLFOLDER) uninstalled"
-
+	echo "Application $(INSTALLFOLDER) uninstalled"
+endif
 clean:
-	@rm -f $(SRCDIR1)/*.o
-	@rm -rf $(WEE_BUNDLE_FOLDER)
-	@rm -f $(PROJECTNAME)
+	find . -name \*.o|xargs rm -rf
+	rm -rf $(WEE_BUNDLE_FOLDER)
+	rm -f $(PROJECTNAME)
 
 .PHONY: all dist install uninstall clean
