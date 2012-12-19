@@ -221,9 +221,13 @@ iPhone Project Createor
 ---------------------------
 [0.] Application
 [1.] Command line utility
-[2.] Notification Center widget
-[3.] Example Player
-[4.] Example UICatalog
+[2.] Dynamic Framework
+[3.] Dynamic Library
+[4.] Notification Center widget
+[5.] Static Framework
+[6.] Static Library
+[7.] Example Player
+[8.] Example UICatalog
 Choose a Template:
 }}}
 
