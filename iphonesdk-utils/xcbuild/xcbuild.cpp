@@ -3,7 +3,8 @@
 #include <algorithm>
 #include <fstream>
 #include <list>
-#include "libxcodeutils/pbxprojdef.h"
+#include <sstream>
+
 #include <stdio.h>
 #include <libgen.h>
 #include <string.h>
@@ -11,17 +12,19 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
+#include "libxcodeutils/pbxprojdef.h"
+
 using namespace std;
 
 //current supported build type.
 enum buildType {
   APP,
   STATICLIB,
-  EXEC
+  EXEC,
+  FRAMEWORK
 };
 
 //this is a wrapper for system, if error happened when compilation, then exit.
-
 void runCommand(const char * command)
 {
   int ret = system(command);
@@ -30,50 +33,46 @@ void runCommand(const char * command)
 }
 
 bool beginWith(const string str,const string needle) {
-        return (!str.compare(0,needle.length(),needle));
+  return (!str.compare(0,needle.length(),needle));
 }
 
-
 bool endWith(const string str,const string needle) {
-   if (str.length() >= needle.length()) {
-      return (0 == str.compare (str.length() - needle.length(), needle.length(), needle));
-    }
-    return false;
+  if (str.length() >= needle.length()) {
+    return (0 == str.compare (str.length() - needle.length(), needle.length(), needle));
+  }
+  return false;
 }
 
 std::string m_replace(std::string str,std::string pattern,std::string dstPattern,int count)
 {
-    std::string retStr="";
-    string::size_type pos;
+  std::string retStr="";
+  string::size_type pos;
 
-    int szStr=str.length();
-    int szPattern=pattern.size();
-    int i=0;
-    int l_count=0;
-    if(-1 == count) // replace all
-        count = szStr;
+  int szStr=str.length();
+  int szPattern=pattern.size();
+  int i=0;
+  int l_count=0;
+  if(-1 == count) // replace all
+    count = szStr;
 
-    for(i=0; i<szStr; i++)
-    {
-        pos=str.find(pattern,i);
+  for(i=0; i<szStr; i++) {
+    pos=str.find(pattern,i);
 
-        if(std::string::npos == pos)
-            break;
-        if(pos < szStr)
-        {
-            std::string s=str.substr(i,pos-i);
-            retStr += s;
-            retStr += dstPattern;
-            i=pos+pattern.length()-1;
-            if(++l_count >= count)
-            {
-                i++;
-                break;
-            }
-        }
+    if(std::string::npos == pos)
+      break;
+    if(pos < szStr) {
+      std::string s=str.substr(i,pos-i);
+      retStr += s;
+      retStr += dstPattern;
+      i=pos+pattern.length()-1;
+      if(++l_count >= count) {
+	i++;
+	break;
+      }
     }
-    retStr += str.substr(i);
-    return retStr;
+  }
+  retStr += str.substr(i);
+  return retStr;
 }
 
 
@@ -114,6 +113,10 @@ public:
   string symroot;
   string public_header_path;
   string private_header_path;
+  
+  //for frame work;
+  string dylib_compatibility_version;
+  string dylib_current_version;
 };
 
 class PBXProj {
@@ -131,6 +134,8 @@ private:
   string getPublicHeaderPath(const PBXBlock *block);
   string getPrivateHeaderPath(const PBXBlock *block);
   string getInfoPlist(const PBXBlock *block);
+  string getDylibCompatibilityVersion(const PBXBlock *block);
+  string getDylibCurrentVersion(const PBXBlock *block);
   void initTargets();
   vector<PBXNativeTarget> targets;
   PBXFile *pDoc;
@@ -170,6 +175,7 @@ vector<PBXNativeTarget> PBXProj::getTargets()
 {
   return this->targets;
 }
+
 void PBXProj::initTargets()
 {
   const PBXArray *target_arr = dynamic_cast<const PBXArray*>(pDoc->valueForKeyPath("rootObject.targets"));
@@ -195,15 +201,15 @@ void PBXProj::initTargets()
     }
     const PBXText * name = dynamic_cast<const PBXText*> (target_blk->valueForKey("name"));
     if(name)
-      target_detail.name = name->text();
+      target_detail.name = m_replace(name->text(), "\"", "", -1);
     
     /*    const PBXText *productName = dynamic_cast<const PBXText*> (target_blk->valueForKey("productName"));
-    if(productName)
-      target_detail.productName = productName->text();
+	  if(productName)
+	  target_detail.productName = productName->text();
     */
     const PBXText *productType = dynamic_cast<const PBXText*> (target_blk->valueForKey("productType"));
     if(productType)
-      target_detail.productType = productType->text();
+      target_detail.productType = m_replace(productType->text(), "\"", "", -1);
       
     const PBXValueRef *bcl_ref = dynamic_cast<const PBXValueRef*>(target_blk->valueForKey("buildConfigurationList"));
     const PBXValue * bcl_value = dynamic_cast<const PBXValue *>(pDoc->deref(bcl_ref));
@@ -211,15 +217,23 @@ void PBXProj::initTargets()
     target_detail.buildargs = getBuildSettings(bcl_blk);
     target_detail.infoplist = getInfoPlist(bcl_blk);
     target_detail.productName =getProductName(bcl_blk);
+    target_detail.dylib_compatibility_version = getDylibCompatibilityVersion(bcl_blk);
+    target_detail.dylib_current_version = getDylibCurrentVersion(bcl_blk);
+    //sometimes there is a ref to TARGET_NAME here;
+    if(target_detail.productName == "$(TARGET_NAME)")
+      target_detail.productName = target_detail.productName;
+
     target_detail.symroot = m_replace(getSymRoot(bcl_blk), "$(SRCROOT)", ".", -1);
     target_detail.symroot = m_replace(target_detail.symroot,"\"","",-1);
     if(target_detail.symroot.empty())
       target_detail.symroot = ".";
+
     target_detail.public_header_path = target_detail.symroot +"/";
     if(getPublicHeaderPath(bcl_blk).empty())
       target_detail.public_header_path += "build/include";
     else
       target_detail.public_header_path += getPublicHeaderPath(bcl_blk);
+
     target_detail.public_header_path = m_replace(target_detail.public_header_path, "\"","",-1);
     target_detail.private_header_path = m_replace(getPrivateHeaderPath(bcl_blk), "$(PUBLIC_HEADERS_FOLDER_PATH)",target_detail.public_header_path,-1);
     target_detail.private_header_path = m_replace(target_detail.private_header_path,"\"","",-1);
@@ -325,7 +339,7 @@ void PBXProj::initTargets()
 		string full_path =local_path;
 		if(this->allFiles.find(local_path) != this->allFiles.end())
 		  full_path = this->allFiles.find(local_path)->second;
-      full_path = m_replace(full_path, "\"", "", -1);
+		full_path = m_replace(full_path, "\"", "", -1);
 		file.path = full_path;
 	      }
 	    }
@@ -435,19 +449,19 @@ string PBXProj::getSymRoot(const PBXBlock *block)
 
 string PBXProj::getPublicHeaderPath(const PBXBlock *block)
 {
-  string productname;
+  string public_header_path;
   const PBXText * type = dynamic_cast<const PBXText *>(block->valueForKey("isa"));
   string btype = type->text();
   if(!type || btype != "XCConfigurationList")
-    return productname;
+    return public_header_path;
   
   const PBXText * defaults = dynamic_cast<const PBXText *>(block->valueForKey("defaultConfigurationName"));
   if(!defaults)
-    return productname;
+    return public_header_path;
   string bdefaults = defaults->text();
   const PBXArray * confs = dynamic_cast<const PBXArray *>(block->valueForKey("buildConfigurations"));
   if(!confs)
-    return productname;
+    return public_header_path;
 
   PBXValueList::const_iterator itor = confs->begin();
   PBXValueList::const_iterator end  = confs->end();  
@@ -465,28 +479,28 @@ string PBXProj::getPublicHeaderPath(const PBXBlock *block)
       continue;
     const PBXText * pName = dynamic_cast<const PBXText *>(settings->valueForKey("PUBLIC_HEADERS_FOLDER_PATH"));
     if(pName){
-      productname = pName->text();
-      return productname;
+      public_header_path = pName->text();
+      return public_header_path;
     }
   }  
-  return productname;
+  return public_header_path;
 }
 
 string PBXProj::getPrivateHeaderPath(const PBXBlock *block)
 {
-  string productname;
+  string private_header_path;
   const PBXText * type = dynamic_cast<const PBXText *>(block->valueForKey("isa"));
   string btype = type->text();
   if(!type || btype != "XCConfigurationList")
-    return productname;
+    return private_header_path;
   
   const PBXText * defaults = dynamic_cast<const PBXText *>(block->valueForKey("defaultConfigurationName"));
   if(!defaults)
-    return productname;
+    return private_header_path;
   string bdefaults = defaults->text();
   const PBXArray * confs = dynamic_cast<const PBXArray *>(block->valueForKey("buildConfigurations"));
   if(!confs)
-    return productname;
+    return private_header_path;
 
   PBXValueList::const_iterator itor = confs->begin();
   PBXValueList::const_iterator end  = confs->end();  
@@ -504,11 +518,11 @@ string PBXProj::getPrivateHeaderPath(const PBXBlock *block)
       continue;
     const PBXText * pName = dynamic_cast<const PBXText *>(settings->valueForKey("PRIVATE_HEADERS_FOLDER_PATH"));
     if(pName){
-      productname = pName->text();
-      return productname;
+      private_header_path = pName->text();
+      return private_header_path;
     }
   }  
-  return productname;
+  return private_header_path;
 }
 
 
@@ -553,6 +567,99 @@ string PBXProj::getProductName(const PBXBlock *block)
   return productname;
 }
 
+string PBXProj::getDylibCompatibilityVersion(const PBXBlock *block)
+{
+  string version;
+  const PBXText * type = dynamic_cast<const PBXText *>(block->valueForKey("isa"));
+  string btype = type->text();
+  if(!type || btype != "XCConfigurationList")
+    return version;
+  const PBXText * defaults = dynamic_cast<const PBXText *>(block->valueForKey("defaultConfigurationName"));
+  if(!defaults)
+    return version;
+  string bdefaults = defaults->text();
+  const PBXArray * confs = dynamic_cast<const PBXArray *>(block->valueForKey("buildConfigurations"));
+  if(!confs)
+    return version;
+  PBXValueList::const_iterator itor = confs->begin();
+  PBXValueList::const_iterator end  = confs->end();
+  for(; itor != end; itor++) {
+    const PBXValueRef * ref = dynamic_cast<const PBXValueRef*>(*itor);
+    const PBXValue *value = pDoc->deref(ref);
+    const PBXBlock *blk = PBXBlock::cast(value);
+    const PBXText * name = dynamic_cast<const PBXText *>(blk->valueForKey("name"));
+    string bname = name->text();
+    if(bname != bdefaults )
+      continue;
+    const PBXBlock * settings = dynamic_cast<const PBXBlock *>(blk->valueForKey("buildSettings"));
+    if(!settings)
+      continue;
+    
+    //lexer treat number as integer but float number as text.
+    const PBXInteger * compVersion = dynamic_cast<const PBXInteger *>(settings->valueForKey("DYLIB_COMPATIBILITY_VERSION"));
+    if(!compVersion){
+      const PBXText * compVersionText = dynamic_cast<const PBXText *>(settings->valueForKey("DYLIB_COMPATIBILITY_VERSION"));
+      if(compVersionText) {
+        version = compVersionText->text();
+        return version;
+      }
+    }
+    else {
+      stringstream ss;
+      ss<< compVersion->intValue();
+      return ss.str();
+    }
+  }
+  return version;
+}
+
+
+string PBXProj::getDylibCurrentVersion(const PBXBlock *block)
+{
+  string version;
+  const PBXText * type = dynamic_cast<const PBXText *>(block->valueForKey("isa"));
+  string btype = type->text();
+  if(!type || btype != "XCConfigurationList")
+    return version;
+  const PBXText * defaults = dynamic_cast<const PBXText *>(block->valueForKey("defaultConfigurationName"));
+  if(!defaults)
+    return version;
+  string bdefaults = defaults->text();
+  const PBXArray * confs = dynamic_cast<const PBXArray *>(block->valueForKey("buildConfigurations"));
+  if(!confs)
+    return version;
+  PBXValueList::const_iterator itor = confs->begin();
+  PBXValueList::const_iterator end  = confs->end();
+  for(; itor != end; itor++) {
+    const PBXValueRef * ref = dynamic_cast<const PBXValueRef*>(*itor);
+    const PBXValue *value = pDoc->deref(ref);
+    const PBXBlock *blk = PBXBlock::cast(value);
+    const PBXText * name = dynamic_cast<const PBXText *>(blk->valueForKey("name"));
+    string bname = name->text();
+    if(bname != bdefaults )
+      continue;
+    const PBXBlock * settings = dynamic_cast<const PBXBlock *>(blk->valueForKey("buildSettings"));
+    if(!settings)
+      continue;
+    //lexer treat number as integer but float number as text.
+    const PBXInteger * currVersion = dynamic_cast<const PBXInteger *>(settings->valueForKey("DYLIB_CURRENT_VERSION"));
+    if(!currVersion){
+      const PBXText * currVersionText = dynamic_cast<const PBXText *>(settings->valueForKey("DYLIB_CURRENT_VERSION"));
+      if(currVersionText) {
+        version = currVersionText->text();
+        return version;
+      }
+    }
+    else {
+      stringstream ss;
+      ss<< currVersion->intValue();
+      return ss.str();
+    }
+  }
+  return version;
+}
+
+
 string PBXProj::getInfoPlist(const PBXBlock *block)
 {
   string infoplist;
@@ -560,7 +667,6 @@ string PBXProj::getInfoPlist(const PBXBlock *block)
   string btype = type->text();
   if(!type || btype != "XCConfigurationList")
     return infoplist;
-  
   const PBXText * defaults = dynamic_cast<const PBXText *>(block->valueForKey("defaultConfigurationName"));
   if(!defaults)
     return infoplist;
@@ -568,10 +674,8 @@ string PBXProj::getInfoPlist(const PBXBlock *block)
   const PBXArray * confs = dynamic_cast<const PBXArray *>(block->valueForKey("buildConfigurations"));
   if(!confs)
     return infoplist;
-
   PBXValueList::const_iterator itor = confs->begin();
   PBXValueList::const_iterator end  = confs->end();  
-
   for(; itor != end; itor++) {
     const PBXValueRef * ref = dynamic_cast<const PBXValueRef*>(*itor);
     const PBXValue *value = pDoc->deref(ref);
@@ -586,7 +690,7 @@ string PBXProj::getInfoPlist(const PBXBlock *block)
     const PBXText * pList = dynamic_cast<const PBXText *>(settings->valueForKey("INFOPLIST_FILE"));
     if(pList){
       infoplist = pList->text();
-      return infoplist;
+      return m_replace(infoplist, "\"", "", -1);
     }
   }  
   return infoplist;
@@ -663,6 +767,9 @@ void convertMakefile(PBXNativeTarget target, buildType type)
   string buildargs = target.buildargs;
   string output = target.result.substr(0,target.result.find(".app"));
 
+  if(type == FRAMEWORK)
+    output = m_replace(output, ".framework", "", -1); 
+
   vector<string> headerpaths;
   for(int i = 0; i < target.headerpaths.size(); i++) {
     headerpaths.push_back(target.headerpaths[i].path);
@@ -695,7 +802,16 @@ void convertMakefile(PBXNativeTarget target, buildType type)
   makefile << "CPPFLAGS +="<<buildargs<<endl;
   makefile << endl;
   for(int i = 0; i < target.frameworks.size(); i++) {
-   makefile <<"LDFLAGS += -framework " + target.frameworks[i].path <<endl;
+    makefile <<"LDFLAGS += -framework " + target.frameworks[i].path <<endl;
+  }
+
+  if(type == FRAMEWORK) {
+    makefile <<"LDFLAGS += -dynamiclib" <<endl;
+    makefile <<"LDFLAGS += -install_name /Library/Frameworks/$(PROJECTNAME).framework/$(PROJECTNAME)"<<endl;
+    if(!target.dylib_compatibility_version.empty())
+      makefile <<"LDFLAGS += -compatibility_version "<<target.dylib_compatibility_version <<endl;
+    if(!target.dylib_current_version.empty())
+      makefile <<"LDFLAGS += -current_version "<<target.dylib_current_version <<endl;
   }
   makefile << endl;
  
@@ -704,12 +820,14 @@ void convertMakefile(PBXNativeTarget target, buildType type)
     sourcepaths.push_back(target.sources[i].path);
   }
   
-/*  sort(sourcepaths.begin(), sourcepaths.end());
-  sourcepaths.erase(unique(sourcepaths.begin(), sourcepaths.end()), sourcepaths.end());
- */
+  /*  sort(sourcepaths.begin(), sourcepaths.end());
+      sourcepaths.erase(unique(sourcepaths.begin(), sourcepaths.end()), sourcepaths.end());
+  */
   makefile << endl;
   if(type == STATICLIB)
     makefile << "all: $(PROJECTNAME) headers"<<endl<<endl;
+  else if(type == FRAMEWORK)
+    makefile << "all: $(PROJECTNAME) framework"<<endl<<endl;
   else
     makefile << "all: $(PROJECTNAME)"<<endl<<endl;
 
@@ -719,28 +837,32 @@ void convertMakefile(PBXNativeTarget target, buildType type)
     object = m_replace(object, ".c", ".o", -1);
     object = m_replace(object, ".cpp", ".o", -1);
     if(i == sourcepaths.size()-1)
-    makefile << "\t"<<object<<endl;
+      makefile << "\t"<<object<<endl;
     else
-    makefile << "\t"<<object<<" \\"<<endl;
+      makefile << "\t"<<object<<" \\"<<endl;
   }
   makefile << endl;
   makefile << "$(PROJECTNAME): \\"<<endl;
-    for(int i = 0; i < sourcepaths.size(); i++) {
+  for(int i = 0; i < sourcepaths.size(); i++) {
     string object = m_replace(sourcepaths[i], ".m", ".o", -1);
     object = m_replace(object, ".c", ".o", -1);
     object = m_replace(object, ".cpp", ".o", -1);
     if(i == sourcepaths.size()-1)
-    makefile << "\t"<<object<<endl;
+      makefile << "\t"<<object<<endl;
     else
-    makefile << "\t"<<object<<" \\"<<endl;
+      makefile << "\t"<<object<<" \\"<<endl;
   }
 
   if(type == APP || type == EXEC) 
     makefile << "\t$(CC) $(CFLAGS) $(LDFLAGS) $(filter %.o,$^) -o $@"<<endl<<endl;
-  else if(type == STATICLIB) {
+  else if(type == FRAMEWORK) {
+    makefile << "\tmkdir -p $(PROJECTNAME).framework"<<endl;
+    makefile << "\t$(CC) $(CFLAGS) $(LDFLAGS) $(filter %.o,$^) -o $(PROJECTNAME).framework/$@"<<endl<<endl;
+  } else if(type == STATICLIB) {
     makefile << "\tmkdir -p xcbuild"<<endl;
     makefile << "\tarm-apple-darwin11-ar cr xcbuild/"<<output<<" $(filter %.o,$^)"<<endl<<endl;
-    }
+  }
+
   for(int i = 0; i < sourcepaths.size(); i++) {
     string object = m_replace(sourcepaths[i], ".m", ".o", -1);
     object = m_replace(object, ".c", ".o", -1);
@@ -762,6 +884,14 @@ void convertMakefile(PBXNativeTarget target, buildType type)
     makefile <<endl;
   }
 
+  if(type == FRAMEWORK) {
+    makefile << "framework:"<<endl;
+    makefile << "\tmkdir -p $(PROJECTNAME).framework/Headers" <<endl;
+    for(int i = 0; i < target.headers.size(); i++) {
+      makefile << "\tcp -r " << target.headers[i].path << " $(PROJECTNAME).framework/Headers" <<endl;
+    }
+    makefile <<endl;
+  }
 
   if(type == APP) { // App need this.
     makefile << "INFOPLIST:=" <<target.infoplist<<endl <<endl;
@@ -824,8 +954,11 @@ void convertMakefile(PBXNativeTarget target, buildType type)
 
   if(type == APP)
     makefile << "\trm -rf $(APPFOLDER)"<<endl;
-
-  makefile << "\trm -f $(PROJECTNAME)"<<endl<<endl;
+  if(type == FRAMEWORK)
+    makefile << "\trm -rf $(PROJECTNAME).framework"<<endl;
+   
+  if(type != FRAMEWORK)  
+    makefile << "\trm -f $(PROJECTNAME)"<<endl<<endl;
     
   makefile.close();  
   cout <<"Makefile generated."<<endl;
@@ -842,6 +975,8 @@ void convertTarget(PBXNativeTarget target, int compile)
     convertMakefile(target, APP);
   else if(target.resulttype == "compiled.mach-o.executable")
     convertMakefile(target, EXEC);
+  else if(target.resulttype == "wrapper.framework")
+    convertMakefile(target, FRAMEWORK);
   else
     cout <<"Not supported yet."<<endl;
   if(compile)
@@ -892,16 +1027,16 @@ int main(int argc, char* argv[])
     }
     short input;
     do {
-	cout <<"Please choose one:";
-	cin>>input;
-	if (cin.fail()) {
-	  cin.clear();
-	  cin.sync();
-	}
+      cout <<"Please choose one:";
+      cin>>input;
+      if (cin.fail()) {
+	cin.clear();
+	cin.sync();
+      }
     } while(input > target_count || input < 0);
-      convertTarget(targets[input], willcompile);
+    convertTarget(targets[input], willcompile);
   } else 
-      convertTarget(targets[0], willcompile);
+    convertTarget(targets[0], willcompile);
   
   return 0;
 }
