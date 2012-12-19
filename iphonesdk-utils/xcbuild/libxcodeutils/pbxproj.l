@@ -22,7 +22,7 @@
                                 return PREAMBLE;    
                             } // one line
                             
-\/\*[^\*\/]*\*\/            {   yylval.string = strdup(yytext);
+"/*"((\*+[^/*])|([^*]))*\**"*/"            {   yylval.string = strdup(yytext);
                                 return COMMENT;     
                             } // inline
                             
