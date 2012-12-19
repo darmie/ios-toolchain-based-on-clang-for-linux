@@ -34,7 +34,7 @@ $(PROJECTNAME):	$(OBJS)
 	$(CPP) -c $(CPPFLAGS) $< -o $@
 
 clean:
-	@rm -f ./*.o
-	@rm -f $(PROJECTNAME)
+	find . -name \*.o|xargs rm -rf
+	rm -f $(PROJECTNAME)
 
 .PHONY: all clean
