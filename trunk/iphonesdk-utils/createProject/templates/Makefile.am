@@ -2,7 +2,11 @@ TEMPLATES = Application \
 	    Command_line_utility \
 	    Example_Player	\
 	    Example_UICatalog	\
-	    Notification_Center_widget
+	    Notification_Center_widget \
+			Dynamic_Library \
+			Static_Library \
+			Dynamic_Framework \
+			Static_Framework
 
 TEMPLATE_FILES = $(TEMPLATES:%=%.template)
 
