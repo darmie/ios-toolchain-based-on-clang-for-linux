@@ -821,7 +821,10 @@ void convertMakefile(PBXNativeTarget target, buildType type)
   makefile << "clean:"<<endl;
   makefile << "\tfind . -name \\*.o|xargs rm -rf"<<endl;
   makefile << "\trm -rf xcbuild"<<endl;
-  makefile << "\trm -rf $(APPFOLDER)"<<endl;
+
+  if(type == APP)
+    makefile << "\trm -rf $(APPFOLDER)"<<endl;
+
   makefile << "\trm -f $(PROJECTNAME)"<<endl<<endl;
     
   makefile.close();  
