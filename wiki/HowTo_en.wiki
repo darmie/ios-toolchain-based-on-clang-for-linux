@@ -177,17 +177,13 @@ when you want to get the code completion hint, you can type "Ctrl-x Ctrl-u" to g
 You may also need autopair/snipMate plugin for VIM.
 
 ==<font color="blue"> Test toolchain </font>==
-I tested this toolchain with many opensource iOS projects, Here is a Makefile for RestKit, a large opensource REST framework  for iOS.
+I tested this toolchain with many opensource iOS projects, you can use RestKit, json-framework, fmdb or sample codes directly from API reference.
 
+(NOTE, A lot of sampel code in API Reference from Apple use xib and storyboard, these files can not be converted to binary format, so it may be built but can not run directly in iOS device.)
+
+Here provides an example of RestKit:
 Download RestKit from:
-
 https://github.com/RestKit/RestKit
-
-Download the makefile from:
-
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/Makefile.restkit
-
-put it in RestKit dir and rename it to Makefile
 
 Prepare a iOS 6.x sdk, since the latest RestKit need some API only in iOS 6.x.
 
@@ -199,10 +195,16 @@ SDK_VERSION=6.0
 
 then enter RestKit dir
 {{{
+$ios-xcbuild RestKit.xcodeproj
 $make
 }}}
 
-You will get a Release dir contains librestkit.dylib, librestkit.a and Header files of RestKit finally.
+or directly build it
+{{{
+$ios-xcbuild -b RestKit.xcodeproj
+}}}
+
+You will get the final result (headers and librestkit.a) in "./xcbuild" directory.
 
 
 ==<font color="blue"> Build an iOS App. </font>==
