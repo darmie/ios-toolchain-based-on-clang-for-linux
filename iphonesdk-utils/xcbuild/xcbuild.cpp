@@ -342,7 +342,18 @@ void PBXProj::initTargets()
 		full_path = m_replace(full_path, "\"", "", -1);
 		file.path = full_path;
 	      }
-	    }
+	    } else if(isa == "PBXReferenceProxy") {
+        file.isa = file_isa->text();
+        const PBXText * file_path = dynamic_cast<const PBXText*>(file_blk->valueForKey("path"));
+        if(file_path) {
+    string local_path = file_path->text();
+    string full_path =local_path;
+    if(this->allFiles.find(local_path) != this->allFiles.end())
+      full_path = this->allFiles.find(local_path)->second;
+    full_path = m_replace(full_path, "\"", "", -1);
+    file.path = full_path;
+        }
+    }
 
 	    if(bp_blk_type == "PBXFrameworksBuildPhase" && !file.path.empty()) {
 	      string framework = file.path;
@@ -391,7 +402,7 @@ void PBXProj::getAllFilesFromMainGroup(const PBXBlock *block, string current_pat
     // cout<<local_path<<endl;
     allFiles.insert(pair<string,string>(path->text(), local_path));
     //    this->allFiles.push_back(local_path);
-  } else if (block_type == "PBXGroup") {
+  } else if (block_type == "PBXGroup" || block_type == "PBXVariantGroup") {
     const PBXArray *arr = dynamic_cast<const PBXArray *>(block->valueForKey("children"));
     if(!arr)
       return;
@@ -781,6 +792,7 @@ void convertMakefile(PBXNativeTarget target, buildType type)
   for(int i = 0; i < headerpaths.size(); i++) {
     buildargs = buildargs + " -I" + headerpaths[i];
   }
+  buildargs += " -I.";
 
   ofstream makefile("./Makefile");
   if(type == APP)
@@ -789,7 +801,7 @@ void convertMakefile(PBXNativeTarget target, buildType type)
   makefile << "PROJECTNAME:="<<output<<endl;
 
   if(type == APP) {
-    makefile << "APPFOLDER:=$(PROJECTNAME).app" <<endl;
+    makefile << "APPFOLDER:=xcbuild/$(PROJECTNAME).app" <<endl;
     makefile << "INSTALLFOLDER:=$(PROJECTNAME).app"<<endl;
   }
   
@@ -802,7 +814,16 @@ void convertMakefile(PBXNativeTarget target, buildType type)
   makefile << "CPPFLAGS +="<<buildargs<<endl;
   makefile << endl;
   for(int i = 0; i < target.frameworks.size(); i++) {
-    makefile <<"LDFLAGS += -framework " + target.frameworks[i].path <<endl;
+    //handle dylib and static lib in frameworks;
+    string framework = target.frameworks[i].path;
+    if(endWith(framework, ".dylib") && beginWith(framework, "lib")) {
+      framework = framework.substr(0,framework.find(".dylib"));
+      framework = framework.substr(3, framework.length());
+      makefile <<"LDFLAGS += -l" <<framework<<endl;
+    } else if(endWith(framework, ".a") && beginWith(framework, "lib")) {
+      makefile <<"LDFLAGS += "<<framework<<endl;
+    }else 
+      makefile <<"LDFLAGS += -framework " + framework <<endl;
   }
 
   if(type == FRAMEWORK) {
@@ -853,11 +874,12 @@ void convertMakefile(PBXNativeTarget target, buildType type)
       makefile << "\t"<<object<<" \\"<<endl;
   }
 
-  if(type == APP || type == EXEC) 
-    makefile << "\t$(CC) $(CFLAGS) $(LDFLAGS) $(filter %.o,$^) -o $@"<<endl<<endl;
-  else if(type == FRAMEWORK) {
-    makefile << "\tmkdir -p $(PROJECTNAME).framework"<<endl;
-    makefile << "\t$(CC) $(CFLAGS) $(LDFLAGS) $(filter %.o,$^) -o $(PROJECTNAME).framework/$@"<<endl<<endl;
+  if(type == APP || type == EXEC) { 
+    makefile << "\tmkdir -p xcbuild"<<endl;
+    makefile << "\t$(CC) $(CFLAGS) $(LDFLAGS) $(filter %.o,$^) -o xcbuild/$@"<<endl<<endl;
+  } else if(type == FRAMEWORK) {
+    makefile << "\tmkdir -p xcbuild/$(PROJECTNAME).framework"<<endl;
+    makefile << "\t$(CC) $(CFLAGS) $(LDFLAGS) $(filter %.o,$^) -o xcbuild/$(PROJECTNAME).framework/$@"<<endl<<endl;
   } else if(type == STATICLIB) {
     makefile << "\tmkdir -p xcbuild"<<endl;
     makefile << "\tarm-apple-darwin11-ar cr xcbuild/"<<output<<" $(filter %.o,$^)"<<endl<<endl;
@@ -886,9 +908,9 @@ void convertMakefile(PBXNativeTarget target, buildType type)
 
   if(type == FRAMEWORK) {
     makefile << "framework:"<<endl;
-    makefile << "\tmkdir -p $(PROJECTNAME).framework/Headers" <<endl;
+    makefile << "\tmkdir -p xcbuild/$(PROJECTNAME).framework/Headers" <<endl;
     for(int i = 0; i < target.headers.size(); i++) {
-      makefile << "\tcp -r " << target.headers[i].path << " $(PROJECTNAME).framework/Headers" <<endl;
+      makefile << "\tcp -r " << target.headers[i].path << " xcbuild/$(PROJECTNAME).framework/Headers" <<endl;
     }
     makefile <<endl;
   }
@@ -916,7 +938,7 @@ void convertMakefile(PBXNativeTarget target, buildType type)
     makefile << "\tmkdir -p $(APPFOLDER)"<<endl;
     makefile << "\tcp -r $(RESOURCES) $(APPFOLDER)"<<endl;
     makefile << "\tcp $(INFOPLIST) $(APPFOLDER)/Info.plist"<<endl;
-    makefile << "\tcp $(PROJECTNAME) $(APPFOLDER)"<<endl;
+    makefile << "\tcp xcbuild/$(PROJECTNAME) $(APPFOLDER)"<<endl;
     makefile << "\tsed -i 's|$${EXECUTABLE_NAME}|" << output << "|g' " << "$(APPFOLDER)/Info.plist"<<endl;
     makefile << "\tsed -i 's|$${PRODUCT_NAME}|" << output << "|g' " << "$(APPFOLDER)/Info.plist"<<endl;
     transform(output.begin(), output.end(), output.begin(), ::tolower);
@@ -952,14 +974,6 @@ void convertMakefile(PBXNativeTarget target, buildType type)
   makefile << "\tfind . -name \\*.o|xargs rm -rf"<<endl;
   makefile << "\trm -rf xcbuild"<<endl;
 
-  if(type == APP)
-    makefile << "\trm -rf $(APPFOLDER)"<<endl;
-  if(type == FRAMEWORK)
-    makefile << "\trm -rf $(PROJECTNAME).framework"<<endl;
-   
-  if(type != FRAMEWORK)  
-    makefile << "\trm -f $(PROJECTNAME)"<<endl<<endl;
-    
   makefile.close();  
   cout <<"Makefile generated."<<endl;
   if(type == STATICLIB)
