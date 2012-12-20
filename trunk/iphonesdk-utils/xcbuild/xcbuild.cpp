@@ -84,6 +84,7 @@ public:
   string name;
   string path;
   string cflag;
+  int is_public_header;
 };
 
 class PBXNativeTarget
@@ -136,6 +137,12 @@ private:
   string getInfoPlist(const PBXBlock *block);
   string getDylibCompatibilityVersion(const PBXBlock *block);
   string getDylibCurrentVersion(const PBXBlock *block);
+/*
+  void getSourcesFromBuildPhases(const PBXBlock *block, PBXNativeTarget target);
+  void getHeadersFromBuildPhases(const PBXBlock *block, PBXNativeTarget target);
+  void getResourcesFromBuildPhases(const PBXBlock *block, PBXNativeTarget target);
+  void getFrameworksFromBuildPhases(const PBXBlock *block, PBXNativeTarget target);
+*/
   void initTargets();
   vector<PBXNativeTarget> targets;
   PBXFile *pDoc;
@@ -182,7 +189,9 @@ void PBXProj::initTargets()
   if(!target_arr)
     return;
 
+  //get target count from "Project object"
   this->targetcount =  target_arr->count();
+
 
   PBXValueList::const_iterator itor = target_arr->begin();
   PBXValueList::const_iterator end  = target_arr->end();
@@ -190,23 +199,40 @@ void PBXProj::initTargets()
     const PBXValueRef* ref     = dynamic_cast<const PBXValueRef*>(*itor);
     const PBXValue *value = pDoc->deref(ref);
     const PBXBlock *target_blk = PBXBlock::cast(value);
+    
+    if(!target_blk)
+      return;
+
 
     PBXNativeTarget target_detail;
 
-    //ignore PBXAggregateTarget
-    const PBXText * isa =  dynamic_cast<const PBXText*>(target_blk->valueForKey("isa"));
-    if(isa->text() == string("PBXAggregateTarget")) {
+    //ignore PBXAggregateTarget, aggregate target means a target group
+    //we did not want to support it.
+    const PBXText * target_isa =  dynamic_cast<const PBXText*>(target_blk->valueForKey("isa"));
+    if(target_isa->text() == string("PBXAggregateTarget")) {
       this->targetcount -= 1; 
       continue;  
     }
+    
+    //ignore everything until it is a PBXNativeTarget.
+    if(target_isa->text() != string("PBXNativeTarget")) {
+      this->targetcount -= 1;
+      continue;
+    }
+  
+    //target name
     const PBXText * name = dynamic_cast<const PBXText*> (target_blk->valueForKey("name"));
     if(name)
       target_detail.name = m_replace(name->text(), "\"", "", -1);
-    
-    /*    const PBXText *productName = dynamic_cast<const PBXText*> (target_blk->valueForKey("productName"));
+   
+    //prodcutName in target sometimes meaningless
+    // 
+    /*const PBXText *productName = dynamic_cast<const PBXText*> (target_blk->valueForKey("productName"));
 	  if(productName)
 	  target_detail.productName = productName->text();
     */
+
+    
     const PBXText *productType = dynamic_cast<const PBXText*> (target_blk->valueForKey("productType"));
     if(productType)
       target_detail.productType = m_replace(productType->text(), "\"", "", -1);
@@ -214,15 +240,30 @@ void PBXProj::initTargets()
     const PBXValueRef *bcl_ref = dynamic_cast<const PBXValueRef*>(target_blk->valueForKey("buildConfigurationList"));
     const PBXValue * bcl_value = dynamic_cast<const PBXValue *>(pDoc->deref(bcl_ref));
     const PBXBlock *bcl_blk = dynamic_cast<const PBXBlock*>(bcl_value);
+
+    // a target should always had a buildConfigurationList contains Release/Debug build configuration
+    // is it is missing, ignore this target.
+    if(!bcl_blk) {
+      this->targetcount -= 1;
+      continue;
+    }
+   
+    //get enough infomations from build configurations
+    //here we only get things from "Release" configuration.
     target_detail.buildargs = getBuildSettings(bcl_blk);
     target_detail.infoplist = getInfoPlist(bcl_blk);
     target_detail.productName =getProductName(bcl_blk);
     target_detail.dylib_compatibility_version = getDylibCompatibilityVersion(bcl_blk);
     target_detail.dylib_current_version = getDylibCurrentVersion(bcl_blk);
-    //sometimes there is a ref to TARGET_NAME here;
-    if(target_detail.productName == "$(TARGET_NAME)")
-      target_detail.productName = target_detail.productName;
 
+    //Sometimes productName in buildconfigurations points to TARGET_NAME;
+    if(target_detail.productName == "$(TARGET_NAME)")
+      target_detail.productName = target_detail.name;
+
+    //Libraries or Frameworks should generate related header files
+    //This define did not used when generate Makefile,
+    //since it is a little bit difficult to determine the dir structure, now.
+    //we will put everything in "./xcbuild"
     target_detail.symroot = m_replace(getSymRoot(bcl_blk), "$(SRCROOT)", ".", -1);
     target_detail.symroot = m_replace(target_detail.symroot,"\"","",-1);
     if(target_detail.symroot.empty())
@@ -237,7 +278,9 @@ void PBXProj::initTargets()
     target_detail.public_header_path = m_replace(target_detail.public_header_path, "\"","",-1);
     target_detail.private_header_path = m_replace(getPrivateHeaderPath(bcl_blk), "$(PUBLIC_HEADERS_FOLDER_PATH)",target_detail.public_header_path,-1);
     target_detail.private_header_path = m_replace(target_detail.private_header_path,"\"","",-1);
-    
+   
+
+    //productReference point to the final result. 
     const PBXValueRef *pr_ref = dynamic_cast<const PBXValueRef*>(target_blk->valueForKey("productReference"));
     const PBXValue *pr_value = pDoc->deref(pr_ref);
     const PBXBlock *pr_blk = PBXBlock::cast(pr_value);
@@ -253,6 +296,9 @@ void PBXProj::initTargets()
       result = m_replace(result,"\"", "", -1);
       target_detail.result = result;//path->text();
     }
+
+    //buildPhases in target block defines all resources in this target.
+    //mostly include Sources/Frameworks/Headers/Resources
     const PBXArray *bp_arr = dynamic_cast<const PBXArray*>(target_blk->valueForKey("buildPhases"));
     if(bp_arr) {
       PBXValueList::const_iterator bp_itor = bp_arr->begin();
@@ -261,11 +307,13 @@ void PBXProj::initTargets()
 	const PBXValueRef* bp_ref     = dynamic_cast<const PBXValueRef*>(*bp_itor);
 	const PBXValue *bp_value = pDoc->deref(bp_ref);
 	const PBXBlock *bp_blk = PBXBlock::cast(bp_value);
-	  
+	    
+  //record bp_blk_type here. 
 	string bp_blk_type = "";	  
 	const PBXText* bp_isa = dynamic_cast<const PBXText*>(bp_blk->valueForKey("isa"));
 	if(bp_isa)
 	  bp_blk_type = bp_isa->text();
+
 
 	const PBXArray* files_arr = dynamic_cast<const PBXArray*>(bp_blk->valueForKey("files"));
 	if(files_arr) {
@@ -277,13 +325,24 @@ void PBXProj::initTargets()
 	    const PBXBlock *files_blk = PBXBlock::cast(files_value);
 
 	    string cflag = "";
+      int is_public_header = 0;
 	    const PBXBlock * file_settings = dynamic_cast<const PBXBlock*>(files_blk->valueForKey("settings"));
 	    if(file_settings) {
 	      const PBXText * compiler_flags = dynamic_cast<const PBXText *> (file_settings->valueForKey("COMPILER_FLAGS"));
 	      if(compiler_flags)
 		cflag = m_replace(compiler_flags->text(),"\"","",-1);
+        const PBXArray * file_attr =  dynamic_cast<const PBXArray *> (file_settings->valueForKey("ATTRIBUTES"));
+        if(file_attr){
+          PBXValueList::const_iterator attr_itor = file_attr->begin();
+          PBXValueList::const_iterator attr_end = file_attr->end(); 
+          for(; attr_itor != attr_end; attr_itor++) {
+            const PBXText * is_public = dynamic_cast<const PBXText *> (*attr_itor);
+            if(is_public && (is_public->text() == string("Public"))) 
+              is_public_header = 1;
+          }
+        }
 	    }
-	      
+	    
 	    const PBXValueRef *file_ref = dynamic_cast<const PBXValueRef*>(files_blk->valueForKey("fileRef") );
 	    
 	    const PBXValue *file_value = pDoc->deref(file_ref);
@@ -326,6 +385,7 @@ void PBXProj::initTargets()
 	    else if(isa == "PBXFileReference") {
 	      file.isa = file_isa->text();
 	      file.cflag = cflag;
+	      file.is_public_header = is_public_header;
 	      const PBXText * file_lastKnownFileType = dynamic_cast<const PBXText*>(file_blk->valueForKey("lastKnownFileType"));
 	      if(file_lastKnownFileType)
 		file.lastKnownFileType = file_lastKnownFileType->text();
@@ -898,19 +958,26 @@ void convertMakefile(PBXNativeTarget target, buildType type)
 
   if(type == STATICLIB) {
     makefile << "headers:"<<endl;
-    makefile << "\tmkdir -p xcbuild/headers" <<endl;
+    makefile << "\tmkdir -p xcbuild/headers/private" <<endl;
     
     for(int i = 0; i < target.headers.size(); i++) {
-      makefile << "\tcp -r " << target.headers[i].path << " xcbuild/headers" <<endl;
+      if(target.headers[i].is_public_header)
+        makefile << "\tcp -r " << target.headers[i].path << " xcbuild/headers" <<endl;
+      else
+        makefile << "\tcp -r " << target.headers[i].path << " xcbuild/headers/private" <<endl;
     }
     makefile <<endl;
   }
 
   if(type == FRAMEWORK) {
     makefile << "framework:"<<endl;
-    makefile << "\tmkdir -p xcbuild/$(PROJECTNAME).framework/Headers" <<endl;
+    makefile << "\tmkdir -p xcbuild/$(PROJECTNAME).framework/Headers/private" <<endl;
     for(int i = 0; i < target.headers.size(); i++) {
-      makefile << "\tcp -r " << target.headers[i].path << " xcbuild/$(PROJECTNAME).framework/Headers" <<endl;
+      if(target.headers[i].is_public_header)
+        makefile << "\tcp -r " << target.headers[i].path << " xcbuild/$(PROJECTNAME).framework/Headers" <<endl;
+      else
+        makefile << "\tcp -r " << target.headers[i].path << " xcbuild/$(PROJECTNAME).framework/Headers/private" <<endl;
+        
     }
     makefile <<endl;
   }
