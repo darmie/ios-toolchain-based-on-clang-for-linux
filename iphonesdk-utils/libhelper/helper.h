@@ -37,6 +37,7 @@ string m_replace(string str,string pattern,string dstPattern,int count=-1);
 //in pathutil.cpp
 string find_command(string cmd, string cmd_begin, string cmd_end);
 string find_dir_in_dir(string dir, string dirname, string begin, string end);
+string find_more_dirs_in_dir(string dir, string begin, string end);
 string find_file_in_dir(string dir, string file, string begin, string end);
 
 // in sdkutil.cpp

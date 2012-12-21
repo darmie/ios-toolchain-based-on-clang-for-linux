@@ -69,7 +69,7 @@ void detect_sdk_and_write_configfile(string configfile)
     cout << "\nThis is the first time you use iPhone toolchain for linux." <<endl;
     cout << "\n" <<endl;
 
-    sdk_fullpath = find_dir_in_dir("/usr/share", "iPhoneOS5.0.sdk", "iPhoneOS", ".sdk");
+    sdk_fullpath = find_more_dirs_in_dir("/usr/share", "iPhoneOS", ".sdk");
     if(sdk_fullpath.empty())
       sdk_fullpath = get_sdk_full_path();
     else

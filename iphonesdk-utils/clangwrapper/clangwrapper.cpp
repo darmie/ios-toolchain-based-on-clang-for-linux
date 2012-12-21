@@ -52,6 +52,8 @@ int main(int argc, char **argv)
   if(endWith(string(argv[0]),"wrapper"))
     should_init = 1;
 
+  if(endWith(string(argv[0]),"ios-switchsdk"))
+    should_init = 1;
   //if ~/.iphonesdk not exists, detect it.  
   if(::access(config_file.c_str(),R_OK) != 0 || should_init)
     detect_sdk_and_write_configfile(config_file);

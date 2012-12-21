@@ -1,5 +1,6 @@
 #include <string>
 #include <dirent.h>
+#include <stdio.h>
 #include "helper.h"
 //for stat()
 #include <sys/types.h>
@@ -8,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
@@ -106,3 +108,39 @@ string find_dir_in_dir(string dir, string dirname, string begin, string end)
   return "";
 }
 
+string find_more_dirs_in_dir(string dir, string begin, string end)
+{
+  vector<string> dirs;
+  string target_file;
+  DIR *dirptr=NULL;
+  struct dirent *entry;
+  if((dirptr = opendir(dir.c_str()))==NULL)
+      return "";
+  
+  while((entry=readdir(dirptr))) {
+    string filename = entry->d_name;
+    if(endWith(filename,end) && beginWith(filename, begin)) 
+      dirs.push_back(filename);
+  }
+  closedir(dirptr);  
+
+  if(dirs.size() == 0) //notfound;
+    return "";
+  
+  if(dirs.size() == 1)
+    return dirs[1];
+  
+  printf("There are more than one sdks found:\n");
+  for(int i = 0; i < dirs.size(); i++) 
+    printf("[%i] %s\n", i, dirs[i].c_str());
+  short input;
+  do {
+      cout <<"Please choose one:";
+      cin>>input;
+      if (cin.fail()) {
+        cin.clear();
+        cin.sync();
+      }
+  } while(input > dirs.size() || input < 0);
+  return dirs[input]; 
+}
