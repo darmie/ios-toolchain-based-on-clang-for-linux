@@ -116,11 +116,6 @@ public:
   string buildargs;
   string infoplist;
 
-  //for static lib
-  string symroot;
-  string public_header_path;
-  string private_header_path;
-  
   //for frame work;
   string dylib_compatibility_version;
   string dylib_current_version;
@@ -143,10 +138,6 @@ private:
   string getBuildSettings(const PBXBlock *block);
   //get productname from buildSettings.
   string getProductName(const PBXBlock *block);
-  //get result dir structure from buildSettings, not used now.
-  string getSymRoot(const PBXBlock *block);
-  string getPublicHeaderPath(const PBXBlock *block);
-  string getPrivateHeaderPath(const PBXBlock *block);
   //get the infoplist file from buildSettings, 
   //especially for App.
   string getInfoPlist(const PBXBlock *block);
@@ -228,7 +219,6 @@ void PBXProj::initTargets()
     if(!target_blk)
       return;
 
-
     PBXNativeTarget target_detail;
 
     //ignore PBXAggregateTarget, aggregate target means a target group
@@ -238,26 +228,21 @@ void PBXProj::initTargets()
       this->targetcount -= 1; 
       continue;  
     }
-    
     //ignore everything until it is a PBXNativeTarget.
     if(target_isa->text() != string("PBXNativeTarget")) {
       this->targetcount -= 1;
       continue;
     }
-  
     //target name
     const PBXText * name = dynamic_cast<const PBXText*> (target_blk->valueForKey("name"));
     if(name)
       target_detail.name = m_replace(name->text(), "\"", "", -1);
-   
     //prodcutName in target sometimes meaningless
     // 
     /*const PBXText *productName = dynamic_cast<const PBXText*> (target_blk->valueForKey("productName"));
       if(productName)
       target_detail.productName = productName->text();
     */
-
-    
     const PBXText *productType = dynamic_cast<const PBXText*> (target_blk->valueForKey("productType"));
     if(productType)
       target_detail.productType = m_replace(productType->text(), "\"", "", -1);
@@ -285,25 +270,6 @@ void PBXProj::initTargets()
     if(target_detail.productName == "$(TARGET_NAME)")
       target_detail.productName = target_detail.name;
 
-    //Libraries or Frameworks should generate related header files
-    //This define did not used when generate Makefile,
-    //since it is a little bit difficult to determine the dir structure, now.
-    //we will put everything in "./xcbuild"
-    target_detail.symroot = m_replace(getSymRoot(bcl_blk), "$(SRCROOT)", ".", -1);
-    target_detail.symroot = m_replace(target_detail.symroot,"\"","",-1);
-    if(target_detail.symroot.empty())
-      target_detail.symroot = ".";
-
-    target_detail.public_header_path = target_detail.symroot +"/";
-    if(getPublicHeaderPath(bcl_blk).empty())
-      target_detail.public_header_path += "build/include";
-    else
-      target_detail.public_header_path += getPublicHeaderPath(bcl_blk);
-
-    target_detail.public_header_path = m_replace(target_detail.public_header_path, "\"","",-1);
-    target_detail.private_header_path = m_replace(getPrivateHeaderPath(bcl_blk), "$(PUBLIC_HEADERS_FOLDER_PATH)",target_detail.public_header_path,-1);
-    target_detail.private_header_path = m_replace(target_detail.private_header_path,"\"","",-1);
-   
 
     //productReference point to the final result. 
     const PBXValueRef *pr_ref = dynamic_cast<const PBXValueRef*>(target_blk->valueForKey("productReference"));
@@ -359,7 +325,6 @@ void PBXProj::initTargets()
 	  getFilesFromFileArray(files_arr, HEADERS, &target_detail);
       }
     }
-
     this->targets.push_back(target_detail);
   }
 }
@@ -526,124 +491,6 @@ void PBXProj::getAllFilesFromMainGroup(const PBXBlock *block, string current_pat
     }
   }
 }
-
-string PBXProj::getSymRoot(const PBXBlock *block)
-{
-  string symroot;
-  const PBXText * type = dynamic_cast<const PBXText *>(block->valueForKey("isa"));
-  string btype = type->text();
-  if(!type || btype != "XCConfigurationList")
-    return symroot;
-  
-  const PBXText * defaults = dynamic_cast<const PBXText *>(block->valueForKey("defaultConfigurationName"));
-  if(!defaults)
-    return symroot;
-  string bdefaults = defaults->text();
-  const PBXArray * confs = dynamic_cast<const PBXArray *>(block->valueForKey("buildConfigurations"));
-  if(!confs)
-    return symroot;
-
-  PBXValueList::const_iterator itor = confs->begin();
-  PBXValueList::const_iterator end  = confs->end();  
-
-  for(; itor != end; itor++) {
-    const PBXValueRef * ref = dynamic_cast<const PBXValueRef*>(*itor);
-    const PBXValue *value = pDoc->deref(ref);
-    const PBXBlock *blk = PBXBlock::cast(value); 
-    const PBXText * name = dynamic_cast<const PBXText *>(blk->valueForKey("name"));
-    string bname = name->text();
-    if(bname != bdefaults )
-      continue;
-    const PBXBlock * settings = dynamic_cast<const PBXBlock *>(blk->valueForKey("buildSettings"));
-    if(!settings)
-      continue;
-    const PBXText * sRoot = dynamic_cast<const PBXText *>(settings->valueForKey("SYMROOT"));
-    if(sRoot){
-      symroot = sRoot->text();
-      return symroot;
-    }
-  }  
-  return symroot;
-}
-
-string PBXProj::getPublicHeaderPath(const PBXBlock *block)
-{
-  string public_header_path;
-  const PBXText * type = dynamic_cast<const PBXText *>(block->valueForKey("isa"));
-  string btype = type->text();
-  if(!type || btype != "XCConfigurationList")
-    return public_header_path;
-  
-  const PBXText * defaults = dynamic_cast<const PBXText *>(block->valueForKey("defaultConfigurationName"));
-  if(!defaults)
-    return public_header_path;
-  string bdefaults = defaults->text();
-  const PBXArray * confs = dynamic_cast<const PBXArray *>(block->valueForKey("buildConfigurations"));
-  if(!confs)
-    return public_header_path;
-
-  PBXValueList::const_iterator itor = confs->begin();
-  PBXValueList::const_iterator end  = confs->end();  
-
-  for(; itor != end; itor++) {
-    const PBXValueRef * ref = dynamic_cast<const PBXValueRef*>(*itor);
-    const PBXValue *value = pDoc->deref(ref);
-    const PBXBlock *blk = PBXBlock::cast(value); 
-    const PBXText * name = dynamic_cast<const PBXText *>(blk->valueForKey("name"));
-    string bname = name->text();
-    if(bname != bdefaults )
-      continue;
-    const PBXBlock * settings = dynamic_cast<const PBXBlock *>(blk->valueForKey("buildSettings"));
-    if(!settings)
-      continue;
-    const PBXText * pName = dynamic_cast<const PBXText *>(settings->valueForKey("PUBLIC_HEADERS_FOLDER_PATH"));
-    if(pName){
-      public_header_path = pName->text();
-      return public_header_path;
-    }
-  }  
-  return public_header_path;
-}
-
-string PBXProj::getPrivateHeaderPath(const PBXBlock *block)
-{
-  string private_header_path;
-  const PBXText * type = dynamic_cast<const PBXText *>(block->valueForKey("isa"));
-  string btype = type->text();
-  if(!type || btype != "XCConfigurationList")
-    return private_header_path;
-  
-  const PBXText * defaults = dynamic_cast<const PBXText *>(block->valueForKey("defaultConfigurationName"));
-  if(!defaults)
-    return private_header_path;
-  string bdefaults = defaults->text();
-  const PBXArray * confs = dynamic_cast<const PBXArray *>(block->valueForKey("buildConfigurations"));
-  if(!confs)
-    return private_header_path;
-
-  PBXValueList::const_iterator itor = confs->begin();
-  PBXValueList::const_iterator end  = confs->end();  
-
-  for(; itor != end; itor++) {
-    const PBXValueRef * ref = dynamic_cast<const PBXValueRef*>(*itor);
-    const PBXValue *value = pDoc->deref(ref);
-    const PBXBlock *blk = PBXBlock::cast(value); 
-    const PBXText * name = dynamic_cast<const PBXText *>(blk->valueForKey("name"));
-    string bname = name->text();
-    if(bname != bdefaults )
-      continue;
-    const PBXBlock * settings = dynamic_cast<const PBXBlock *>(blk->valueForKey("buildSettings"));
-    if(!settings)
-      continue;
-    const PBXText * pName = dynamic_cast<const PBXText *>(settings->valueForKey("PRIVATE_HEADERS_FOLDER_PATH"));
-    if(pName){
-      private_header_path = pName->text();
-      return private_header_path;
-    }
-  }  
-  return private_header_path;
-}
-
 
 string PBXProj::getProductName(const PBXBlock *block)
 {
