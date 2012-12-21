@@ -17,13 +17,19 @@
 using namespace std;
 
 //current supported build type.
-enum buildType {
+enum targetType {
   APP,
   STATICLIB,
   EXEC,
   FRAMEWORK
 };
 
+enum buildPhase {
+  SOURCES,
+  HEADERS,
+  FRAMEWORKS,
+  RESOURCES
+};
 //this is a wrapper for system, if error happened when compilation, then exit.
 void runCommand(const char * command)
 {
@@ -128,26 +134,45 @@ public:
   vector<PBXNativeTarget> getTargets();
 
 private:
+  //extract all files project contains to allFiles;
+  //main porpose it to construct the currect pathes for every files.
+  //since file reference did not contains any paht infomations.
   void getAllFilesFromMainGroup(const PBXBlock * block, string current_path);
+  
+  //get common build args from buildSettings.
   string getBuildSettings(const PBXBlock *block);
+  //get productname from buildSettings.
   string getProductName(const PBXBlock *block);
+  //get result dir structure from buildSettings, not used now.
   string getSymRoot(const PBXBlock *block);
   string getPublicHeaderPath(const PBXBlock *block);
   string getPrivateHeaderPath(const PBXBlock *block);
+  //get the infoplist file from buildSettings, 
+  //especially for App.
   string getInfoPlist(const PBXBlock *block);
+  //get dylib compatibility version and current version from buildSettings.
+  //especially for framework build.
   string getDylibCompatibilityVersion(const PBXBlock *block);
   string getDylibCurrentVersion(const PBXBlock *block);
-/*
-  void getSourcesFromBuildPhases(const PBXBlock *block, PBXNativeTarget target);
-  void getHeadersFromBuildPhases(const PBXBlock *block, PBXNativeTarget target);
-  void getResourcesFromBuildPhases(const PBXBlock *block, PBXNativeTarget target);
-  void getFrameworksFromBuildPhases(const PBXBlock *block, PBXNativeTarget target);
-*/
+
+  //get every files from target buildPhases
+  //and construct corrent member field of target class.
+  void getFilesFromFileArray(const PBXArray *file_arr, buildPhase bptype, PBXNativeTarget *target);
+
+  //start parse target.
+  //called by constructor of PBXProj.loadProj();
   void initTargets();
-  vector<PBXNativeTarget> targets;
-  PBXFile *pDoc;
-  map<string,string> allFiles;
+
+  //contains targets count.
   int targetcount;
+
+  //contains all targets.
+  vector<PBXNativeTarget> targets;
+
+  //contains all files in project.
+  map<string,string> allFiles;
+ 
+  PBXFile *pDoc;
 };
 
 PBXProj::PBXProj()
@@ -228,8 +253,8 @@ void PBXProj::initTargets()
     //prodcutName in target sometimes meaningless
     // 
     /*const PBXText *productName = dynamic_cast<const PBXText*> (target_blk->valueForKey("productName"));
-	  if(productName)
-	  target_detail.productName = productName->text();
+      if(productName)
+      target_detail.productName = productName->text();
     */
 
     
@@ -300,6 +325,7 @@ void PBXProj::initTargets()
     //buildPhases in target block defines all resources in this target.
     //mostly include Sources/Frameworks/Headers/Resources
     const PBXArray *bp_arr = dynamic_cast<const PBXArray*>(target_blk->valueForKey("buildPhases"));
+
     if(bp_arr) {
       PBXValueList::const_iterator bp_itor = bp_arr->begin();
       PBXValueList::const_iterator bp_end  = bp_arr->end();
@@ -308,142 +334,164 @@ void PBXProj::initTargets()
 	const PBXValue *bp_value = pDoc->deref(bp_ref);
 	const PBXBlock *bp_blk = PBXBlock::cast(bp_value);
 	    
-  //record bp_blk_type here. 
+	//record bp_blk_type here. 
 	string bp_blk_type = "";	  
 	const PBXText* bp_isa = dynamic_cast<const PBXText*>(bp_blk->valueForKey("isa"));
-	if(bp_isa)
-	  bp_blk_type = bp_isa->text();
-
+	if(!bp_isa) {
+	  this->targetcount -= 1;
+	  continue;
+	}
+	
+	bp_blk_type = bp_isa->text();
 
 	const PBXArray* files_arr = dynamic_cast<const PBXArray*>(bp_blk->valueForKey("files"));
-	if(files_arr) {
-	  PBXValueList::const_iterator files_itor = files_arr->begin();
-	  PBXValueList::const_iterator files_end  = files_arr->end();
-	  for(; files_itor != files_end; files_itor++){
-	    const PBXValueRef * files_ref = dynamic_cast<const PBXValueRef*>(*files_itor);
-	    const PBXValue *files_value = pDoc->deref(files_ref);
-	    const PBXBlock *files_blk = PBXBlock::cast(files_value);
-
-	    string cflag = "";
-      int is_public_header = 0;
-	    const PBXBlock * file_settings = dynamic_cast<const PBXBlock*>(files_blk->valueForKey("settings"));
-	    if(file_settings) {
-	      const PBXText * compiler_flags = dynamic_cast<const PBXText *> (file_settings->valueForKey("COMPILER_FLAGS"));
-	      if(compiler_flags)
-		cflag = m_replace(compiler_flags->text(),"\"","",-1);
-        const PBXArray * file_attr =  dynamic_cast<const PBXArray *> (file_settings->valueForKey("ATTRIBUTES"));
-        if(file_attr){
-          PBXValueList::const_iterator attr_itor = file_attr->begin();
-          PBXValueList::const_iterator attr_end = file_attr->end(); 
-          for(; attr_itor != attr_end; attr_itor++) {
-            const PBXText * is_public = dynamic_cast<const PBXText *> (*attr_itor);
-            if(is_public && (is_public->text() == string("Public"))) 
-              is_public_header = 1;
-          }
-        }
-	    }
-	    
-	    const PBXValueRef *file_ref = dynamic_cast<const PBXValueRef*>(files_blk->valueForKey("fileRef") );
-	    
-	    const PBXValue *file_value = pDoc->deref(file_ref);
-	    const PBXBlock *file_blk = PBXBlock::cast(file_value);
-	    
-	    const PBXText * file_isa = dynamic_cast<const PBXText*>(file_blk->valueForKey("isa"));
-	    string isa = file_isa->text();
-	    File file;
-	    if(isa == "PBXVariantGroup") {
-	      //Group in resources seems mean a directory that should be keep its structure.
-	      //So we try to get the directory name;
-	      const PBXArray * children_arr = dynamic_cast<const PBXArray*>(file_blk->valueForKey("children"));
-	      PBXValueList::const_iterator children_itor = children_arr->begin();
-	      PBXValueList::const_iterator children_end  = children_arr->end();
-	      for(; children_itor != children_end; children_itor++) {
-		const PBXValueRef * c_ref = dynamic_cast<const PBXValueRef*>(*children_itor);
-		const PBXValue * c_value = pDoc->deref(c_ref);
-		const PBXBlock * c_blk = PBXBlock::cast(c_value);
-		const PBXText * file_isa = dynamic_cast<const PBXText*>(c_blk->valueForKey("isa"));
-		if(file_isa)
-		  file.isa = file_isa->text();
-		const PBXText * file_lastKnownFileType = dynamic_cast<const PBXText*>(c_blk->valueForKey("lastKnownFileType"));
-		if(file_lastKnownFileType)
-		  file.lastKnownFileType = file_lastKnownFileType->text();	
-		const PBXText * file_name = dynamic_cast<const PBXText*>(c_blk->valueForKey("name"));
-		if(file_name)
-		  file.name = file_name->text();
-		
-		const PBXText * file_path = dynamic_cast<const PBXText*>(c_blk->valueForKey("path"));
-		if(file_path) {
-		  string local_path = file_path->text();
-		  string full_path = local_path;
-		  if(this->allFiles.find(local_path) != this->allFiles.end())
-		    full_path = this->allFiles.find(local_path)->second;
-		  full_path = ::dirname(strdup(full_path.c_str()));
-		  file.path = full_path;
-		}
-	      }
-	    }
-	    else if(isa == "PBXFileReference") {
-	      file.isa = file_isa->text();
-	      file.cflag = cflag;
-	      file.is_public_header = is_public_header;
-	      const PBXText * file_lastKnownFileType = dynamic_cast<const PBXText*>(file_blk->valueForKey("lastKnownFileType"));
-	      if(file_lastKnownFileType)
-		file.lastKnownFileType = file_lastKnownFileType->text();
-	      const PBXText * file_name = dynamic_cast<const PBXText*>(file_blk->valueForKey("name"));
-	      if(file_name)
-		file.name = file_name->text();
-		
-	      const PBXText * file_path = dynamic_cast<const PBXText*>(file_blk->valueForKey("path"));
-	      if(file_path) {
-		string local_path = file_path->text();
-		string full_path =local_path;
-		if(this->allFiles.find(local_path) != this->allFiles.end())
-		  full_path = this->allFiles.find(local_path)->second;
-		full_path = m_replace(full_path, "\"", "", -1);
-		file.path = full_path;
-	      }
-	    } else if(isa == "PBXReferenceProxy") {
-        file.isa = file_isa->text();
-        const PBXText * file_path = dynamic_cast<const PBXText*>(file_blk->valueForKey("path"));
-        if(file_path) {
-    string local_path = file_path->text();
-    string full_path =local_path;
-    if(this->allFiles.find(local_path) != this->allFiles.end())
-      full_path = this->allFiles.find(local_path)->second;
-    full_path = m_replace(full_path, "\"", "", -1);
-    file.path = full_path;
-        }
-    }
-
-	    if(bp_blk_type == "PBXFrameworksBuildPhase" && !file.path.empty()) {
-	      string framework = file.path;
-	      char * frameworkpath = strdup(framework.c_str());
-	      framework = ::basename(frameworkpath);
-	      framework = framework.substr(0,framework.find(".framework"));
-	      file.path = framework;
-	      target_detail.frameworks.push_back(file);
-	    }
-	    else if(bp_blk_type == "PBXResourcesBuildPhase" && !file.path.empty())
-	      target_detail.resources.push_back(file);
-	    else if(bp_blk_type == "PBXSourcesBuildPhase" && !file.path.empty())
-	      target_detail.sources.push_back(file);
-	    else if(bp_blk_type == "PBXHeadersBuildPhase" && !file.path.empty()){
-	      target_detail.headers.push_back(file); 
-	      string headerpath = file.path;
-	      char * headerpath_c = strdup(headerpath.c_str());
-	      headerpath = ::dirname(headerpath_c);
-	      file.path = m_replace(headerpath,"\"","",-1);
-	      target_detail.headerpaths.push_back(file);
-	    }
-	      
-	  }
+	if(!files_arr) {
+	  this->targetcount -= 1;
+	  continue;
 	}
+	if(bp_blk_type == "PBXFrameworksBuildPhase")
+	  getFilesFromFileArray(files_arr, FRAMEWORKS, &target_detail);
+	else if(bp_blk_type == "PBXSourcesBuildPhase")
+	  getFilesFromFileArray(files_arr, SOURCES, &target_detail);
+	else if(bp_blk_type == "PBXResourcesBuildPhase")
+	  getFilesFromFileArray(files_arr, RESOURCES, &target_detail);
+	else if(bp_blk_type == "PBXHeadersBuildPhase")
+	  getFilesFromFileArray(files_arr, HEADERS, &target_detail);
       }
     }
 
     this->targets.push_back(target_detail);
   }
 }
+
+void PBXProj::getFilesFromFileArray(const PBXArray *files_arr, buildPhase bptype, PBXNativeTarget *target) 
+{
+  PBXValueList::const_iterator files_itor = files_arr->begin();
+  PBXValueList::const_iterator files_end  = files_arr->end();
+  for(; files_itor != files_end; files_itor++){
+    const PBXValueRef * files_ref = dynamic_cast<const PBXValueRef*>(*files_itor);
+    const PBXValue *files_value = pDoc->deref(files_ref);
+    const PBXBlock *files_blk = PBXBlock::cast(files_value);
+
+    string cflag = "";
+    int is_public_header = 0;
+    const PBXBlock * file_settings = dynamic_cast<const PBXBlock*>(files_blk->valueForKey("settings"));
+    // files contains a assignment named settings, it will contains special compiler flag for source file
+    // or is/is not public for header files.
+    // these info are we needed.
+    if(file_settings) {
+      const PBXText * compiler_flags = dynamic_cast<const PBXText *> (file_settings->valueForKey("COMPILER_FLAGS"));
+      if(compiler_flags)
+	cflag = m_replace(compiler_flags->text(),"\"","",-1);
+      const PBXArray * file_attr =  dynamic_cast<const PBXArray *> (file_settings->valueForKey("ATTRIBUTES"));
+      if(file_attr){
+	PBXValueList::const_iterator attr_itor = file_attr->begin();
+	PBXValueList::const_iterator attr_end = file_attr->end();
+	for(; attr_itor != attr_end; attr_itor++) {
+	  const PBXText * is_public = dynamic_cast<const PBXText *> (*attr_itor);
+	  if(is_public && (is_public->text() == string("Public")))
+	    is_public_header = 1;
+	}
+      }
+    }
+
+    const PBXValueRef *file_ref = dynamic_cast<const PBXValueRef*>(files_blk->valueForKey("fileRef") );
+
+    const PBXValue *file_value = pDoc->deref(file_ref);
+    const PBXBlock *file_blk = PBXBlock::cast(file_value);
+
+    const PBXText * file_isa = dynamic_cast<const PBXText*>(file_blk->valueForKey("isa"));
+    string isa = file_isa->text();
+    File file;
+
+    if(isa == "PBXVariantGroup") {
+      //Group in resources seems mean a directory that should be keep its structure.
+      //So we try to get the directory name;
+      const PBXArray * children_arr = dynamic_cast<const PBXArray*>(file_blk->valueForKey("children"));
+      PBXValueList::const_iterator children_itor = children_arr->begin();
+      PBXValueList::const_iterator children_end  = children_arr->end();
+      for(; children_itor != children_end; children_itor++) {
+	const PBXValueRef * c_ref = dynamic_cast<const PBXValueRef*>(*children_itor);
+	const PBXValue * c_value = pDoc->deref(c_ref);
+	const PBXBlock * c_blk = PBXBlock::cast(c_value);
+	const PBXText * file_isa = dynamic_cast<const PBXText*>(c_blk->valueForKey("isa"));
+	if(file_isa)
+	  file.isa = file_isa->text();
+	const PBXText * file_lastKnownFileType = dynamic_cast<const PBXText*>(c_blk->valueForKey("lastKnownFileType"));
+	if(file_lastKnownFileType)
+	  file.lastKnownFileType = file_lastKnownFileType->text();
+	const PBXText * file_name = dynamic_cast<const PBXText*>(c_blk->valueForKey("name"));
+	if(file_name)
+	  file.name = file_name->text();
+
+	const PBXText * file_path = dynamic_cast<const PBXText*>(c_blk->valueForKey("path"));
+	if(file_path) {
+	  string local_path = file_path->text();
+	  string full_path = local_path;
+	  if(this->allFiles.find(local_path) != this->allFiles.end())
+	    full_path = this->allFiles.find(local_path)->second;
+	  full_path = ::dirname(strdup(full_path.c_str()));
+	  file.path = full_path;
+	}
+      }
+    }
+    else if(isa == "PBXFileReference") {
+      file.isa = file_isa->text();
+      file.cflag = cflag;
+      file.is_public_header = is_public_header;
+      const PBXText * file_lastKnownFileType = dynamic_cast<const PBXText*>(file_blk->valueForKey("lastKnownFileType"));
+      if(file_lastKnownFileType)
+	file.lastKnownFileType = file_lastKnownFileType->text();
+      const PBXText * file_name = dynamic_cast<const PBXText*>(file_blk->valueForKey("name"));
+      if(file_name)
+	file.name = file_name->text();
+
+      const PBXText * file_path = dynamic_cast<const PBXText*>(file_blk->valueForKey("path"));
+      if(file_path) {
+	string local_path = file_path->text();
+	string full_path =local_path;
+	if(this->allFiles.find(local_path) != this->allFiles.end())
+	  full_path = this->allFiles.find(local_path)->second;
+	full_path = m_replace(full_path, "\"", "", -1);
+	file.path = full_path;
+      }
+    }
+    else if(isa == "PBXReferenceProxy") {
+      file.isa = file_isa->text();
+      const PBXText * file_path = dynamic_cast<const PBXText*>(file_blk->valueForKey("path"));
+      if(file_path) {
+	string local_path = file_path->text();
+	string full_path =local_path;
+	if(this->allFiles.find(local_path) != this->allFiles.end())
+	  full_path = this->allFiles.find(local_path)->second;
+	full_path = m_replace(full_path, "\"", "", -1);
+	file.path = full_path;
+      }
+    }
+    if(bptype == FRAMEWORKS && !file.path.empty()) {
+      string framework = file.path;
+      char * frameworkpath = strdup(framework.c_str());
+      framework = ::basename(frameworkpath);
+      framework = framework.substr(0,framework.find(".framework"));
+      file.path = framework;
+      target->frameworks.push_back(file);
+    } 
+    else if(bptype == RESOURCES && !file.path.empty())
+      target->resources.push_back(file);
+    else if(bptype == SOURCES && !file.path.empty())
+      target->sources.push_back(file);
+    else if(bptype == HEADERS && !file.path.empty()){
+      target->headers.push_back(file);
+      string headerpath = file.path;
+      char * headerpath_c = strdup(headerpath.c_str());
+      headerpath = ::dirname(headerpath_c);
+      file.path = m_replace(headerpath,"\"","",-1);
+      target->headerpaths.push_back(file);
+    }
+  }
+}
+
+
 
 void PBXProj::getAllFilesFromMainGroup(const PBXBlock *block, string current_path)
 {
@@ -829,10 +877,7 @@ string PBXProj::getBuildSettings(const PBXBlock *block)
   return buildargs;
 }
 
-
-static void printHelp(const char* cmd);
-
-void convertMakefile(PBXNativeTarget target, buildType type)
+void convertMakefile(PBXNativeTarget target, targetType type)
 {
   string compiler = "ios-clang";
   string buildargs = target.buildargs;
@@ -1043,8 +1088,7 @@ void convertMakefile(PBXNativeTarget target, buildType type)
 
   makefile.close();  
   cout <<"Makefile generated."<<endl;
-  if(type == STATICLIB)
-    cout <<"Build result will be in ./xcbuild" <<endl;
+  cout <<"Build result will be in ./xcbuild" <<endl;
 }
 
 
@@ -1064,6 +1108,12 @@ void convertTarget(PBXNativeTarget target, int compile)
     runCommand("make");
 }
 
+void printHelp(const char* cmd)
+{
+  printf("Usage: %s -c <project.pbxproj> : convert xcodeproj to make\n", cmd);
+  printf("       %s -b <project.pbxproj> : build xcodeproj directly\n", cmd);
+  exit(0);
+}
 
 int main(int argc, char* argv[])
 {
@@ -1123,10 +1173,4 @@ int main(int argc, char* argv[])
 }
 
 
-void printHelp(const char* cmd)
-{
-  printf("Usage: %s -c <project.pbxproj> : convert xcodeproj to make\n", cmd);
-  printf("       %s -b <project.pbxproj> : build xcodeproj directly\n", cmd);
-  exit(0);
-}
 
