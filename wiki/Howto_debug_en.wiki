@@ -1,15 +1,21 @@
 Here is a simple step by step tutorial for how to enable App debug for iOS toolchain:
 
-==1. Prepare debugserver==
-Apple provides a "debugserver" with XCode, you can download a copy from:
+===1. Prepare debugserver===
+Apple provides a "debugserver" with XCode, for iOS 5.x, it is in "DeveloperDiskImage5_0.pkg"
 
-for iOS 5.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/debugserver-for-ios-5.x.tar.xz
+1. Extract debugserver
+{{{
+$xar -xf DeveloperDiskImage5_0.pkg PayLoad
+$cat Payload |zcat|cpio -id
+$cp Platforms/iPhoneOS.platform/DeviceSupport/Latest/DeveloperDiskImage.dmg .
+$dmg2img DeveloperDiskImage.dmg
+$mount -o loop DeveloperDiskImage.img /mnt
+$mkdir ~/Developer
+$cd /mnt
+$cp -r * ~/Developer/
+}}}
 
-for iOS 6.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/debugserver-for-ios-6.x.tar.xz
-
-And upload "Developer" dir to the root of your iOS device.
-
-If you want to prepare it by your self, try to find "DeveloperDiskImage.dmg" in XCode`*`.dmg, you can use dmg2img and mount to extract all contents of it to a directory named "Developer". the debugserver is "Developer/usr/bin/debugserver".
+Now, the $HOME/Developer dir contains all related files of debugserver. 
 
 For security issue, by default, you can not use debugserver directly in iOS device, it need to be signed.
 
@@ -34,12 +40,13 @@ For security issue, by default, you can not use debugserver directly in iOS devi
 
 3. sign it.
 {{{
+$cd ~/Developer/usr/bin
 $ldid -Sent.xml debugserver
 }}}
 
 4, upload "Developer" dir to the root of iOS device.
 {{{
-$scp -r ./Developer root@<your iphone IP>:/
+$scp -r ~/Developer root@<your iphone IP>:/
 }}}
 
 5, ssh to your iOS device and try it.
@@ -48,7 +55,7 @@ $ssh <Your iPhone IP> -l root
 $/Developer/usr/bin/debugserver 1000 /Applications/<Some>.app/<Some binary>
 }}}
 
-==2. Install gdb 1822==
+===2. Install gdb 1822===
 Install gdb 1822 and dsymutil according to the <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/HowTo_en">HOWTO</a>.
 
 ==3. Enable debug informations when build==
