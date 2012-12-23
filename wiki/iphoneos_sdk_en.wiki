@@ -50,6 +50,7 @@ $cd /mnt/Packages.
 You will find a lot of ".pkg" files in this dir, we need:
 
 *iPhoneSDK5_0.pkg* : this is iOS SDK.
+
 *iPhoneSDKTools.pkg* : this pkg contains libarc_iphoneos.a, it is needed by clang with "-fobjc-arc" flag to enable ARC support of Objective-C.
 
 
