@@ -6,7 +6,7 @@ If you want to done this totally in linux, you may need these tools installed.
 
 The following is for 5.0 sdk from "xcode_4.2_and_ios_5_sdk_for_snow_leopard.dmg" , which is almost same with 4.x/6.x sdk and other version of xcode.
 
-===1. Extract iPhoneSDk pkg from xcode-xxx.img===
+===1. Extract iPhoneSDK pkg from xcode-xxx.img===
 Under Mac OSX, click the xcode img will mount it automaticallly, usually it is mounted under */Volumes/Xcode/*, enter /Volumes/Xcode/Packages and find *iPhoneSDK5_0.pkg*  for ios 5 or other versions according to your iOS version.
 
 Under Linux, you will need dmg2img to manipulate the Xcode img:
