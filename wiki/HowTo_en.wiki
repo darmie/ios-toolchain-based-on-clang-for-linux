@@ -70,23 +70,100 @@ extern void encrypt (char *__block, int __edflag) __THROW __nonnull ((1));
 </font>
 
 ==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
+I can not redistribute the  iPhoneOS SDK shipped with xcode, Please follow below steps to generate it yourself. 
 
-You can use the pre-generated SDKs.
+If you want to done this totally in linux, you may need these tools installed.
 
-DO NOT use higher version SDK with lower version Device.
+*dmg2img* can be downloaded from: http://vu1tur.eu.org/tools/
 
-for iOS 4.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS4.2.sdk.tar.xz
+*xar* can be downloaded from: https://code.google.com/p/xar/
 
-for iOS 5.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
+The following is for 5.0 sdk from "xcode_4.2_and_ios_5_sdk_for_snow_leopard.dmg" , which is almost same with 4.x/6.x sdk and other version of xcode.
 
-for iOS 6.x: http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS6.0.sdk.tar.xz
+===3.1. Extract iPhoneSDK pkg from xcode-xxx.img===
+Download the xcode-xxx.dmg with iOS sdk from Apple.
 
-Extract it to */usr/share"
+Under Mac OSX, click the xcode img will mount it automaticallly, usually it is mounted under */Volumes/Xcode/*, enter /Volumes/Xcode/Packages and find *iPhoneSDK5_0.pkg*  for ios 5 or other versions according to your iOS version.
+
+Under Linux, you will need dmg2img to manipulate the Xcode img:
+
+1, Get the partition
 {{{
-$tar xvf iPhoneOS*.sdk.tar.xz -C /usr/share
+$dmg2img -p xcode_4.2_and_ios_5_sdk_for_snow_leopard.dmg
 }}}
 
-or follow <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en">this link</a> to generate it by yourself.
+You will get
+{{{
+
+dmg2img v1.6.4 (c) vu1tur (to@vu1tur.eu.org)
+
+xcode_4.2_and_ios_5_sdk_for_snow_leopard.dmg --> (partition list)
+
+partition 0: Driver Descriptor Map (DDM : 0)
+partition 1:  (Apple_Free : 1)
+partition 2: Apple (Apple_partition_map : 2)
+partition 3: Macintosh (Apple_Driver_ATAPI : 3)
+partition 4:  (Apple_Free : 4)
+partition 5: disk image (Apple_HFS : 5)
+partition 6:  (Apple_Free : 6)
+}}}
+
+Find the line contains "Apple HFS", it is partition 5 for this dmg, and run below command to convert it to loopback img.
+
+{{{
+$dmg2img -p 5 xcode_4.2_and_ios_5_sdk_for_snow_leopard.dmg
+}}}
+
+After it finished, you will get a img named "xcode_4.2_and_ios_5_sdk_for_snow_leopard.img".
+
+Mount it:
+{{{
+$sudo modprobe hfsplus
+$sudo mount -o loop -t hfsplus xcode_4.2_and_ios_5_sdk_for_snow_leopard.img /mnt
+$cd /mnt/Packages.
+}}}
+
+You will find a lot of ".pkg" files in this dir, we need:
+
+*iPhoneSDK5_0.pkg* : this is iOS SDK.
+
+*iPhoneSDKTools.pkg* : this pkg contains libarc_iphoneos.a, it is needed by clang with "-fobjc-arc" flag to enable ARC support of Objective-C.
+
+
+===3.2. Extract files  for iPhoneOS SDK===
+For SDK,
+{{{
+$cd /usr/share
+$xar -xf iPhoneSDK5_0.pkg Payload; cat Payload | zcat | cpio -id
+$mv Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk .
+$rm -rf Platforms
+$rm -rf Payload
+}}}
+
+For ARC support
+{{{
+$xar -xf iPhoneSDKTools.pkg Payload
+$cat Payload |zcat|cpio -id
+$mkdir -p /usr/share/iPhoneOS5.0.sdk/usr/lib/arc
+$cp Platforms/iPhoneOS.platform/Developer/usr/lib/arc/libarclite_iphoneos.a /usr/share/iPhoneOS5.0.sdk/usr/lib/arc
+}}}
+
+
+===3.3. fix framework headers positions(optional)===
+Headers of frameworks can be found automatically by clang, so this step is optional.
+If you need code completion in your editor(such as clang code completion for vim/emacs or something else), you may need fix headers positions. and copy all framework headers to standard include dir of SDK.
+{{{
+# fix headers locations, optional.
+cd iPhoneOS5.0.sdk/System/Library/Frameworks
+for i in *.framework
+do
+     f=`basename $i .framework`
+     mkdir -p /usr/share/iPhoneOS5.0.sdk/usr/include/$f
+     if [ -d $i/Headers ]; then
+     cp -Rf -p $i/Headers/* /usr/share/iPhoneOS5.0.sdk/usr/include/$f/
+     fi
+done
+}}}
 
 
 ==<font color="blue"> Step 4: The utilities </font>==
