@@ -18,9 +18,9 @@ Actually, the iOS toolchain under linux is as same and simple as other crosscomp
 
   # *Assembler and Linker*: cctools and ld64 from apple opensource.
   # *Compiler*:  Clang/LLVM
-  # *Debugger*: gdb/dsymutil. (waiting for lldb)
   # *SDK*, include headers and libraries.
   # *Utilities*: such as ldid codesign tool.
+  # *Debugger*: gdb/dsymutil. 
   # *Documents*: API reference and related documents.
 
 You also need an iOS device jailbreaked and with ssh installed.
