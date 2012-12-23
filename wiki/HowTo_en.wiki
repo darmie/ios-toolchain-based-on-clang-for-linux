@@ -321,10 +321,9 @@ https://github.com/RestKit/RestKit
 
 Prepare a iOS 6.x sdk, since the latest RestKit need some API only in iOS 6.x.
 
-You may need to modify ~/.iphonesdk to 
+You may need to switch to 6.0 SDK
 {{{
-SDK_FULL_PATH=/usr/share/iPhoneOS6.0.sdk
-SDK_VERSION=6.0
+$ios-switchsdk
 }}}
 
 then enter RestKit dir
