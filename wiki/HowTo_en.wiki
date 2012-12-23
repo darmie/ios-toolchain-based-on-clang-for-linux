@@ -191,7 +191,7 @@ $make
 $make install
 }}}
 
-==<font color="blue"> Step 6: Debugger </font>==
+==<font color="blue"> Step 5: Debugger </font>==
 I had ported gdb-1822 from opendarwin to linux. thanks to opencflite(for CoreFoundation implementation) and maloader(for running mac binary under linux).
 
 A package include opencflite/maloader/gdb-1822 had been provided to make it build and install easily.
