@@ -129,6 +129,8 @@ You will find a lot of ".pkg" files in this dir, we need:
 
 *iPhoneSDKTools.pkg* : this pkg contains libarc_iphoneos.a, it is needed by clang with "-fobjc-arc" flag to enable ARC support of Objective-C.
 
+*DeveloperDiskImage5_0.pkg* : this pkg contains debugserver for iOS, it will be used when you setup debugserver in Step 6.
+
 
 ===3.2. Extract files  for iPhoneOS SDK===
 For SDK,
