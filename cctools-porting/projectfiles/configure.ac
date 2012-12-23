@@ -34,6 +34,18 @@ AM_PROG_AS([clang])
 AC_CHECK_TOOL([HOST_RANLIB], [ranlib], :)
 AC_CHECK_TOOL([HOST_AR], [ar], :)
 
+#detect buggy unistd.h contains __block.
+buggy_unistd=`grep "\*__block," /usr/include/unistd.h`
+if test "$buggy_unistd"; then
+  echo "==========================================="
+  echo "Buggy unistd.h found"
+  echo "\"__block\" is a reserved word of clang compiler for blocks support."
+  echo "Please replace \"__block\" in /usr/include/unistd.h to \"__libc_block\""
+  echo "==========================================="
+  exit
+fi
+
+
 #for libstuff emulated.c
 case $target_cpu in
      powerpc)
@@ -61,11 +73,13 @@ case $target_cpu in
     ;;
 esac
 
-#as reported, some users may use llvm-c/Disassembler.h from base system instead of the local copy in include dir.
+#as reported, some users may use llvm-c/Disassembler.h instead of local copy in include dir.
 #add these macros for avoid compilation failed.
 
 AC_DEFINE(__STDC_LIMIT_MACROS)
 AC_DEFINE(__STDC_CONSTANT_MACROS)
+
+
 
 #for as wrapper.
 AC_SUBST([ASLIBEXECDIR], ['${libexecdir}/as'])
