@@ -381,7 +381,42 @@ If you want to build a multi-arch FAT mach-o binary, add multiple "-arch armv(n)
 For iOS 4.x/5.x, armv6 armv7 can be used.  
 For iOS 6.x, armv7/armv7s can be used. (armv6 droped in iOS 6.x)
 
-====3. Localize App ====
+====3. Debug App ====
+Remove -g0 from the CFLAGS in Makefile if it exists.
+
+Add "-g" to the CFLAGS in Makefile and recompile your project.
+
+and run:
+{{{
+$cd <binary>.app
+$dsymutil -o <binary>.dSYM <binary>
+}}}
+it will generate a "`<`binary`>`.dSYM" directory.
+
+Upload the bundle to your iOS device and also cp to the same path of SDK dir.
+
+for example, if your project is named "Hello.app", you should upload it to /Applications of your iOS device and also cp it to <SDK root path>/Applications.
+
+in iOS device, run 
+{{{
+#/Developer/usr/bin/debugserver 1000 /Applications/Hello.app/Hello
+}}}
+
+It will launch debugserver, open port 1000 and waiting for a connection.
+
+in Linux, run
+{{{
+$arm-apple-darwin11-gdb
+}}}
+
+when (gdb) prompt appear, enter
+{{{
+(gdb)file /usr/share/iPhoneOS5.0.sdk/Applications/Hello.app/Hello
+(gdb)target remote-macosx <Your iPhone IP>:1000
+}}}
+
+
+====4. Localize App ====
 Run ios-genLocalization in Project folder.
 {{{
 $ios-genLocalization
