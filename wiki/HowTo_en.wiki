@@ -70,9 +70,9 @@ extern void encrypt (char *__block, int __edflag) __THROW __nonnull ((1));
 </font>
 
 ==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
-I can not redistribute the  iPhoneOS SDK shipped with xcode, Please follow below steps to generate it yourself. 
+<font color="red">I can not redistribute the  iPhoneOS SDK shipped with xcode, Please follow below steps to generate it yourself. </font>
 
-If you want to done this totally in linux, you may need these tools installed.
+If you want to do this totally under linux, you may need these tools installed.
 
 *dmg2img* can be downloaded from: http://vu1tur.eu.org/tools/
 
