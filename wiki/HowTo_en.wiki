@@ -53,9 +53,7 @@ http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-l
 
 Download and build it:
 {{{
-$export CC=clang
-$export CXX=clang++
-$CXXFLAGS=" -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS"  ./configure --target=arm-apple-darwin11 --prefix=/usr
+$./configure --target=arm-apple-darwin11 --prefix=/usr
 $make
 $make install
 }}}
@@ -66,7 +64,6 @@ $make install
 {{{
 extern void encrypt (char *__block, int __edflag) __THROW __nonnull ((1));
 }}}
-  # CXXFLAGS is needed for some situation, it already fixed in SVN and will shipped with next release.
 </font>
 
 ==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
