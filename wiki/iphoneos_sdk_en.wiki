@@ -57,7 +57,7 @@ You will find a lot of ".pkg" files in this dir, we need:
 
 
 ===2. Extract files  for iPhoneOS SDK===
-
+For SDK,
 {{{
 $cd /usr/share
 $xar -xf iPhoneSDK5_0.pkg Payload; cat Payload | zcat | cpio -id
@@ -66,6 +66,7 @@ $rm -rf Platforms
 $rm -rf Payload
 }}}
 
+For ARC support
 {{{
 $xar -xf iPhoneSDKTools.pkg Payload
 $cat Payload |zcat|cpio -id
