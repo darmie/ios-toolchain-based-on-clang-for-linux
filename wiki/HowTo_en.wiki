@@ -59,7 +59,7 @@ $make install
 }}}
 
 <font color="red"> 
-  # clang/clang++ are needed, since ld64-134.9 require blocks extension.
+  # clang/clang++ are needed, since ld64-134.9 require blocks extension gcc does not support.
   # There is a function prototype in unistd.h from glibc use a variable name "`__`block", it is a reserved word of clang, please change it to anything your want, for example "`__`libc`_`block". this should be fixed in glibc.
 {{{
 extern void encrypt (char *__block, int __edflag) __THROW __nonnull ((1));
