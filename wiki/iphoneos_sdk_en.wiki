@@ -33,7 +33,7 @@ tar zxvf libarclite_iphoneos.a.tar.gz -C /usr/share/iPhone5.0.sdk/usr/lib/arc
 
 ===4. fix framework headers positions(optional)===
 Headers of frameworks can be found automatically by clang, so this step is optional.
-If you need code completion in your editor(such as clang code completion for vim/emacs or something else), you may need fix headers positions. and copy all frameworks to standard include dir of SDK.
+If you need code completion in your editor(such as clang code completion for vim/emacs or something else), you may need fix headers positions. and copy all framework headers to standard include dir of SDK.
 {{{
 # fix headers locations, optional.
 cd iPhoneOS5.0.sdk/System/Library/Frameworks
