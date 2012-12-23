@@ -8,7 +8,7 @@ New version of xcode also use clang as its compiler:
 
 http://opensource.apple.com/release/developer-tools-45/
 
-This URL shows the opensource components used in Xcode 4.5, I almost ported everything and we got a Non-UI copy of Xcode toolchain for linux now.
+This URL shows the opensource components used in Xcode 4.5, Almost everything missing in linux had been ported and we got a Non-UI copy of Xcode toolchain for linux now.
 
 Here is an tutorial of  'How to setup iOS toolchain for linux'. 
 
