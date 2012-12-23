@@ -49,7 +49,7 @@ svn checkout http://ios-toolchain-based-on-clang-for-linux.googlecode.com/svn/tr
 }}}
 
 Here is a released tarball.
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-ld64-134.9-for-linux-1.0.tar.xz
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-ld64-134.9-for-linux-1.1.tar.xz
 
 Download and build it:
 {{{
@@ -182,7 +182,7 @@ iphonesdk-utils is a utility collection for iOS development, provides below util
 
 Download from: 
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-1.4.tar.bz2
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-1.5.tar.bz2
 
 Build and install it:
 {{{	
