@@ -173,6 +173,7 @@ iphonesdk-utils is a utility collection for iOS development, provides below util
 
   # *ldid* : codesign tool, with armv7/armv7s support and other changes from orig version. it will be called by ld64.
   # *ios-clang-wrapper* : automatically find SDK and construct proper compilation args.
+  # *ios-switchsdk* : switch sdk when multiple version of SDK exist.
   # *ios-pngcrush*: png crush/de-crush tool, like Apple's pngcrush.
   # *ios-createProject* : project templates
   # *ios-genLocalization* : iOS app localization tool based on clang lexer.
