@@ -93,7 +93,12 @@ std::vector<std::string> getLocalizedStringFromFile(std::string filename, std::s
     clang::TargetInfo *pTargetInfo = 
         clang::TargetInfo::CreateTargetInfo(
             *pDiagnosticsEngine,
-            &targetOptions);
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR == 2
+            targetOptions
+#else
+            &targetOptions
+#endif
+            );   
     llvm::IntrusiveRefCntPtr<clang::HeaderSearchOptions> headerSearchOptions(new clang::HeaderSearchOptions());
     for(int i = 0 ; i < includepaths.size(); i++)
         headerSearchOptions->AddPath(includepaths.at(i),
