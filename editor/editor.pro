@@ -16,12 +16,14 @@ HEADERS += \
     objchighlighter.h \
     mainwindow.h \
     textedit.h \
-    filedock.h
+    filedock.h \
+    highlight.h
 SOURCES += main.cpp \
     objchighlignter.cpp \
     mainwindow.cpp \
     textedit.cpp \
-    filedock.cpp
+    filedock.cpp \
+    highlight.cpp
 
 RESOURCES += \
     resources.qrc
