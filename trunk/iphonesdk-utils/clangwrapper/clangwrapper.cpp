@@ -91,7 +91,7 @@ int main(int argc, char **argv)
   } 
      
   // cmd args for execvpe;
-  char **cmd = (char **)malloc((7 + argc)*sizeof(char*));
+  char **cmd = (char **)malloc((8 + argc)*sizeof(char*));
   cmd[0] = strdup(command.c_str());
   cmd[1] = strdup("-target");
   cmd[2] = strdup(target.c_str());
@@ -99,10 +99,11 @@ int main(int argc, char **argv)
   cmd[4] = strdup(default_arch.c_str());
   cmd[5] = strdup("-isysroot");
   cmd[6] = strdup(sdk_fullpath.c_str());
+  cmd[7] = strdup("-mlinker-version=134.9");
   for (int i = 1; i < argc; i ++) {
-    cmd[6+i] = argv[i];
+    cmd[7+i] = argv[i];
   }
-  cmd[6+argc] = (char *)0;
+  cmd[7+argc] = (char *)0;
 
   // env for execvpe
   int count = 0;
