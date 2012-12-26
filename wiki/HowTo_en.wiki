@@ -302,6 +302,23 @@ when you want to get the code completion hint, you can type "Ctrl-x Ctrl-u" to g
 
 You may also need autopair/snipMate plugin for VIM.
 
+==<font color="blue"> Step 9: Sublime Text 2 codes auto complete. (Optional) </font>==
+Sublime text 2 is another good choice if you do not use vim/Emacs.
+For iOS code complete in Sublime text 2, you need install SublimeClang from  Package Control or by your self and make sure it is works.
+
+Then configure it's options like:
+{{{
+        "-isysroot", "/usr/share/iPhoneOS5.0.sdk",
+        "-F/usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks",
+        "-I/usr/share/iPhoneOS5.0.sdk/usr/include",
+        "-target", "arm-apple-darwin11",
+        "-fblocks",
+        "-fobjc-nonfragile-abi",
+        "-fno-builtin",
+        "-fobjc-arc",
+        "-D__IPHONE_OS_VERSION_MIN_REQUIRED=50100"
+}}}
+
 ==<font color="blue"> Test toolchain </font>==
 I tested this toolchain with many opensource iOS projects, you can use RestKit, json-framework, fmdb or sample codes directly from API reference.
 
