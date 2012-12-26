@@ -28,6 +28,17 @@ private:
 
   CXIndex cx_index;
   CXTranslationUnit cx_tu;
+
+  QTextCharFormat m_formatFunction;
+  QTextCharFormat m_formatSingleLineComment;
+  QTextCharFormat m_formatMultiLineComment;
+  QTextCharFormat m_formatKeyword;
+  QTextCharFormat m_formatUserKeyword;
+  QTextCharFormat m_formatOperator;
+  QTextCharFormat m_formatNumber;
+  QTextCharFormat m_formatEscapeChar;
+  QTextCharFormat m_formatMacro;
+  QTextCharFormat m_formatString;
 };
 
 #endif

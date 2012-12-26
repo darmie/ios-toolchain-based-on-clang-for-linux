@@ -7,6 +7,8 @@
 #include <QDebug>
 
 #include "objchighlighter.h"
+#include "highlight.h"
+
 static int completion_printCompletionHeadTerm(
     CXCompletionString completion_string, FILE *fp)
 {
@@ -156,7 +158,7 @@ TextEdit::TextEdit(QWidget *parent): QTextEdit(parent)
 
     //connect(this,SIGNAL(textChanged()), this,SLOT(slotReparse()));
 
-    ObjcHighlighter *h = new ObjcHighlighter(this->document());
+
 
     completionList = new QListWidget(this);
     completionList->setSelectionMode( QAbstractItemView::SingleSelection );
@@ -168,7 +170,16 @@ TextEdit::TextEdit(QWidget *parent): QTextEdit(parent)
     palette.setBrush(QPalette::Active, QPalette::Base, Qt::white);
     completionList->setPalette(palette);
 
-
+    m_formatFunction.setForeground(Qt::black);
+    m_formatSingleLineComment.setForeground(Qt::red);
+    m_formatKeyword.setForeground(Qt::blue);
+    m_formatUserKeyword.setForeground(Qt::darkBlue);
+    m_formatOperator.setForeground(Qt::black);
+    m_formatNumber.setForeground(Qt::darkMagenta);
+    m_formatEscapeChar.setForeground(Qt::darkBlue);
+    m_formatMacro.setForeground(Qt::darkGreen);
+    m_formatMultiLineComment.setForeground(Qt::red);
+    m_formatString.setForeground(Qt::darkCyan);
 
     //connect(m_completionList, SIGNAL(itemActivated(QListWidgetItem *)), this, SLOT(slotWordCompletion(QListWidgetItem *)) );
 }
@@ -201,6 +212,81 @@ void TextEdit::slotReparse()
     clang_reparseTranslationUnit(
         cx_tu, 1, &unsaved_file, CXTranslationUnit_PrecompiledPreamble);
 
+    CXFile file = clang_getFile(cx_tu, unsaved_file.Filename);
+
+    CXSourceLocation start = clang_getLocationForOffset(cx_tu, file, 0);
+    CXSourceLocation end = clang_getLocationForOffset(cx_tu, file, this->toPlainText().length());
+    CXSourceRange range= clang_getRange(start,end);
+    CXToken *tokens;
+    unsigned tokenCount;
+    clang_tokenize(cx_tu,range, &tokens, &tokenCount);
+
+    if (tokenCount > 0)
+    {
+      CXCursor *cursors = NULL;
+      cursors = (CXCursor *)calloc(sizeof(CXCursor), tokenCount);
+      clang_annotateTokens(cx_tu, tokens, tokenCount, cursors);
+
+      for (unsigned i=0 ; i<tokenCount ; i++)
+      {
+        CXSourceRange sr = clang_getTokenExtent(cx_tu, tokens[i]);
+        unsigned start, end;
+        CXSourceLocation s = clang_getRangeStart(sr);
+        CXSourceLocation e = clang_getRangeEnd(sr);
+        clang_getInstantiationLocation(s, 0, 0, 0, &start);
+        clang_getInstantiationLocation(e, 0, 0, 0, &end);
+        qDebug()<<"start:"<<start<<"end:"<<end;
+    /*    if(start >end) {
+            int tmp = start;
+            start = end;
+            end = tmp;
+        }
+*/
+
+        switch (cursors[i].kind)
+        {
+        case CXCursor_FirstRef... CXCursor_LastRef:
+
+          break;
+        case CXCursor_MacroDefinition:
+
+          break;
+        case CXCursor_MacroInstantiation:
+
+          break;
+        case CXCursor_FirstDecl...CXCursor_LastDecl:
+
+          break;
+        case CXCursor_ObjCMessageExpr:
+
+          break;
+        case CXCursor_DeclRefExpr:
+
+          break;
+        case CXCursor_PreprocessingDirective: {
+
+        }
+          break;
+        default:
+          break;
+        }
+     /*   if(cursors[i].kind == CXCursor_FunctionDecl)
+            setFormat(start, end-start, m_formatSingleLineComment);*/
+      }
+    }
+    QTextCursor currentCursor = this->textCursor();
+    currentCursor.setPosition(3);
+    //setCurrentCharFormat(m_formatKeyword);
+    currentCursor.setCharFormat(m_formatMacro);
+   /* Highlight *hi = new Highlight();
+    hi->setCXFile(file);
+    hi->setCXSourceRange(range);
+    hi->setCXTranslationUnit(cx_tu);
+
+    hi->setDocument(this->document());*/
+   // ObjcHighlighter *h = new ObjcHighlighter(this->document());
+
+    //qDebug()<<tokenCount;
     int currentLine = this->textCursor().blockNumber()+1;
     int currentColumn = this->textCursor().columnNumber();
     qDebug() << currentLine <<currentColumn<<endl;
