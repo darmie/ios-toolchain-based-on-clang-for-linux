@@ -278,6 +278,7 @@ then create a App Project. and add these lines to `<`Project folder`>`/.clang_co
 {{{
 -ccc-host-triple arm-apple-darwin11
 -I/usr/share/iPhoneOS5.0.sdk/usr/include
+-F/usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks
 }}}
 
 when you want to get the code completion hint, you can type "Ctrl-x Ctrl-u" to get a popup menu.
