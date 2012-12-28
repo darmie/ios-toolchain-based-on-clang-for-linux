@@ -140,24 +140,6 @@ $mkdir -p /usr/share/iPhoneOS5.0.sdk/usr/lib/arc
 $cp Platforms/iPhoneOS.platform/Developer/usr/lib/arc/libarclite_iphoneos.a /usr/share/iPhoneOS5.0.sdk/usr/lib/arc
 }}}
 
-
-===3.3. fix framework headers positions(optional)===
-Headers of frameworks can be found automatically by clang, so this step is optional.
-If you need code completion in your editor(such as clang code completion for vim/emacs or something else), you may need fix headers positions. and copy all framework headers to standard include dir of SDK.
-{{{
-# fix headers locations, optional.
-cd /usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks
-for i in *.framework
-do
-     f=`basename $i .framework`
-     mkdir -p /usr/share/iPhoneOS5.0.sdk/usr/include/$f
-     if [ -d $i/Headers ]; then
-     cp -Rf -p $i/Headers/* /usr/share/iPhoneOS5.0.sdk/usr/include/$f/
-     fi
-done
-}}}
-
-
 ==<font color="blue"> Step 4: The utilities </font>==
 iphonesdk-utils is a utility collection for iOS development, provides below utilities:
 
