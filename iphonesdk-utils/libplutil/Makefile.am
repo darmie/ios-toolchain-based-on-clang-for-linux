@@ -32,5 +32,17 @@ noinst_HEADERS =	\
 	object.h	\
 	plist.h	\
 	plutil.h	\
-	ptrarray.h
+	ptrarray.h \
+  plist/Array.h \
+  plist/Boolean.h \
+  plist/Data.h \
+  plist/Date.h \
+  plist/Dictionary.h \
+  plist/Integer.h \
+  plist/Node.h \
+  plist/plist.h \
+  plist/plist++.h \
+  plist/Real.h \
+  plist/String.h \
+  plist/Structure.h
 
