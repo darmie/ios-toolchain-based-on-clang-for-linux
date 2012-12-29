@@ -24,6 +24,7 @@ ld_CXXFLAGS =  \
 	-I$(top_srcdir)/ld64/src \
 	-I$(top_srcdir)/ld64/src/abstraction \
 	-I$(top_srcdir)/ld64/src/3rd \
+	-I$(top_srcdir)/ld64/src/3rd/BlocksRuntime \
 	-I$(top_srcdir)/ld64/src/ld \
 	-I$(top_srcdir)/ld64/src/ld/parsers \
     -I$(top_srcdir)/ld64/src/ld/passes \
@@ -40,6 +41,7 @@ ld_CFLAGS =  \
     -I$(top_srcdir)/ld64/src \
     -I$(top_srcdir)/ld64/src/abstraction \
     -I$(top_srcdir)/ld64/src/3rd \
+	  -I$(top_srcdir)/ld64/src/3rd/BlocksRuntime \
     -I$(top_srcdir)/ld64/src/ld \
     -I$(top_srcdir)/ld64/src/ld/parsers \
     -I$(top_srcdir)/ld64/src/ld/passes \
