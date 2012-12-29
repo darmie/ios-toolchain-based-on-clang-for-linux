@@ -15,7 +15,5 @@ void gtk_im_context_set_client_window (GtkIMContext *context,
   int height = gdk_window_get_height(window);
   if(width != 0 && height !=0)
     gtk_im_context_focus_in(context);
-  
-  
 }
 
