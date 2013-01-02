@@ -128,7 +128,7 @@ string find_more_dirs_in_dir(string dir, string begin, string end)
     return "";
   
   if(dirs.size() == 1)
-    return dirs[1];
+    return dirs[0];
   
   printf("There are more than one sdks found:\n");
   for(int i = 0; i < dirs.size(); i++) 
