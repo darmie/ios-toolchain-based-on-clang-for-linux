@@ -157,7 +157,7 @@ iphonesdk-utils is a utility collection for iOS development, provides below util
 
 Download from: 
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-1.6.tar.bz2
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-1.8.tar.bz2
 
 Build and install it:
 {{{	
