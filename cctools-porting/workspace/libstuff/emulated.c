@@ -20,13 +20,11 @@ int _NSGetExecutablePath(char *path, unsigned int *size)
 {
    int bufsize = *size;
    int ret_size;
-   char *localpath = (char*)malloc(bufsize);
-   bzero(localpath,bufsize);
-   ret_size = readlink("/proc/self/exe", localpath, bufsize);
+   ret_size = readlink("/proc/self/exe", path, bufsize);
    if (ret_size != -1)
    {
         *size = ret_size;
-        strcpy(path,localpath);
+        path[ret_size] = 0;
         return 0;
    }
    else
