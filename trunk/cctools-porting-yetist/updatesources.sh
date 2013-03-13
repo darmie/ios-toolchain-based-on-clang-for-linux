@@ -72,6 +72,7 @@ extract_sources(){
 
 main(){
 	local idx=0
+	echo -e "VERSION\n============" > ${distdir}/VERSION
 	for netfile in "${packages[@]}"; do
 		local pkgname=${netfile%-*}
 		local pkgver=${netfile#*-}
@@ -81,6 +82,7 @@ main(){
 		local tarball=`basename $url`
 		download_sources
 		extract_sources
+		echo "${pkgname}-${pkgver}, url: $url" >> ${distdir}/VERSION
 		idx=$((idx + 1))
 	done
 }
