@@ -18,7 +18,7 @@ bin_PROGRAMS =  \
 	codesign_allocate
  
 LDADD =  \
-        $(top_srcdir)/libstuff/libstuff.la \
+        $(top_builddir)/libstuff/libstuff.la \
 		$(DL_LIBS) 
 		
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/include/foreign -I$(top_srcdir)/libstuff $(WARNINGS) $(LTO_DEFS) -D__DARWIN_UNIX03

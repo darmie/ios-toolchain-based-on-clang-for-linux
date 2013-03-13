@@ -1,6 +1,6 @@
 bin_PROGRAMS = ld_classic 
 ld_classic_LDADD =  \
-        $(top_srcdir)/libstuff/libstuff.la
+        $(top_builddir)/libstuff/libstuff.la
 
 ld_classic_CFLAGS = -D__DARWIN_UNIX03 -I$(top_srcdir)/include -I$(top_srcdir)/include/foreign -I$(top_srcdir)/libstuff $(WARNINGS) $(LTO_DEFS) -DDEBUG
 
@@ -11,3 +11,11 @@ ld_classic_SOURCES =  \
 	indirect_sections.c mod_sections.c i860_reloc.c ppc_reloc.c \
 	m88k_reloc.c hppa_reloc.c sparc_reloc.c coalesced_sections.c uuid.c \
 	debugcompunit.c debugline.c arm_reloc.c
+
+EXTRA_DIST =	\
+	4byte_literals.h 8byte_literals.h arm_reloc.h coalesced_sections.h	\
+	cstring_literals.h debugcompunit.h debugline.h dwarf2.h dylibs.h	\
+	fvmlibs.h generic_reloc.h hash_string.h hppa_reloc.h i860_reloc.h	\
+	indirect_sections.h layout.h ld.h literal_pointers.h live_refs.h	\
+	m88k_reloc.h mod_sections.h objects.h pass1.h pass2.h ppc_reloc.h	\
+	sections.h sets.h sparc_reloc.h specs.h symbols.h uuid.h

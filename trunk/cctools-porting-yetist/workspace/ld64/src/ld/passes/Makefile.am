@@ -35,3 +35,16 @@ libPasses_la_SOURCES =  \
 	order.cpp  \
 	tlvp.cpp \
 	stubs/stubs.cpp 
+
+EXTRA_DIST =	\
+	branch_island.h	\
+	branch_shim.h	\
+	compact_unwind.h	\
+	dtrace_dof.h	\
+	dylibs.h	\
+	got.h	\
+	huge.h	\
+	objc.h	\
+	order.h	\
+	tlvp.h	\
+	stubs

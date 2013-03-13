@@ -43,12 +43,12 @@ ObjectDump_SOURCES = \
 	ObjectDump.cpp \
 	$(top_srcdir)/ld64/src/ld/debugline.c 
 ObjectDump_LDADD =  \
-	$(top_srcdir)/ld64/src/ld/parsers/libParsers.la \
+	$(top_builddir)/ld64/src/ld/parsers/libParsers.la \
 	$(LTO_LIBS)  
 
 
 dyldinfo_SOURCES =  dyldinfo.cpp
 dyldinfo_LDADD =  \
-	$(top_srcdir)/ld64/src/3rd/libhelper.la
+	$(top_builddir)/ld64/src/3rd/libhelper.la
 
 
