@@ -1,4 +1,4 @@
-AC_INIT([cctools], [836], [cjacker@gmail.com])
+AC_INIT([ios-toolchain], [1.1], [cjacker@gmail.com])
 
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
@@ -59,9 +59,8 @@ AC_ARG_PROGRAM
 #as reported, some users may use llvm-c/Disassembler.h from base system instead of the local copy in include dir.
 #add these macros for avoid compilation failed.
 
-AC_DEFINE(__STDC_LIMIT_MACROS)
-AC_DEFINE(__STDC_CONSTANT_MACROS)
-
+AC_DEFINE(__STDC_LIMIT_MACROS, [1], [Limits of specified-width integer types])
+AC_DEFINE(__STDC_CONSTANT_MACROS, [1], [Define Macros for integer constants])
 
 AC_CHECK_TOOL([HOST_RANLIB], [ranlib], :)
 AC_CHECK_TOOL([HOST_AR], [ar], :)
@@ -210,7 +209,9 @@ fi
 AC_SUBST(LTO_LIBS)
 AC_SUBST(LTO_DEFS)
 
-LD_CLASSIC=""
+#####################
+# Check LD_CLASSIC
+#####################
 cat > conftest.c <<EOF
 #if defined(__x86_64__) || (!defined(__i386__) && defined(__LP64__))
 host_address=64
@@ -222,15 +223,14 @@ OSBIT=`${CC-cc} -E conftest.c | grep host_address=`
 rm -f conftest.c
 
 if test "$OSBIT" = "host_address=32"; then
-	ENABLE_LD_CLASSIC="YES"
-AC_MSG_NOTICE(["Your system is 32bit, enable ld_classic build"])
-LD_CLASSIC="ld"
+	LD_CLASSIC="yes"
+	AC_MSG_NOTICE(["Your system is 32bit, enable ld_classic build"])
 else
-	ENABLE_LD_CLASSIC="NO"
-AC_MSG_NOTICE(["Your system is 64bit, disable ld_classic"])
+	LD_CLASSIC="no"
+	AC_MSG_NOTICE(["Your system is 64bit, disable ld_classic"])
 fi
 
-AC_SUBST([LD_CLASSIC], [$LD_CLASSIC])
+AM_CONDITIONAL(ENABLE_LD_CLASSIC, [test "x$LD_CLASSIC" = "xyes"])
 
 
 AC_CONFIG_FILES([
@@ -268,5 +268,5 @@ Configuration:
 	CXX Compiler:		${CXX}
 	OBJC Compiler:		${OBJC}
 	OBJCXX Compiler:	${OBJCXX}
-	Enable ld_classic:	${ENABLE_LD_CLASSIC}
+	Enable ld_classic:	${LD_CLASSIC}
 "

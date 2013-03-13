@@ -1,8 +1,8 @@
 bin_PROGRAMS = otool 
 otool_LDADD =  \
-        $(top_srcdir)/libstuff/libstuff.la \
-		$(top_srcdir)/libobjc2/libobjc.la \
-		$(DL_LIBS) 
+        $(top_builddir)/libstuff/libstuff.la \
+	$(top_builddir)/libobjc2/libobjc.la \
+	$(DL_LIBS) 
 
 otool_LDFLAGS = $(PTHREAD_FLAGS) 
 
@@ -23,3 +23,15 @@ otool_SOURCES =  \
 	print_objc2_32bit.c \
 	print_objc2_64bit.c
 
+EXTRA_DIST =	\
+	arm_disasm.h	\
+	hppa_disasm.h	\
+	i386_disasm.h	\
+	i860_disasm.h	\
+	m68k_disasm.h	\
+	m88k_disasm.h	\
+	notify.h	\
+	ofile_print.h	\
+	otool.h	\
+	ppc_disasm.h	\
+	sparc_disasm.h
