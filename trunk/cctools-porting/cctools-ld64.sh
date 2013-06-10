@@ -1,14 +1,14 @@
 #!/bin/bash
 
-DIST_DIR=./cctools-836-ld64-134.9
+DIST_DIR=./cctools-839-ld64-134.9
 
 
 LD64_FILE=ld64-134.9.tar.gz
-CCTOOLS_FILE=cctools-836.tar.gz
+CCTOOLS_FILE=cctools-839.tar.gz
 LIBOBJC2_FILE=libobjc2-1.6.1.tar.bz2
 
 LD64_MD5=feb205b72ea38bb4da4f4429ab88fc1b
-CCTOOLS_MD5=62a3b204265170c39333c9d81ef6249d
+CCTOOLS_MD5=1c832fd1178af3b66fd436e36b65997f
 LIBOBJC2_MD5=611ef55ed15ea9c1a7b4b72807e41210
 
 LD64_URL=http://www.opensource.apple.com/tarballs/ld64/$LD64_FILE
@@ -58,7 +58,7 @@ tar ${TARSTRIP}=1 -zxf ${LD64_FILE} -C ${DIST_DIR}/ld64 2>/dev/null
 tar ${TARSTRIP}=1 -jxf ${LIBOBJC2_FILE} -C ${DIST_DIR}/libobjc2 2>/dev/null
 
 echo "3.Clean codes"
-rm -rf ${DIST_DIR}/{cbtlibs,dyld,file,gprof,libdyld,mkshlib,profileServer,cctools-836,efitools,PB.project,RelNotes,libmacho}
+rm -rf ${DIST_DIR}/{cbtlibs,dyld,file,gprof,libdyld,mkshlib,profileServer,cctools-839,efitools,PB.project,RelNotes,libmacho}
 rm -rf ${DIST_DIR}/ld64/{ld64-134.9,ld64.xcodeproj,unit-tests}
 rm -rf ${DIST_DIR}/libobjc2/{GNUmakefile,Makefile*}
 
@@ -68,7 +68,7 @@ echo "5.Removing __private_extern__"
 find ${DIST_DIR} -type f -name \*.h | xargs sed -i 's/^__private_extern__/extern/g'
 
 echo "6.Patch codes"
-cat patches/cctools-836-ported.patch |patch -p1 -d ${DIST_DIR} >/dev/null
+cat patches/cctools-839-ported.patch |patch -p1 -d ${DIST_DIR} >/dev/null
 cat patches/libobjc-remove-dispatch.patch |patch -p1 -d ${DIST_DIR} >/dev/null
 cat patches/ld64-134.9-ported.patch |patch -p0 -d ${DIST_DIR} >/dev/null
 cat patches/ld64-backward-support-for-llvm-gcc.patch |patch -p0 -d ${DIST_DIR} >/dev/null
