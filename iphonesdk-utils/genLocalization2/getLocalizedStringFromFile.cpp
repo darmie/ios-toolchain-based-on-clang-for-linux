@@ -104,7 +104,6 @@ std::vector<std::string> getLocalizedStringFromFile(std::string filename, std::s
         headerSearchOptions->AddPath(includepaths.at(i),
                 clang::frontend::Angled,
                 false,
-                false,
                 false);
     clang::HeaderSearch headerSearch(headerSearchOptions,
                                      fileManager,
