@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT(iphonesdk-utils, 1.8, [cjacker@gmail.com])
+AC_INIT(iphonesdk-utils, 1.9, [cjacker@gmail.com])
 
 AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_SRCDIR(clangwrapper/clangwrapper.cpp)
