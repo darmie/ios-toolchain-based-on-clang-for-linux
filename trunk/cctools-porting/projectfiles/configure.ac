@@ -23,6 +23,8 @@ AC_CONFIG_SRCDIR([APPLE_LICENSE])
 LT_PREREQ([2.2.6])
 LT_INIT(disable-static)
 
+AC_CONFIG_HEADERS([dummy.h])
+
 AC_PROG_INSTALL
 
 AC_PROG_CC([clang])
@@ -45,6 +47,8 @@ if test "$buggy_unistd"; then
   exit
 fi
 
+
+AC_CHECK_HEADERS([llvm-c/lto.h], [], [AC_MSG_ERROR([*** lto.h not found, Please install llvm dev packages according to your system])])
 
 #for libstuff emulated.c
 case $target_cpu in
