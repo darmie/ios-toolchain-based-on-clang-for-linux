@@ -700,7 +700,17 @@ string PBXProj::getBuildSettings(const PBXBlock *block)
       const PBXText *pch_path = dynamic_cast<const PBXText *>(settings->valueForKey("GCC_PREFIX_HEADER"));
       if(pch_path)
 	buildargs = buildargs + " -include " + pch_path->text();
-    }   
+    }
+    const PBXArray *hsp_arr = dynamic_cast<const PBXArray*>(settings->valueForKey("HEADER_SEARCH_PATHS"));
+    if(hsp_arr) {
+      PBXValueList::const_iterator hsp_itor = hsp_arr->begin();
+      PBXValueList::const_iterator hsp_end  = hsp_arr->end();
+      for(; hsp_itor != hsp_end; hsp_itor++){
+        const PBXText *hsp_path = dynamic_cast<const PBXText *> (*hsp_itor);
+        if(hsp_path && hsp_path->text())
+          buildargs = buildargs + " -I" + hsp_path->text();
+      }
+    }
   }
   
   vector<string> local_header_path;
