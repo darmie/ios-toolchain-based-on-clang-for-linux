@@ -65,6 +65,16 @@ $make
 $make install
 }}}
 
+For Ubuntu 13.04
+{{{
+$sudo apt-get install uuid-dev libssl-dev
+$export CFLAGS="-I/usr/include/llvm-c-3.2"
+$export CXXFLAGS="-I/usr/include/llvm-c-3.2"
+$./configure --target=arm-apple-darwin11 --prefix=/usr
+$make
+$make install
+}}}
+
 
 ==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
 <font color="red">I can not redistribute the  iPhoneOS SDK shipped with xcode, Please follow below steps to generate it yourself. </font>
