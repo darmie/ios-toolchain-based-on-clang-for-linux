@@ -29,7 +29,8 @@ ios_genLocalization_LDADD =	\
        	$(top_builddir)/libplutil/libplutil.la	\
       	$(top_builddir)/libhelper/libhelper.la	\
        	$(CLANG_LIBS)	\
-	$(LLVM_LIBS)
+	$(LLVM_LIBS)	\
+	-ldl
 
 ios_genLocalization_SOURCES =	\
 	main.cpp	\
