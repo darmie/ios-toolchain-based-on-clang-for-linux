@@ -37,7 +37,7 @@ Clang/llvm 3.2 is *highly* recommended.
 
 If you want to build clang/llvm from scratch, Please refer to <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_en"> this link</a> to build a svn version for your linux distribution.
 
-If your distribution already provides  clang/llvm packages，make sure it is 3.1 release or above.  Lower version may work but isn't tested. 
+If your distribution already provides  clang/llvm packages，make sure it is 3.3 release or above.  Lower version may work but isn't tested. 
 
 
 ==<font color="blue"> Step 2 : The assembler and linker </font>==
