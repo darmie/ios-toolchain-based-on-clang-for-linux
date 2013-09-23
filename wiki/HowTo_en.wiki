@@ -49,7 +49,8 @@ svn checkout http://ios-toolchain-based-on-clang-for-linux.googlecode.com/svn/tr
 }}}
 
 Here is a released tarball.
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-836-ld64-134.9-for-linux-1.1.tar.xz
+https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-839-ld64-134.9-1.2.tar.gz
+
 
 Download and build it:
 {{{
