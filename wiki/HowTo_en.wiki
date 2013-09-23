@@ -44,19 +44,17 @@ If you want to build clang/llvm from scratch, Please refer to <a href="http://co
 
 If your distribution already provides  clang/llvm packages，make sure it is 3.2 release or above.  Lower version may work but isn't tested. 
 
-for Ubuntu 13.04 users, clang/llvm already provided in repos, please run:
+<font color="blue">for Ubuntu 13.04 users, clang/llvm already provided in repos, please run:</font>
 
 {{{
-$apt-get install clang libclang-dev uuid-dev libssl-dev libpng12-dev
+$sudo apt-get install clang libclang-dev uuid-dev libssl-dev libpng12-dev
 }}}
 
 to install some dev packages, other dev packages related to llvm/llvm-dev should be installed automatically.
 
 
-
-
 ==<font color="blue"> Step 2 : The assembler and linker </font>==
-I had ported the latest cctools-836 and ld64-134.9 from Apple opensource to linux. the porting process is a little bit complicated, also with a lot of codes modified for linux, let's just skip it.
+I had ported the latest cctools-839 and ld64-134.9 from Apple opensource to linux. the porting process is a little bit complicated, also with a lot of codes modified for linux, let's just skip it.
 
 The porting tool and patches had been commit to SVN, if you are interested in how to porting, please check out the codes from:
 {{{
@@ -73,13 +71,10 @@ $make
 $make install
 }}}
 
-For Ubuntu 13.04, since it package llvm to use customized libraries/headers path.
+<font color="blue">For Ubuntu 13.04</font>, since the clang/llvm 3.2 package use a customized libraries/headers path. please setup CFLAGS and CXXFLAGS first before run configure.
 {{{
 $export CFLAGS="-I/usr/include/llvm-c-3.2"
 $export CXXFLAGS="-I/usr/include/llvm-c-3.2"
-$./configure --target=arm-apple-darwin11 --prefix=/usr
-$make
-$make install
 }}}
 
 
