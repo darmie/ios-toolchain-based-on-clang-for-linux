@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT(iphonesdk-utils, 1.9, [cjacker@gmail.com])
+AC_INIT(iphonesdk-utils, 2.0, [cjacker@gmail.com])
 
 AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_SRCDIR(clangwrapper/clangwrapper.cpp)
@@ -57,10 +57,22 @@ PKG_CHECK_MODULES(XML, [
     libxml-2.0 
 ])
 
-AC_CHECK_PROG([llvm_config], [llvm-config],[yes],[no])
+AC_CHECK_PROG(HAVE_LLVM_CONFIG, llvm-config, true, false)
 
-if test "x$llvm-config" = "xno"; then
-    AC_MSG_ERROR("Couldn't find llvm-config.")
+if test "x$HAVE_LLVM_CONFIG" = "xfalse"; then
+	AC_CHECK_PROG(HAVE_LLVM_CONFIG_32, llvm-config-3.2, true, false)
+	if test "x$HAVE_LLVM_CONFIG_32" = "xfalse"; then
+		AC_MSG_ERROR([llvm-config or llvm-config-3.2 not found on your system,please install related packages])
+	else
+    		LLVM_CXX_FLAGS=`llvm-config-3.2 --cxxflags`
+    		LLVM_LIBDIR=`llvm-config-3.2 --libdir`
+    		LLVM_LDFLAGS=`llvm-config-3.2 --ldflags --libs cppbackend|sed 'N;s/\n//'`
+    		LLVM_LIBS=`llvm-config-3.2 --libs`
+    		LLVM_LIBS="-L${LLVM_LIBDIR} ${LLVM_LIBS} ${LLVM_LDFLAGS}"
+
+    		AC_SUBST(LLVM_CXX_FLAGS)
+    		AC_SUBST(LLVM_LIBS)
+	fi
 else
     LLVM_CXX_FLAGS=`llvm-config --cxxflags`
     LLVM_LIBDIR=`llvm-config --libdir`
@@ -70,7 +82,7 @@ else
 
     AC_SUBST(LLVM_CXX_FLAGS)
     AC_SUBST(LLVM_LIBS)
-fi 
+fi
 
 TEMPLATES_DIR="$datadir/iPhoneTemplates"
 AC_SUBST(TEMPLATES_DIR)

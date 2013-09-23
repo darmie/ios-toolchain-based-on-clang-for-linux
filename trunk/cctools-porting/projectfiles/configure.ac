@@ -48,6 +48,8 @@ fi
 
 
 AC_CHECK_HEADERS([llvm-c/lto.h], [], [AC_MSG_ERROR([*** lto.h not found, Please install llvm dev packages according to your system])])
+AC_CHECK_HEADERS([openssl/md5.h], [], [AC_MSG_ERROR([*** md5.h not found, Please install ssl dev packages according to your system])])
+AC_CHECK_HEADERS([uuid/uuid.h], [], [AC_MSG_ERROR([*** uuid.h not found, Please install uuid dev packages according to your system])])
 
 #for libstuff emulated.c
 case $target_cpu in
@@ -200,9 +202,19 @@ AC_C_BIGENDIAN([AC_SUBST([ENDIAN_FLAG],[-D__BIG_ENDIAN__=1])],
 			[AC_SUBST([ENDIAN_FLAG],[-D__LITTLE_ENDIAN__=1])])
 
 # Check LTO
-AC_CHECK_PROG([llvm_config], [llvm-config],[yes],[no])
-if test "x$llvm-config" = "xno"; then
-        AC_MSG_ERROR("Could not find llvm-config.")
+AC_CHECK_PROG(HAVE_LLVM_CONFIG, llvm-config, true, false)
+
+if test "x$HAVE_LLVM_CONFIG" = "xfalse"; then
+        AC_CHECK_PROG(HAVE_LLVM_CONFIG_32, llvm-config-3.2, true, false)
+        if test "x$HAVE_LLVM_CONFIG_32" = "xfalse"; then
+                AC_MSG_ERROR([llvm-config or llvm-config-3.2 not found on your system,please install related packages])
+        else
+	        LLVM_LIBDIR=`llvm-config-3.2 --libdir`
+        	if test -f $LLVM_LIBDIR/libLTO.so;then
+                	LTO_LIBS="-L`llvm-config-3.2 --libdir` -lLTO"
+                	LTO_DEFS="-DLTO_SUPPORT=1"
+        	fi
+        fi
 else
         LLVM_LIBDIR=`llvm-config --libdir`
         if test -f $LLVM_LIBDIR/libLTO.so;then
@@ -210,6 +222,7 @@ else
                 LTO_DEFS="-DLTO_SUPPORT=1"
         fi
 fi
+
 
 AC_SUBST(LTO_LIBS)
 AC_SUBST(LTO_DEFS)
