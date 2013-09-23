@@ -157,8 +157,7 @@ iphonesdk-utils is a utility collection for iOS development, provides below util
   # *ios-xcbuild* : convert xcode project to makefile, build xcode project directly under linux.
 
 Download from: 
-
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-1.8.tar.bz2
+https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-1.9.tar.gz
 
 Build and install it:
 {{{	
