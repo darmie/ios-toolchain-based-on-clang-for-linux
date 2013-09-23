@@ -4,7 +4,7 @@
 
 
 
-<font color="blue">NOTE: I do NOT have a ubuntu or fedora installed, the os and base environment I used to develop these utilities is totally build from scratch with original upstream opensource project(include llvm/clang, gcc and other related package), So It sould be works with the versions I mentioned in this document, but may had some problem with other versions shipped with some distros, It is common and normal problem linux faced. If you are using some distros and also familiar with it, please do some verification job or contribute some patches. Thanks.</font>
+<font color="blue">NOTE: I do NOT have a ubuntu or fedora installed, the os and base environment I used to develop these utilities is totally build from scratch with original upstream opensource project(include llvm/clang, gcc and other related package), So It sould works with the versions I mentioned in this document, but may have some problems with other versions shipped with some distros, It is common and normal problem of linux components since API be changed in some opensource project.  If you are using some distros and also familiar with it, please do some verification job or contribute some patches. Thanks.</font>
 
 
 
