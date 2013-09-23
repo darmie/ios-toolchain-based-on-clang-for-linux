@@ -1,6 +1,12 @@
 =iOS toolchain based on clang for linux=
 
-<font color="blue">Cjacker <cjacker@gmail.com> 2012-11-26 </font>
+<font color="blue">Cjacker <cjacker@gmail.com> 2013-09-23 updated</font>
+
+
+
+<font color="blue">NOTE: I do NOT have a ubuntu or fedora installed, the os and base environment I used to develop these utilities is totally build from scratch with original upstream opensource project(include llvm/clang, gcc and other related package), So It sould be works with the versions I mentioned in this document, but may had some problem with other versions shipped with some distros, It is common and normal problem linux faced. If you are using some distros and also familiar with it, please do some verification job or contribute some patches. Thanks.</font>
+
+
 
 Clang for linux provides an almost full implementation for Objective C 2.0 includes blocks and other features gcc doesn't support.
 
