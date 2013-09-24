@@ -306,8 +306,9 @@ Please choose which language your App want to support, it will generate the rela
 
 
 
-
-==<font color="blue"> Optional: Emacs codes auto complete. (Optional) </font>==
+----
+----
+==<font color="blue"> Emacs codes auto complete. (Optional) </font>==
 I modified emacs-auto-complete-clang-async to run clang-complete only one instance and have a significant performance improvement.(The patch had been submitted to original author)
 
 here is a tarball include auto-complete/yasnippet/autopair.el/auto-complete-clang-async to provide a convenient development environment with Emacs.
@@ -318,7 +319,7 @@ http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/emacs-auto-co
 
 Please refer to "README" in tarball to setup by yourself.
 
-==<font color="blue"> Optional: VIM codes auto complete. (Optional) </font>==
+==<font color="blue"> VIM codes auto complete. (Optional) </font>==
 If you are a vim user, you can use clang_complete plugin for vim to get code completion support. make sure your vim/gvim already enable python support.
 
 Download it from:
@@ -337,7 +338,7 @@ when you want to get the code completion hint, you can type "Ctrl-x Ctrl-u" to g
 
 You may also need autopair/snipMate plugin for VIM.
 
-==<font color="blue"> Optional: Sublime Text 2 codes auto complete. (Optional) </font>==
+==<font color="blue"> Sublime Text 2 codes auto complete. (Optional) </font>==
 Sublime text 2 is another good choice if you do not use vim/Emacs.
 For iOS code complete in Sublime text 2, you need install SublimeClang from  Package Control or by your self and make sure it is works.
 
