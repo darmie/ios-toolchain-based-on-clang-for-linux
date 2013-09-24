@@ -80,7 +80,7 @@ $export CXXFLAGS="-I/usr/include/llvm-c-3.2"
 
 
 ==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
-The old iPhone SDK extracted from xcode had been provided in Download Sections.
+The old iPhone SDK with ARC support extracted from xcode had been provided in Download Sections.
 You can directly download it and extract it to /usr/share
 
 For iOS 4.2: https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS4.2.sdk.tar.xz
@@ -89,8 +89,7 @@ For iOS 5.0: https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files
 
 For iOS 6.0: https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS6.0.sdk.tar.xz
 
-For other iOS versions, You may need follow these steps to get the SDK for your self.
-https://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en
+For other iOS versions, You may need follow <a href="https://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/iphoneos_sdk_en"> these steps </a>to get the SDK for your self.
 
 
 ==<font color="blue"> Step 4: The utilities </font>==
