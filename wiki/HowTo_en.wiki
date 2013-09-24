@@ -67,6 +67,7 @@ svn checkout http://ios-toolchain-based-on-clang-for-linux.googlecode.com/svn/tr
 $sudo tar zxvf cctools-839-prebuilt-for-ubuntu-13.04.tar.gz -C /
 }}}
 
+And jump to next step.
 
 Here is a released source tarball.
 https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-839-ld64-134.9-1.3.tar.gz
