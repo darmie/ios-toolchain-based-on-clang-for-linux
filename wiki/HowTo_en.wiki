@@ -62,7 +62,13 @@ The porting tool and patches had been commit to SVN, if you are interested in ho
 svn checkout http://ios-toolchain-based-on-clang-for-linux.googlecode.com/svn/trunk/cctools-porting
 }}}
 
-Here is a released tarball.
+<font color="blue">If you are ubuntu 13.04 64bit users and don't like to compile the cctools your self, you can download the <a href="https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-839-prebuilt-for-ubuntu-13.04.tar.gz">prebuilt tarball</a> for ubuntu 13.04 64bit and extract it to /</font>
+{{{
+$sudo tar zxvf cctools-839-prebuilt-for-ubuntu-13.04.tar.gz -C /
+}}}
+
+
+Here is a released source tarball.
 https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-839-ld64-134.9-1.3.tar.gz
 
 Download and build it:
@@ -107,7 +113,14 @@ iphonesdk-utils is a utility collection for iOS development, provides below util
   # *ios-plutil* : plist compiler/decompiler.
   # *ios-xcbuild* : convert xcode project to makefile, build xcode project directly under linux.
 
-Download from: 
+<font color="blue">If you are ubuntu 13.04 64bit users and don't like to compile the cctools your self, you can download the <a href="https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-2.0-prebuilt-for-ubuntu-13.04.tar.gz">prebuilt tarball</a> for ubuntu 13.04 64bit and extract it to /</font>
+{{{
+$sudo tar zxvf iphonesdk-utils-2.0-prebuilt-for-ubuntu-13.04.tar.gz -C /
+}}}
+
+And jump to next step.
+
+Download the source tarball from: 
 https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-2.0.tar.gz
 
 Build and install it:
