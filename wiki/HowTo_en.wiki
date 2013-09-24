@@ -90,12 +90,13 @@ For iOS 5.0: https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files
 For iOS 6.0: https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS6.0.sdk.tar.xz
 
 
-If you want to do this totally under linux, you may need these tools installed.
 
 
 For other iOS versions, You may need follow below steps to get the SDK for your self.
 
-First, prepare the utilities to extract dmg.
+
+If you want to do this totally under linux, you may need these tools installed.
+
 
 *dmg2img* can be downloaded from: http://vu1tur.eu.org/tools/
 
