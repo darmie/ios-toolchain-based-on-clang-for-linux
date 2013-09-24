@@ -48,7 +48,7 @@ If your distribution already provides  clang/llvm packages，make sure it is 3.2
 <font color="blue">for Ubuntu 13.04 users, clang/llvm already provided in repos, please run:</font>
 
 {{{
-$sudo apt-get install clang libclang-dev uuid-dev libssl-dev libpng12-dev libicu-dev
+$sudo apt-get install clang libclang-dev uuid-dev libssl-dev libpng12-dev libicu-dev bison flex
 }}}
 
 to install some dev packages, other dev packages related to llvm/llvm-dev should be installed automatically.
