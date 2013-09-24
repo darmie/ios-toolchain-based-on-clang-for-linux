@@ -153,6 +153,8 @@ Download from:
 
 http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/gdb-1822-for-linux-0.1.tar.xz
 
+https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/dsymutil.tar.gz
+
 Extract it and <font color="red">you need copy "dsymutil" from Mac OSX to here</font>.
 
 and build/install it:
