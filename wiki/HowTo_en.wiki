@@ -118,57 +118,25 @@ $make install
 }}}
 
 ==<font color="blue"> Step 5: Debugger </font>==
+Since we don't have an iOS emulator under linux, we have to use physical device to debug our iOS apps.  so we need a debugserver installed into iOS device and a native gdb.
 
-===1. Prepare debugserver===
-Apple provides a "debugserver" with XCode, for iOS 5.x, it is in "DeveloperDiskImage5_0.pkg"
+===1. Install debugserver===
+There are old version debugserver (extracted from xcode)provided in Download Section:
 
-1. Extract debugserver
-{{{
-$xar -xf DeveloperDiskImage5_0.pkg PayLoad
-$cat Payload |zcat|cpio -id
-$cp Platforms/iPhoneOS.platform/DeviceSupport/Latest/DeveloperDiskImage.dmg .
-$dmg2img DeveloperDiskImage.dmg
-$mount -o loop DeveloperDiskImage.img /mnt
-$mkdir ~/Developer
-$cd /mnt
-$cp -r * ~/Developer/
-}}}
+For iOS 5.x: https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/debugserver-for-ios-5.x.tar.xz
 
-Now, the $HOME/Developer dir contains all related files of debugserver. 
+For iOS 6.x: https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/debugserver-for-ios-6.x.tar.xz
 
-For security issue, by default, you can not use debugserver directly in iOS device, it need to be signed.
+You can directly download it according to your device and extract it.
 
-1. prepare a ent.xml 
-{{{
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>com.apple.springboard.debugapplications</key>
-    <true/>
-    <key>get-task-allow</key>
-    <true/>
-    <key>task_for_pid-allow</key>
-    <true/>
-    <key>run-unsigned-code</key>
-    <true/>
-</dict>
-</plist>
-}}}
+For other versions, please follow <a href="https://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/debugserver_en">these steps</a> to extract debugserver.
 
-2. make sure the debugserver is not FAT mach-o, otherwise, use lipo  to extract it.
-
-3. sign it.
-{{{
-$cd ~/Developer/usr/bin
-$ldid -Sent.xml debugserver
-}}}
-
-4, upload "Developer" dir to the root of iOS device.
+After extraction, upload "Developer" dir to the root of iOS device.
 {{{
 $scp -r ~/Developer root@<your iphone IP>:/
 }}}
 
-5, ssh to your iOS device and try it.
+And ssh to your iOS device and try it.
 {{{
 $ssh <Your iPhone IP> -l root
 $/Developer/usr/bin/debugserver 1000 /Applications/<Some>.app/<Some binary>
@@ -206,52 +174,7 @@ firefox ./index.html
 }}}
 
 
-==<font color="blue"> Step 7: Emacs codes auto complete. (Optional) </font>==
-I modified emacs-auto-complete-clang-async to run clang-complete only one instance and have a significant performance improvement.(The patch had been submitted to original author)
 
-here is a tarball include auto-complete/yasnippet/autopair.el/auto-complete-clang-async to provide a convenient development environment with Emacs.
- 
-Download :
-
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/emacs-auto-complete.tar.gz
-
-Please refer to "README" in tarball to setup by yourself.
-
-==<font color="blue"> Step 8: VIM codes auto complete. (Optional) </font>==
-If you are a vim user, you can use clang_complete plugin for vim to get code completion support. make sure your vim/gvim already enable python support.
-
-Download it from:
-https://github.com/Rip-Rip/clang_complete
-
-extract all files to your ~/.vim dir.
-
-then create a App Project. and add these lines to `<`Project folder`>`/.clang_complete
-{{{
--ccc-host-triple arm-apple-darwin11
--I/usr/share/iPhoneOS5.0.sdk/usr/include
--F/usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks
-}}}
-
-when you want to get the code completion hint, you can type "Ctrl-x Ctrl-u" to get a popup menu.
-
-You may also need autopair/snipMate plugin for VIM.
-
-==<font color="blue"> Step 9: Sublime Text 2 codes auto complete. (Optional) </font>==
-Sublime text 2 is another good choice if you do not use vim/Emacs.
-For iOS code complete in Sublime text 2, you need install SublimeClang from  Package Control or by your self and make sure it is works.
-
-Then configure it's options like:
-{{{
-        "-isysroot", "/usr/share/iPhoneOS5.0.sdk",
-        "-F/usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks",
-        "-I/usr/share/iPhoneOS5.0.sdk/usr/include",
-        "-target", "arm-apple-darwin11",
-        "-fblocks",
-        "-fobjc-nonfragile-abi",
-        "-fno-builtin",
-        "-fobjc-arc",
-        "-D__IPHONE_OS_VERSION_MIN_REQUIRED=50100"
-}}}
 
 ==<font color="blue"> Test toolchain </font>==
 I tested this toolchain with many opensource iOS projects, you can use RestKit, json-framework, fmdb or sample codes directly from API reference.
@@ -382,6 +305,54 @@ Enter your number :
 Please choose which language your App want to support, it will generate the related plist files. translate them and re-install your App to iOS device.
 
 
+
+
+==<font color="blue"> Optional: Emacs codes auto complete. (Optional) </font>==
+I modified emacs-auto-complete-clang-async to run clang-complete only one instance and have a significant performance improvement.(The patch had been submitted to original author)
+
+here is a tarball include auto-complete/yasnippet/autopair.el/auto-complete-clang-async to provide a convenient development environment with Emacs.
+ 
+Download :
+
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/emacs-auto-complete.tar.gz
+
+Please refer to "README" in tarball to setup by yourself.
+
+==<font color="blue"> Optional: VIM codes auto complete. (Optional) </font>==
+If you are a vim user, you can use clang_complete plugin for vim to get code completion support. make sure your vim/gvim already enable python support.
+
+Download it from:
+https://github.com/Rip-Rip/clang_complete
+
+extract all files to your ~/.vim dir.
+
+then create a App Project. and add these lines to `<`Project folder`>`/.clang_complete
+{{{
+-ccc-host-triple arm-apple-darwin11
+-I/usr/share/iPhoneOS5.0.sdk/usr/include
+-F/usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks
+}}}
+
+when you want to get the code completion hint, you can type "Ctrl-x Ctrl-u" to get a popup menu.
+
+You may also need autopair/snipMate plugin for VIM.
+
+==<font color="blue"> Optional: Sublime Text 2 codes auto complete. (Optional) </font>==
+Sublime text 2 is another good choice if you do not use vim/Emacs.
+For iOS code complete in Sublime text 2, you need install SublimeClang from  Package Control or by your self and make sure it is works.
+
+Then configure it's options like:
+{{{
+        "-isysroot", "/usr/share/iPhoneOS5.0.sdk",
+        "-F/usr/share/iPhoneOS5.0.sdk/System/Library/Frameworks",
+        "-I/usr/share/iPhoneOS5.0.sdk/usr/include",
+        "-target", "arm-apple-darwin11",
+        "-fblocks",
+        "-fobjc-nonfragile-abi",
+        "-fno-builtin",
+        "-fobjc-arc",
+        "-D__IPHONE_OS_VERSION_MIN_REQUIRED=50100"
+}}}
 
 ==Enjoy it.==
  
