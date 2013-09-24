@@ -1,4 +1,6 @@
-If you want to done this totally in linux, you may need these tools installed.
+
+If you want to do this totally under linux, you may need these tools installed.
+
 
 *dmg2img* can be downloaded from: http://vu1tur.eu.org/tools/
 
@@ -55,6 +57,8 @@ You will find a lot of ".pkg" files in this dir, we need:
 
 *iPhoneSDKTools.pkg* : this pkg contains libarc_iphoneos.a, it is needed by clang with "-fobjc-arc" flag to enable ARC support of Objective-C.
 
+*DeveloperDiskImage5_0.pkg* : this pkg contains debugserver for iOS, it will be used when you setup debugserver in Step 5.
+
 
 ===2. Extract files  for iPhoneOS SDK===
 For SDK,
@@ -73,24 +77,4 @@ $cat Payload |zcat|cpio -id
 $mkdir -p /usr/share/iPhoneOS5.0.sdk/usr/lib/arc
 $cp Platforms/iPhoneOS.platform/Developer/usr/lib/arc/libarclite_iphoneos.a /usr/share/iPhoneOS5.0.sdk/usr/lib/arc
 }}}
-
-
-===3. fix framework headers positions(optional)===
-Headers of frameworks can be found automatically by clang, so this step is optional.
-If you need code completion in your editor(such as clang code completion for vim/emacs or something else), you may need fix headers positions. and copy all framework headers to standard include dir of SDK.
-{{{
-# fix headers locations, optional.
-cd iPhoneOS5.0.sdk/System/Library/Frameworks
-for i in *.framework
-do
-     f=`basename $i .framework`
-     mkdir -p /usr/share/iPhoneOS5.0.sdk/usr/include/$f
-     if [ -d $i/Headers ]; then
-     cp -Rf -p $i/Headers/* /usr/share/iPhoneOS5.0.sdk/usr/include/$f/
-     fi
-done
-}}}
-
-===4.Non-public headers for a jailbreaked device===
-These are some non-public headers for jailbreaked device somewhere. you can download it and install it as you need.
  
