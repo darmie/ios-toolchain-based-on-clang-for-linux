@@ -80,9 +80,22 @@ $export CXXFLAGS="-I/usr/include/llvm-c-3.2"
 
 
 ==<font color="blue"> Step 3: The iPhoneOS SDK. </font>==
-<font color="red">I can not redistribute the  iPhoneOS SDK shipped with xcode, Please follow below steps to generate it yourself. </font>
+The old iPhone SDK extracted from xcode had been provided in Download Sections.
+You can directly download it and extract it to /usr/share
+
+For iOS 4.2: https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS4.2.sdk.tar.xz
+
+For iOS 5.0: https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS5.0.sdk.tar.xz
+
+For iOS 6.0: https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iPhoneOS6.0.sdk.tar.xz
+
 
 If you want to do this totally under linux, you may need these tools installed.
+
+
+For other iOS versions, You may need follow below steps to get the SDK for your self.
+
+First, prepare the utilities to extract dmg.
 
 *dmg2img* can be downloaded from: http://vu1tur.eu.org/tools/
 
