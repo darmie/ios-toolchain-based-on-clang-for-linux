@@ -6,6 +6,7 @@
 
 <font color="blue">NOTE: Ubuntu 13.04 with clang/llvm-3.2 tested.</font>
 
+<font color="red">NOTE: storyboard and xib files can not be compiled by this toolchain, since the format of these files is closed and undocumented.</font>
 
 Clang for linux provides an almost full implementation for Objective C 2.0 includes blocks and other features gcc doesn't support.
 
