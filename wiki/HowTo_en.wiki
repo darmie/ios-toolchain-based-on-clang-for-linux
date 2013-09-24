@@ -147,17 +147,13 @@ $/Developer/usr/bin/debugserver 1000 /Applications/<Some>.app/<Some binary>
 ===2. Install gdb 1822===
 I had ported gdb-1822 from opendarwin to linux. 
 
-A package include opencflite/maloader/gdb-1822 had been provided to make it build and install easily.
+A package include opencflite/maloader/gdb-1822/dsymutil(copied from macosx) had been provided to make it build and install easily.
 
 Download from:
 
-http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/gdb-1822-for-linux-0.1.tar.xz
+http://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/gdb-1822-for-linux-0.2.tar.gz
 
-https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/dsymutil.tar.gz
-
-Extract it and <font color="red">you need copy "dsymutil" from Mac OSX to here</font>.
-
-and build/install it:
+Extract and build/install it:
 {{{
 $make
 $make install
