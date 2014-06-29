@@ -1,14 +1,14 @@
 #!/bin/bash
 
-DIST_DIR=./cctools-839-ld64-134.9
+DIST_DIR=./cctools-855-ld64-236.3
 
 
-LD64_FILE=ld64-134.9.tar.gz
-CCTOOLS_FILE=cctools-839.tar.gz
+LD64_FILE=ld64-236.3.tar.gz
+CCTOOLS_FILE=cctools-855.tar.gz
 LIBOBJC2_FILE=libobjc2-1.6.1.tar.bz2
 
-LD64_MD5=feb205b72ea38bb4da4f4429ab88fc1b
-CCTOOLS_MD5=1c832fd1178af3b66fd436e36b65997f
+LD64_MD5=6018c9ad37d14a50015af04da395f8ac
+CCTOOLS_MD5=480f9a872c3a846f0b2c4c3cf28a5408
 LIBOBJC2_MD5=611ef55ed15ea9c1a7b4b72807e41210
 
 LD64_URL=http://www.opensource.apple.com/tarballs/ld64/$LD64_FILE
@@ -58,7 +58,9 @@ tar ${TARSTRIP}=1 -zxf ${LD64_FILE} -C ${DIST_DIR}/ld64 2>/dev/null
 tar ${TARSTRIP}=1 -jxf ${LIBOBJC2_FILE} -C ${DIST_DIR}/libobjc2 2>/dev/null
 
 echo "3.Clean codes"
-rm -rf ${DIST_DIR}/{cbtlibs,dyld,file,gprof,libdyld,mkshlib,profileServer,cctools-839,efitools,PB.project,RelNotes,libmacho}
+find . -name Makefile|xargs rm -rf
+rm -rf ${DIST_DIR}/{dyld,file,libdyld,mkshlib,profileServer,cctools-839,PB.project,RelNotes,libmacho}
+#rm -rf ${DIST_DIR}/{cbtlibs,dyld,file,gprof,libdyld,mkshlib,profileServer,cctools-839,efitools,PB.project,RelNotes,libmacho}
 rm -rf ${DIST_DIR}/ld64/{ld64-134.9,ld64.xcodeproj,unit-tests}
 rm -rf ${DIST_DIR}/libobjc2/{GNUmakefile,Makefile*}
 
@@ -68,16 +70,18 @@ echo "5.Removing __private_extern__"
 find ${DIST_DIR} -type f -name \*.h | xargs sed -i 's/^__private_extern__/extern/g'
 
 echo "6.Patch codes"
-cat patches/cctools-839-ported.patch |patch -p1 -d ${DIST_DIR} >/dev/null
-cat patches/libobjc-remove-dispatch.patch |patch -p1 -d ${DIST_DIR} >/dev/null
-cat patches/ld64-134.9-ported.patch |patch -p0 -d ${DIST_DIR} >/dev/null
-cat patches/ld64-backward-support-for-llvm-gcc.patch |patch -p0 -d ${DIST_DIR} >/dev/null
+cat patches/cctools-855-ported.patch |patch -p1 -d ${DIST_DIR} 
+cat patches/libobjc-remove-dispatch.patch |patch -p1 -d ${DIST_DIR} 
+cat patches/ld64-236.3-ported.patch |patch -p1 -d ${DIST_DIR} 
+cat patches/ld64-backward-support-for-llvm-gcc.patch |patch -p1 -d ${DIST_DIR} 
 
 echo "7.Add external headers from Mac OS X"
 tar cf - headers |tar ${TARSTRIP}=1 -xf - -C ${DIST_DIR}
 
 echo "8.Add Automake project files"
 tar cf - projectfiles |tar ${TARSTRIP}=1 -xf - -C ${DIST_DIR}
+
+cat patches/github-tpoechtrager.patch|patch -p1 -d ${DIST_DIR}
 
 echo "9.Clean a little bit"
 find ${DIST_DIR} -name "*.orig"|xargs rm -rf
