@@ -2,10 +2,6 @@
 
 <font color="blue">Cjacker <cjacker@gmail.com> 2014-06-30 updated</font>
 
-
-
-<font color="blue">NOTE: Ubuntu 13.04 with clang/llvm-3.2 tested and prebuilt cctools/iphonesdk-utils/gdb provided.</font>
-
 <font color="red">NOTE: storyboard and xib files can not be compiled by this toolchain, since the format of these files is closed and undocumented, only nibtool shipped with xcode can handle these files and we had no chance to port it.</font>
 
 Clang for linux provides an almost full implementation for Objective C 2.0 includes blocks and other features gcc doesn't support.
