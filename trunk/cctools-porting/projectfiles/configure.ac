@@ -206,7 +206,7 @@ AC_CHECK_LIB([c++abi],[__cxa_demangle],[CXXABI_LIB=-lc++abi],[
 ])
 
 AC_SUBST(CXXABI_LIB)
-
+AC_CHECK_FUNCS([strmode])
 AC_C_BIGENDIAN([AC_SUBST([ENDIAN_FLAG],[-D__BIG_ENDIAN__=1])],
 			[AC_SUBST([ENDIAN_FLAG],[-D__LITTLE_ENDIAN__=1])])
 
