@@ -1,6 +1,6 @@
 =iOS toolchain based on clang for linux=
 
-<font color="blue">Cjacker <cjacker@gmail.com> 2013-09-23 updated</font>
+<font color="blue">Cjacker <cjacker@gmail.com> 2014-06-30 updated</font>
 
 
 
@@ -39,7 +39,7 @@ Before we start, you need a workable C/C++ compiler installed.
 
 ==<font color="blue"> Step 1 : The compiler </font>==
 
-<font color="red">Clang/llvm 3.2 or 3.3  </font>is *highly* recommended and tested.
+<font color="red">Clang/llvm >= 3.2 </font>is *highly* recommended and tested.
 
 If you want to build clang/llvm from scratch, Please refer to <a href="http://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/build_clang_en"> this link</a> to build a svn version for your linux distribution.
 
@@ -55,25 +55,18 @@ to install some dev packages, other dev packages related to llvm/llvm-dev should
 
 
 ==<font color="blue"> Step 2 : The assembler and linker </font>==
-I had ported the latest cctools-839 and ld64-134.9 from Apple opensource to linux. the porting process is a little bit complicated, also with a lot of codes modified for linux, let's just skip it.
+The latest cctools-855 and ld64-236.3 had been ported from Apple opensource to linux. the porting process is a little bit complicated, also with a lot of codes modified for linux, let's just skip it.
 
-The porting tool and patches had been commit to SVN, if you are interested in how to porting, please check out the codes from:
+please check out the codes from:
 {{{
 svn checkout http://ios-toolchain-based-on-clang-for-linux.googlecode.com/svn/trunk/cctools-porting
 }}}
 
-<font color="blue">If you are ubuntu 13.04 64bit users and don't like to compile the cctools your self, you can download the <a href="https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-839-prebuilt-for-ubuntu-13.04.tar.gz">prebuilt tarball</a> for ubuntu 13.04 64bit and extract it to /</font>
+
+Build it:
 {{{
-$sudo tar zxvf cctools-839-prebuilt-for-ubuntu-13.04.tar.gz -C /
-}}}
-
-<font color="blue">And jump to next step.</font>
-
-Here is a released source tarball.
-https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/cctools-839-ld64-134.9-1.3.tar.gz
-
-Download and build it:
-{{{
+$./cctools-ld64.sh
+$cd cctools-855-ld64-236.3
 $./configure --target=arm-apple-darwin11 --prefix=/usr
 $make
 $make install
@@ -113,13 +106,6 @@ iphonesdk-utils is a utility collection for iOS development, provides below util
   # *ios-genLocalization* : iOS app localization tool based on clang lexer.
   # *ios-plutil* : plist compiler/decompiler.
   # *ios-xcbuild* : convert xcode project to makefile, build xcode project directly under linux.
-
-<font color="blue">If you are ubuntu 13.04 64bit users and don't like to compile the iphonesdk-utils your self, you can download the <a href="https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-2.0-prebuilt-for-ubuntu-13.04.tar.gz">prebuilt tarball</a> for ubuntu 13.04 64bit and extract it to /</font>
-{{{
-$sudo tar zxvf iphonesdk-utils-2.0-prebuilt-for-ubuntu-13.04.tar.gz -C /
-}}}
-
-<font color="blue">And jump to next step.</font>
 
 Download the source tarball from: 
 https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/iphonesdk-utils-2.0.tar.gz
@@ -163,12 +149,6 @@ I had ported gdb-1822 from opendarwin to linux.
 
 A package include opencflite/maloader/gdb-1822/dsymutil(copied from macosx) had been provided to make it build and install easily.
 
-<font color="blue">If you are ubuntu 13.04 64bit users and don't like to compile the gdb-1822 your self, you can download the <a href="https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files/gdb-1822-prebuilt-for-ubuntu-13.04.tar.gz">prebuilt tarball</a> for ubuntu 13.04 64bit and extract it to /</font>
-{{{
-$sudo tar zxvf gdb-1822-prebuilt-for-ubuntu-13.04.tar.gz -C /
-}}}
-
-<font color="blue">And jump to next step.</font>
 
 Download from:
 
