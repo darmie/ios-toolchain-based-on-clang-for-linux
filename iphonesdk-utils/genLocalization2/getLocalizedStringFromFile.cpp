@@ -110,8 +110,9 @@ std::vector<std::string> getLocalizedStringFromFile(std::string filename, std::s
 		false,
 #endif
                 false);
+
     clang::HeaderSearch headerSearch(headerSearchOptions,
-                                     fileManager,
+                                     sourceManager,
                                      *pDiagnosticsEngine,
                                      languageOptions,
                                      pTargetInfo);

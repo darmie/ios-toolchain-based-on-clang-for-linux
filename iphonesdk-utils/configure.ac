@@ -2,12 +2,12 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT(iphonesdk-utils, 2.0, [cjacker@gmail.com])
+AC_INIT(iphonesdk-utils, 2.1, [cjacker@gmail.com])
 
 AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_SRCDIR(clangwrapper/clangwrapper.cpp)
 
-AM_INIT_AUTOMAKE([1.10 no-define no-dist-gzip dist-bzip2 tar-ustar])
+AM_INIT_AUTOMAKE([1.10 no-define no-dist-gzip dist-bzip2 tar-ustar subdir-objects no-dependencies])
 AC_CONFIG_MACRO_DIR([m4])
 AM_MAINTAINER_MODE
 
@@ -66,7 +66,7 @@ if test "x$HAVE_LLVM_CONFIG" = "xfalse"; then
 	else
     		LLVM_CXX_FLAGS=`llvm-config-3.2 --cxxflags`
     		LLVM_LIBDIR=`llvm-config-3.2 --libdir`
-    		LLVM_LDFLAGS=`llvm-config-3.2 --ldflags --libs cppbackend|sed 'N;s/\n//'`
+    		LLVM_LDFLAGS=`llvm-config-3.2 --ldflags --libs cppbackend|sed 'N;s/\n/ /'`
     		LLVM_LIBS=`llvm-config-3.2 --libs`
     		LLVM_LIBS="-L${LLVM_LIBDIR} ${LLVM_LIBS} ${LLVM_LDFLAGS}"
 
@@ -76,7 +76,7 @@ if test "x$HAVE_LLVM_CONFIG" = "xfalse"; then
 else
     LLVM_CXX_FLAGS=`llvm-config --cxxflags`
     LLVM_LIBDIR=`llvm-config --libdir`
-    LLVM_LDFLAGS=`llvm-config --ldflags --libs cppbackend|sed 'N;s/\n//'`
+    LLVM_LDFLAGS=`llvm-config --ldflags --libs cppbackend|sed 'N;s/\n/ /'`
     LLVM_LIBS=`llvm-config --libs`
     LLVM_LIBS="-L${LLVM_LIBDIR} ${LLVM_LIBS} ${LLVM_LDFLAGS}"
 
