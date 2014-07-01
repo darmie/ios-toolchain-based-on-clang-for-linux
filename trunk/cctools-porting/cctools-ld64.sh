@@ -5,11 +5,11 @@ DIST_DIR=./cctools-855-ld64-236.3
 
 LD64_FILE=ld64-236.3.tar.gz
 CCTOOLS_FILE=cctools-855.tar.gz
-LIBOBJC2_FILE=libobjc2-1.6.1.tar.bz2
+LIBOBJC2_FILE=libobjc2-1.7.tgz
 
 LD64_MD5=6018c9ad37d14a50015af04da395f8ac
 CCTOOLS_MD5=480f9a872c3a846f0b2c4c3cf28a5408
-LIBOBJC2_MD5=611ef55ed15ea9c1a7b4b72807e41210
+LIBOBJC2_MD5=7cb75674c87113ea7c9c462502617fc4
 
 LD64_URL=http://www.opensource.apple.com/tarballs/ld64/$LD64_FILE
 CCTOOLS_URL=http://www.opensource.apple.com/tarballs/cctools/$CCTOOLS_FILE
@@ -53,14 +53,14 @@ else
     TARSTRIP=--strip-path
 fi
 echo "2.Extract codes"
-tar ${TARSTRIP}=1 -zxf ${CCTOOLS_FILE} -C ${DIST_DIR} 2>/dev/null
-tar ${TARSTRIP}=1 -zxf ${LD64_FILE} -C ${DIST_DIR}/ld64 2>/dev/null
-tar ${TARSTRIP}=1 -jxf ${LIBOBJC2_FILE} -C ${DIST_DIR}/libobjc2 2>/dev/null
+tar ${TARSTRIP}=1 -zxf ${CCTOOLS_FILE} -C ${DIST_DIR}
+tar ${TARSTRIP}=1 -zxf ${LD64_FILE} -C ${DIST_DIR}/ld64 
+tar ${TARSTRIP}=1 -zxf ${LIBOBJC2_FILE} -C ${DIST_DIR}/libobjc2
 
 echo "3.Clean codes"
 find . -name Makefile|xargs rm -rf
-rm -rf ${DIST_DIR}/{dyld,file,libdyld,mkshlib,profileServer,cctools-839,PB.project,RelNotes,libmacho}
-#rm -rf ${DIST_DIR}/{cbtlibs,dyld,file,gprof,libdyld,mkshlib,profileServer,cctools-839,efitools,PB.project,RelNotes,libmacho}
+#rm -rf ${DIST_DIR}/{dyld,file,libdyld,mkshlib,profileServer,cctools-839,PB.project,RelNotes,libmacho}
+rm -rf ${DIST_DIR}/{cbtlibs,dyld,file,libdyld,mkshlib,profileServer,cctools-839,efitools,PB.project,RelNotes,libmacho}
 rm -rf ${DIST_DIR}/ld64/{ld64-134.9,ld64.xcodeproj,unit-tests}
 rm -rf ${DIST_DIR}/libobjc2/{GNUmakefile,Makefile*}
 
