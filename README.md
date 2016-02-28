@@ -183,7 +183,7 @@ For iOS 6.x: https://ios-toolchain-based-on-clang-for-linux.googlecode.com/files
 
 You can directly download it according to your device and extract it.
 
-For other versions, please follow https://code.google.com/p/ios-toolchain-based-on-clang-for-linux/wiki/debugserver_en'>these steps to extract debugserver.
+For other versions, please follow these steps in **/debug-server.md** to extract debugserver.
 
 After extraction, upload "Developer" dir to the root of iOS device. `$scp -r ~/Developer root@<your iphone IP>:/`
 
